@@ -1,0 +1,2 @@
+# FlyMe
+Django app
