@@ -7,7 +7,6 @@ from geopy.distance import geodesic
 
 
 
-#create Counrty model
 class Country(models.Model):
     name = models.CharField(max_length=150, unique=True)
     flag = models.ImageField(upload_to='countries/photos/')
@@ -20,7 +19,6 @@ class Country(models.Model):
 
 
 
-#create AirPort Model 
 class AirPort(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     name = models.CharField(max_length=150, unique=True)
@@ -33,7 +31,7 @@ class AirPort(models.Model):
 
 
 
-#create TrendingPlaces
+
 class TrendingPlace(models.Model):
     name = models.CharField(max_length=150, unique=True)
     description = models.TextField()
@@ -51,10 +49,12 @@ class MultiImages(models.Model):
     photo = models.ImageField(upload_to='trending_places/photos/')
     trendingPlace = models.ForeignKey(TrendingPlace,on_delete=models.CASCADE)
 
-
+    # def __str__(self) :
+    #     return str(self.photo)
+    def __str__(self):
+        return f'{self.photo} - Name Of TrendingPlace : {self.trendingPlace.name}'
 
     
-#create Route Model
 class Route(models.Model):
 
     startAirport = models.ForeignKey(AirPort, on_delete=models.CASCADE,null=True, related_name='routes_from')
