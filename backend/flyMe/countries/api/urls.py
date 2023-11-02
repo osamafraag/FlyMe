@@ -10,6 +10,6 @@ urlpatterns = [
     path('trending-places/<int:pk>/', trending_place_detail, name='trending-place-detail'),
     path('routes/', route_list, name='route-list'),
     path('routes/<int:pk>/', route_detail, name='route-detail'),
-    path('multi-images/', multi_images_list, name='multi-images-list'),
-    path('multi-images/<int:pk>/', multi_images_detail, name='multi-images-detail'),
+    path('images/', multi_images_list, name='multi-images-list'),
+    path('images/<int:pk>/', multi_images_detail, name='multi-images-detail'),
 ]

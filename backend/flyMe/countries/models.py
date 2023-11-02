@@ -49,8 +49,6 @@ class MultiImages(models.Model):
     photo = models.ImageField(upload_to='trending_places/photos/')
     trendingPlace = models.ForeignKey(TrendingPlace,on_delete=models.CASCADE)
 
-    # def __str__(self) :
-    #     return str(self.photo)
     def __str__(self):
         return f'{self.photo} - Name Of TrendingPlace : {self.trendingPlace.name}'
 
