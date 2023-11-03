@@ -125,3 +125,38 @@ def multi_images_detail_trendingPlace(request, pk):
 
     serializer = MultiImagesSerializerTrendingPlace(image)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def featured_countries_list(request):
+    featured_countries = Country.objects.filter(isFeatured=True)
+    serializer = CountrySerializer(featured_countries, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def featured_country_detail(request, pk):
+    try:
+        featured_country = Country.objects.get(pk=pk, isFeatured=True)
+    except Country.DoesNotExist:
+        return Response("Sorry, This featured country does not exist", status=404)
+
+    serializer = CountrySerializer(featured_country)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def event_countries_list(request):
+    event_countries = Country.objects.filter(event__isnull=False)
+    serializer = CountrySerializer(event_countries, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def event_country_detail(request, pk):
+    try:
+        event_country = Country.objects.get(pk=pk, event__isnull=False)
+    except Country.DoesNotExist:
+        return Response("Sorry, This event country does not exist", status=404)
+
+    serializer = CountrySerializer(event_country,many =True)
+    return Response(serializer.data)
