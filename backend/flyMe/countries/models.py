@@ -1,12 +1,6 @@
 from django.db import models
 from geopy.distance import geodesic
 
-
-
-
-
-
-
 class Country(models.Model):
     name = models.CharField(max_length=150, unique=True)
     flag = models.ImageField(upload_to='countries/photos/')
@@ -45,12 +39,18 @@ class TrendingPlace(models.Model):
 
 
     
-class MultiImages(models.Model):
+class MultiImagesTrendingPlace(models.Model):
     photo = models.ImageField(upload_to='trending_places/photos/')
     trendingPlace = models.ForeignKey(TrendingPlace,on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.photo} - Name Of TrendingPlace : {self.trendingPlace.name}'
+class MultiImagesCountry(models.Model):
+    photo = models.ImageField(upload_to='countries/photos/')
+    country = models.ForeignKey(Country,on_delete=models.CASCADE,null=True)
+
+    def __str__(self):
+        return f'{self.photo} - Name Of TrendingPlace : {self.country.name}'
 
     
 class Route(models.Model):

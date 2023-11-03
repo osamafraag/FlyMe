@@ -1,27 +1,40 @@
 from rest_framework import serializers
-from countries.models import Country, AirPort, TrendingPlace, Route, MultiImages
+from countries.models import Country, AirPort, TrendingPlace, Route, MultiImagesTrendingPlace,MultiImagesCountry
+
+
+
+class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
+    class Meta:
+        model = MultiImagesTrendingPlace
+        fields = ('id', 'photo', 'trendingPlace')
+
+class MultiImagesSerializerCountry(serializers.ModelSerializer):
+    country_name = serializers.CharField(source='country.name', read_only=True)
+
+    class Meta:
+        model = MultiImagesCountry
+        fields = ('id', 'photo','country_name')
 
 class CountrySerializer(serializers.ModelSerializer):
+    multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
+
     class Meta:
         model = Country
-        fields = '__all__'
+        fields = ['id','name','flag','callingCode','nationality','multi_images']
+
 
 class AirPortSerializer(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name', read_only=True)
 
     class Meta:
         model = AirPort
-        fields = '__all__'
+        fields = ('id', 'country_name', 'name', 'latitude', 'longitude')
 
-class MultiImagesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MultiImages
-        fields = ('id', 'photo', 'trendingPlace')
 
 
 class TrendingPlaceSerializer(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name', read_only=True)
-    multi_images = MultiImagesSerializer(many=True, read_only=True)
+    multi_images = MultiImagesSerializerTrendingPlace(many=True, read_only=True)
 
     class Meta:
         model = TrendingPlace
