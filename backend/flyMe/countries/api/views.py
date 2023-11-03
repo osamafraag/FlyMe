@@ -38,8 +38,14 @@ def airport_detail(request, pk):
 @api_view(['GET'])
 def trending_place_list(request):
     places = TrendingPlace.objects.all()
-    serializer = TrendingPlaceSerializer(places, many=True)
-    return Response(serializer.data)
+    trending_place_data = TrendingPlaceSerializer(places, many=True).data
+
+    for place in trending_place_data:
+        multi_images = MultiImages.objects.filter(trendingPlace=place['id'])
+        multi_images_data = MultiImagesSerializer(multi_images, many=True).data
+        place['multi_images'] = multi_images_data
+
+    return Response(trending_place_data)
 
 @api_view(['GET'])
 def trending_place_detail(request, pk):
@@ -48,8 +54,13 @@ def trending_place_detail(request, pk):
     except TrendingPlace.DoesNotExist:
         return Response(status=404)
 
-    serializer = TrendingPlaceSerializer(place)
-    return Response(serializer.data)
+    multi_images = MultiImages.objects.filter(trendingPlace=place)
+    trending_place_data = TrendingPlaceSerializer(place).data
+    multi_images_data = MultiImagesSerializer(multi_images, many=True).data
+    trending_place_data['multi_images'] = multi_images_data
+
+    return Response(trending_place_data)
+
 
 @api_view(['GET'])
 def route_list(request):
