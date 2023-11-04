@@ -1,7 +1,11 @@
 from rest_framework import serializers
-from countries.models import Country, AirPort, TrendingPlace, Route, MultiImagesTrendingPlace,MultiImagesCountry
+from countries.models import Country, AirPort, TrendingPlace, Route, MultiImagesTrendingPlace,MultiImagesCountry,Event
 
 
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = ('id', 'nameEvent','description','startDate','endDate','sale_amount' )
 
 class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
     class Meta:
@@ -9,7 +13,7 @@ class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
         fields = ('id', 'photo', 'trendingPlace')
 
 class MultiImagesSerializerCountry(serializers.ModelSerializer):
-    country_name = serializers.CharField(source='country.name', read_only=True)
+    country_name = serializers.CharField(source='country.name.name', read_only=True)
 
     class Meta:
         model = MultiImagesCountry
@@ -17,6 +21,9 @@ class MultiImagesSerializerCountry(serializers.ModelSerializer):
 
 class CountrySerializer(serializers.ModelSerializer):
     multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
+    event = EventSerializer(read_only=True)
+    name = serializers.CharField(source='name.name')
+
 
     class Meta:
         model = Country
@@ -24,7 +31,8 @@ class CountrySerializer(serializers.ModelSerializer):
 
 
 class AirPortSerializer(serializers.ModelSerializer):
-    country_name = serializers.CharField(source='country.name', read_only=True)
+    country_name = serializers.CharField(source='country.name.name', read_only=True)
+    
 
     class Meta:
         model = AirPort
@@ -33,7 +41,7 @@ class AirPortSerializer(serializers.ModelSerializer):
 
 
 class TrendingPlaceSerializer(serializers.ModelSerializer):
-    country_name = serializers.CharField(source='country.name', read_only=True)
+    country_name = serializers.CharField(source='country.name.name', read_only=True)
     multi_images = MultiImagesSerializerTrendingPlace(many=True, read_only=True)
 
     class Meta:
@@ -42,8 +50,8 @@ class TrendingPlaceSerializer(serializers.ModelSerializer):
 
 
 class RouteSerializer(serializers.ModelSerializer):
-    start_airport_name = serializers.CharField(source='startAirport.name', read_only=True)
-    end_airport_name = serializers.CharField(source='endAirport.name', read_only=True)
+    start_airport_name = serializers.CharField(source='startAirport.name.name', read_only=True)
+    end_airport_name = serializers.CharField(source='endAirport.name.name', read_only=True)
     distance_km = serializers.SerializerMethodField()
 
     class Meta:
