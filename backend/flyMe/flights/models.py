@@ -49,6 +49,14 @@ class FlightRoute(models.Model):
     startTime = models.DateTimeField(null=False)
     endTime = models.DateTimeField(null=False)
 
+    @classmethod
+    def all(cls) :
+        return cls.objects.all()
+    
+    @classmethod
+    def get(cls,id) :
+        return cls.objects.get(id=id)
+
 class Class(models.Model):
     name = models.CharField(null=False)
     additionalCostPercentage = models.IntegerField(null=False)
@@ -58,6 +66,14 @@ class Class(models.Model):
     wifiAvailability = models.BooleanField()
     powerOutlet = models.BooleanField()
     streamEntertainment = models.BooleanField()
+
+    @classmethod
+    def all(cls) :
+        return cls.objects.all()
+    
+    @classmethod
+    def get(cls,id) :
+        return cls.objects.get(id=id)
 
 class BookHistory(models.Model):
     # passenger = models.ForeignKey(User,null=True, blank=True,on_delete=models.CASCADE, related_name='bookHistory')
@@ -69,9 +85,25 @@ class BookHistory(models.Model):
     cashBack = models.IntegerField()
     paymentMethod = models.BooleanField()
 
-class BookFight(models.Model):
+    @classmethod
+    def all(cls) :
+        return cls.objects.all()
+    
+    @classmethod
+    def get(cls,id) :
+        return cls.objects.get(id=id)
+
+class BookFlight(models.Model):
     flight = models.ForeignKey(Flight,null=True, blank=True,on_delete=models.CASCADE, related_name='flightBooks')
     book = models.ForeignKey(BookHistory,null=True, blank=True,on_delete=models.CASCADE, related_name='bookflights')
     type = models.BooleanField()
+
+    @classmethod
+    def all(cls) :
+        return cls.objects.all()
+    
+    @classmethod
+    def get(cls,id) :
+        return cls.objects.get(id=id)
 
 

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-(w)xn^tzxh15=eo@!agw#$zsrg5rzmszum#fcv96n)6#9m$12@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'countries.apps.CountriesConfig',
     'flights.apps.FlightsConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
