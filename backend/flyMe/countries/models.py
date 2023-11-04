@@ -1,26 +1,19 @@
 from django.db import models
 from geopy.distance import geodesic
 
-
-
-
-
-
-
-#create Counrty model
 class Country(models.Model):
     name = models.CharField(max_length=150, unique=True)
     flag = models.ImageField(upload_to='countries/photos/')
-    callingCode = models.CharField(max_length=5,null=True)  
+    callingCode = models.CharField(max_length=5,null=True)
     nationality= models.CharField(max_length=150,null=True, blank=True, help_text="like Egyption, etc..")
-
+    isFeatured = models.BooleanField(null=True)
+    event = models.CharField(null=True,blank=True)
 
     def __str__(self) :
         return self.name
 
 
 
-#create AirPort Model 
 class AirPort(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     name = models.CharField(max_length=150, unique=True)
@@ -33,7 +26,7 @@ class AirPort(models.Model):
 
 
 
-#create TrendingPlaces
+
 class TrendingPlace(models.Model):
     name = models.CharField(max_length=150, unique=True)
     description = models.TextField()
@@ -47,14 +40,20 @@ class TrendingPlace(models.Model):
 
 
     
-class MultiImages(models.Model):
+class MultiImagesTrendingPlace(models.Model):
     photo = models.ImageField(upload_to='trending_places/photos/')
     trendingPlace = models.ForeignKey(TrendingPlace,on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.photo} - Name Of TrendingPlace : {self.trendingPlace.name}'
+class MultiImagesCountry(models.Model):
+    photo = models.ImageField(upload_to='countries/photos/')
+    country = models.ForeignKey(Country,on_delete=models.CASCADE,null=True)
 
+    def __str__(self):
+        return f'{self.photo} - Name Of TrendingPlace : {self.country.name}'
 
     
-#create Route Model
 class Route(models.Model):
 
     startAirport = models.ForeignKey(AirPort, on_delete=models.CASCADE,null=True, related_name='routes_from')
