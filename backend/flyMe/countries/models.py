@@ -1,29 +1,54 @@
+from asyncio import exceptions
 from django.db import models
-# from geopy.distance import geodesic
+from geopy.distance import geodesic
 from django_countries.fields import CountryField
+    
 
+
+class Event(models.Model):
+    nameEvent = models.CharField(null=False, help_text="Put Name Of Events", max_length=255)
+    description = models.TextField(null=True,blank=True)
+    startDate = models.DateField(null=True, blank=True)
+    endDate = models.DateField(null=True, blank=True)
+    sale_amount = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+
+    def __str__(self):
+        return self.nameEvent
 
 class Country(models.Model):
-    name = CountryField(blank_label="(select country)")
+    name = CountryField(blank_label="(select country)", unique=True)
     flag = models.ImageField(upload_to='countries/photos/')
-    callingCode = models.CharField(max_length=5,null=True)
-    nationality= models.CharField(max_length=150,null=True, blank=True, help_text="like Egyption, etc..")
-    isFeatured = models.BooleanField(null=True)
-    event = models.CharField(null=True,blank=True)
+    callingCode = models.CharField(max_length=5, null=True)
+    nationality = models.CharField(max_length=150, null=True, blank=True, help_text="like Egyptian, etc..")
+    isFeatured = models.BooleanField(help_text="IF you Choose it , Must Enter Value as Event")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE,null=True, blank=True)
 
     def __str__(self):
         return self.name.name
+    
+    # def save(self, *args, **kwargs):
+    #     if self.isFeatured and not self.event:
+    #         raise ValueError("A featured country must have an associated event.")
+    #     super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if not self.isFeatured:
+            self.event = None
+        elif self.isFeatured and not self.event:
+            self.event = None
+            self.isFeatured = None
 
+        super().save(*args, **kwargs)
 
 
 class AirPort(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='airPort/photos/',null=True,blank=True)
     name = models.CharField(max_length=150, unique=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name} ({self.country.name})"
+        return f"{self.name} ({self.country})"
     
 
 
@@ -53,7 +78,7 @@ class MultiImagesCountry(models.Model):
     country = models.ForeignKey(Country,on_delete=models.CASCADE,null=True)
 
     def __str__(self):
-        return f'{self.photo} - Name Of TrendingPlace : {self.country.name}'
+        return f'{self.photo} - Name Of TrendingPlace : {self.country}'
 
     
 class Route(models.Model):
@@ -71,6 +96,6 @@ class Route(models.Model):
 
         startCoords = (self.startAirport.latitude, self.startAirport.longitude)
         endCoords = (self.endAirport.latitude, self.endAirport.longitude)
-        # self.distance = geodesic(startCoords, endCoords).kilometers
+        self.distance = geodesic(startCoords, endCoords).kilometers
 
         super().save(*args, **kwargs)
