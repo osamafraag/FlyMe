@@ -1,16 +1,18 @@
 from django.db import models
-from geopy.distance import geodesic
+# from geopy.distance import geodesic
+from django_countries.fields import CountryField
+
 
 class Country(models.Model):
-    name = models.CharField(max_length=150, unique=True)
+    name = CountryField(blank_label="(select country)")
     flag = models.ImageField(upload_to='countries/photos/')
     callingCode = models.CharField(max_length=5,null=True)
     nationality= models.CharField(max_length=150,null=True, blank=True, help_text="like Egyption, etc..")
     isFeatured = models.BooleanField(null=True)
     event = models.CharField(null=True,blank=True)
 
-    def __str__(self) :
-        return self.name
+    def __str__(self):
+        return self.name.name
 
 
 
@@ -21,7 +23,7 @@ class AirPort(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.country.name})"
     
 
 
@@ -69,6 +71,6 @@ class Route(models.Model):
 
         startCoords = (self.startAirport.latitude, self.startAirport.longitude)
         endCoords = (self.endAirport.latitude, self.endAirport.longitude)
-        self.distance = geodesic(startCoords, endCoords).kilometers
+        # self.distance = geodesic(startCoords, endCoords).kilometers
 
         super().save(*args, **kwargs)

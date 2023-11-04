@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'countries.apps.CountriesConfig',
     'flights.apps.FlightsConfig',
     'rest_framework',
+    'django_countries'
 
 ]
 
