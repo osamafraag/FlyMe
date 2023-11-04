@@ -4,7 +4,7 @@ from geopy.distance import geodesic
 class Country(models.Model):
     name = models.CharField(max_length=150, unique=True)
     flag = models.ImageField(upload_to='countries/photos/')
-    callingCode = models.CharField(max_length=5,null=True)  
+    callingCode = models.CharField(max_length=5,null=True)
     nationality= models.CharField(max_length=150,null=True, blank=True, help_text="like Egyption, etc..")
     isFeatured = models.BooleanField(null=True)
     event = models.CharField(null=True,blank=True)

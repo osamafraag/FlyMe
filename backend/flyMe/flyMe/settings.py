@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'countries.apps.CountriesConfig',
     'flights.apps.FlightsConfig',
+    'rest_framework',
+
 ]
 
 MIDDLEWARE = [

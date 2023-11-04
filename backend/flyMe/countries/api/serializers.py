@@ -20,7 +20,7 @@ class CountrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Country
-        fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event ']
+        fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event']
 
 
 class AirPortSerializer(serializers.ModelSerializer):
