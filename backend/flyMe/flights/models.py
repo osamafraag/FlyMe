@@ -1,5 +1,6 @@
 from django.db import models
 from countries.models import Country, Route
+from accounts.models import MyUser
 
 class Aircraft(models.Model):
 
@@ -76,7 +77,7 @@ class Class(models.Model):
         return cls.objects.get(id=id)
 
 class BookHistory(models.Model):
-    # passenger = models.ForeignKey(User,null=True, blank=True,on_delete=models.CASCADE, related_name='bookHistory')
+    passenger = models.ForeignKey(MyUser,null=True, blank=True,on_delete=models.CASCADE, related_name='bookHistory')
     flight = models.ForeignKey(Flight,null=True, blank=True,on_delete=models.CASCADE, related_name='bookHistory')
     category = models.ForeignKey(Class,null=True, blank=True,on_delete=models.CASCADE, related_name='bookHistory')
     bookedAt = models.DateTimeField(auto_now_add=True)
