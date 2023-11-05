@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from flights.models import *
 from flights.api.serializers import *
+from accounts.models import *
 
 
 @api_view(['GET', 'POST'])
@@ -15,6 +16,9 @@ def aircraftList(request):
 
     elif request.method=='GET':
         aircrafts = Aircraft.all()
+        name = request.GET.get('name', None)
+        if name is not None:
+            aircrafts = aircrafts.filter(name__icontains=name)
         serializer = AircraftSerializer(aircrafts, many=True)
         return Response(serializer.data)
 
@@ -46,8 +50,27 @@ def flightList(request):
         return Response({'errors':flight.errors}, status=400)
 
     elif request.method=='GET':
-        aircrafts = Flight.all()
-        serializer = FlightSerializer(aircrafts, many=True)
+        flights = Flight.all()
+        source = request.GET.get('from', None)
+        destination = request.GET.get('to', None)
+        year = request.GET.get('year', None)
+        month = request.GET.get('month', None)
+        day = request.GET.get("day", None)
+        type = request.GET.get("type", None)
+        if year :
+            flights = flights.filter(departureTime__year=year)
+        if month :
+            flights = flights.filter(departureTime__month=month)
+        if day :
+            flights = flights.filter(departureTime__day=day)
+        if type :
+            flights = flights.filter(type=type)
+        if source :
+            flights = flights.filter(id__in=Country.objects.filter(name__icontains=source).values('outcomingFlights'))
+        if destination :
+            flights = flights.filter(id__in=Country.objects.filter(name__icontains=destination).values('incomingFlights'))
+
+        serializer = FlightSerializer(flights, many=True)
         return Response(serializer.data)
 
 @api_view(['GET', 'DELETE', 'PUT'])

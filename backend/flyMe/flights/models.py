@@ -1,15 +1,22 @@
 from django.db import models
 from countries.models import Country, Route
 from accounts.models import MyUser
+from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Aircraft(models.Model):
-
-    name = models.CharField(null=False)
-    company = models.CharField(null=False)
-    capacity = models.IntegerField(null=False)
-    maxLoad = models.IntegerField(null=False)
-    baggageWeight = models.IntegerField(null=True)
-    maxDistance = models.IntegerField(null=False)
+    companies = [
+        ('A', 'Airbus'),
+        ('B', 'Boeing'),
+        ('L', 'Lockheed Martin'),
+        ('R', 'Raytheon')
+    ]
+    name = models.CharField(default='noName')
+    company = models.CharField(max_length=1, choices=companies, default='A')
+    capacity = models.PositiveIntegerField(default=100)
+    maxLoad = models.PositiveIntegerField(default=10)
+    baggageWeight = models.PositiveIntegerField(default=20)
+    maxDistance = models.PositiveIntegerField(default=500)
 
     def __str__(self) :
         return self.name
@@ -23,18 +30,24 @@ class Aircraft(models.Model):
         return cls.objects.get(id=id)
     
 class Flight(models.Model):
+    type = [
+        ('D', 'Direct'),
+        ('T', 'Transient')
+    ]
+    departureTime = models.DateTimeField(default=timezone.now)
+    arrivalTime = models.DateTimeField(default=timezone.now)
+    availableSeats = models.PositiveIntegerField(default=0)
+    baseCost = models.PositiveIntegerField(default=1000)
+    baggageWeight = models.PositiveIntegerField(default=20)
+    totalDistance = models.PositiveIntegerField(default=500)
+    type = models.CharField(max_length=1, choices=type, default='d')
+    aircraft = models.ForeignKey(Aircraft,default=1 ,on_delete=models.CASCADE, related_name='flights')
+    sourceCountry = models.ForeignKey(Country,default=1,on_delete=models.CASCADE, related_name='outcomingFlights')
+    destinationCountry = models.ForeignKey(Country,default=1,on_delete=models.CASCADE, related_name='incomingFlights')
 
-    departureTime = models.DateTimeField(null=True)
-    arrivalTime = models.DateTimeField(null=True)
-    availableSeats = models.IntegerField(null=False)
-    baseCost = models.IntegerField(null=False)
-    baggageWeight = models.IntegerField(null=False)
-    totalDistance = models.IntegerField(null=False)
-    type = models.BooleanField()
-    aircraft = models.ForeignKey(Aircraft,null=True, blank=True,on_delete=models.CASCADE, related_name='flights')
-    sourceCountry = models.ForeignKey(Country,null=True, blank=True,on_delete=models.CASCADE, related_name='outcomingFlights')
-    destinationCountry = models.ForeignKey(Country,null=True, blank=True,on_delete=models.CASCADE, related_name='incomingFlights')
-
+    def __str__(self) :
+        return f"From {self.sourceCountry} To {self.destinationCountry} at {self.departureTime} "
+    
     @classmethod
     def all(cls) :
         return cls.objects.all()
@@ -44,11 +57,14 @@ class Flight(models.Model):
         return cls.objects.get(id=id)
     
 class FlightRoute(models.Model):
-    flight = models.ForeignKey(Flight,null=True, blank=True,on_delete=models.CASCADE, related_name='relatedRoutes')
-    route = models.ForeignKey(Route,null=True, blank=True,on_delete=models.CASCADE, related_name='relatedFlights')
-    index = models.IntegerField(null=False)
-    startTime = models.DateTimeField(null=False)
-    endTime = models.DateTimeField(null=False)
+    flight = models.ForeignKey(Flight,default=1,on_delete=models.CASCADE, related_name='relatedRoutes')
+    route = models.ForeignKey(Route,default=1,on_delete=models.CASCADE, related_name='relatedFlights')
+    index = models.PositiveIntegerField(default=1)
+    startTime = models.DateTimeField(default=timezone.now)
+    endTime = models.DateTimeField(default=timezone.now)
+
+    def __str__(self) :
+        return f"Route number {self.index} for Flight ({self.flight}) "
 
     @classmethod
     def all(cls) :
@@ -59,14 +75,36 @@ class FlightRoute(models.Model):
         return cls.objects.get(id=id)
 
 class Class(models.Model):
-    name = models.CharField(null=False)
-    additionalCostPercentage = models.IntegerField(null=False)
-    seatCategory = models.CharField(null=False)
-    mealCategory = models.CharField(null=False)
-    mealCategory = models.CharField(null=False)
-    wifiAvailability = models.BooleanField()
-    powerOutlet = models.BooleanField()
-    streamEntertainment = models.BooleanField()
+    seatCategories = [
+        ('E', 'Economy Class Seats'),
+        ('P', 'Premium Economy Class Seats'),
+        ('B', 'Business Class Seats'),
+        ('F', 'First-Class Seats')
+    ]
+    mealCategories = [
+        ('S', 'Standard vegetarian.'),
+        ('V', 'Vegan'),
+        ('F', 'Fruit platter'),
+        ('R', 'Raw vegetable'),
+        ('M', 'Muslim meal')
+    ]
+    drinkCategories = [
+        ('O', 'Only water'),
+        ('W', 'Warm Drinks only'),
+        ('C', 'Cold drinks only'),
+        ('B', 'Both Cold and Warm drinks')
+    ]
+    name = models.CharField(default='noName')
+    additionalCostPercentage = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(70)])
+    seatCategory = models.CharField(max_length=1, choices=seatCategories, default='E')
+    mealCategory = models.CharField(max_length=1, choices=mealCategories, default='M')
+    drinkCategory = models.CharField(max_length=1, choices=drinkCategories, default='O')
+    wifiAvailability = models.BooleanField(default=False)
+    powerOutlet = models.BooleanField(default=False)
+    streamEntertainment = models.BooleanField(default=False)
+
+    def __str__(self) :
+        return self.name
 
     @classmethod
     def all(cls) :
@@ -77,14 +115,24 @@ class Class(models.Model):
         return cls.objects.get(id=id)
 
 class BookHistory(models.Model):
-    passenger = models.ForeignKey(MyUser,null=True, blank=True,on_delete=models.CASCADE, related_name='bookHistory')
-    flight = models.ForeignKey(Flight,null=True, blank=True,on_delete=models.CASCADE, related_name='bookHistory')
-    category = models.ForeignKey(Class,null=True, blank=True,on_delete=models.CASCADE, related_name='bookHistory')
+    paymentMethods=[
+        ('W',"Wallet"),
+        ('C',"Card")
+    ]
+    statuses=[
+        ('D',"Done"),
+        ('S',"Still")
+    ]
+    passenger = models.ForeignKey(MyUser,default=None,on_delete=models.CASCADE, related_name='bookHistory')
+    category = models.ForeignKey(Class,default=1,on_delete=models.CASCADE, related_name='bookHistory')
     bookedAt = models.DateTimeField(auto_now_add=True)
-    status = models.BooleanField()
-    totalCost = models.IntegerField()
-    cashBack = models.IntegerField()
-    paymentMethod = models.BooleanField()
+    status = models.BooleanField(max_length=1, choices=statuses, default='S')
+    totalCost = models.PositiveIntegerField(blank=True)
+    cashBack = models.PositiveIntegerField(blank=True)
+    paymentMethod = models.CharField(max_length=1, choices=paymentMethods, default='O')
+
+    def __str__(self) :
+        return f"Booked by {self.passenger} At ({self.bookedAt})"
 
     @classmethod
     def all(cls) :
@@ -93,11 +141,27 @@ class BookHistory(models.Model):
     @classmethod
     def get(cls,id) :
         return cls.objects.get(id=id)
+    
+    def save(self, *args, **kwarg):
+        self.totalCost = self.totalCost + self.totalCost*self.category.additionalCostPercentage/100
+        self.cashBack = self.totalCost*0.03
+        super(BookHistory, self).save(*args, **kwarg)
 
 class BookFlight(models.Model):
-    flight = models.ForeignKey(Flight,null=True, blank=True,on_delete=models.CASCADE, related_name='flightBooks')
-    book = models.ForeignKey(BookHistory,null=True, blank=True,on_delete=models.CASCADE, related_name='bookflights')
-    type = models.BooleanField()
+    types=[
+        ('D','Departure'),
+        ('R','Return'),
+        ('S','Start'),
+        ('E','End'),
+        ('M','Multi'),
+        ('O','One way')
+    ]
+    flight = models.ForeignKey(Flight,default=None,on_delete=models.CASCADE, related_name='flightBooks')
+    book = models.ForeignKey(BookHistory,default=None,on_delete=models.CASCADE, related_name='bookflights')
+    type = models.CharField(max_length=1, choices=types, default='O')
+
+    def __str__(self) :
+        return f"Flight {self.flight} for Book ({self.book})"
 
     @classmethod
     def all(cls) :
