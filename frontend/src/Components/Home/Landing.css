@@ -1,0 +1,57 @@
+.landing {
+  background-image: url("./../../Assets/Images/Landing2.jpg");
+  background-size: cover;
+  position: relative;
+}
+
+.search-form {
+  position: absolute;
+  bottom: 0; 
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.search-type {
+  border: none;
+  background-color: #f4f4f4;
+  border-radius: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.search-type:hover, .search-type.active {
+  background-color: var(--secondary-color);
+  color: var(--main-color);
+  border-radius: 15px;
+}
+
+.custom-select {
+  height: 3.5rem;
+  position: relative;
+}
+
+.custom-select option:checked {
+  color: var(--main-color); 
+}
+
+.custom-select option:hover {
+  background-color: #f4f4f4;
+}
+
+.search-submit {
+  border: none;
+  border-radius: 25px;
+  padding: 15px 25px;
+  background-color: var(--main-color);
+}
+
+.departure-input{
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.return-input {
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
