@@ -1,8 +1,13 @@
 :root {
   --main-color: #426a9d;
-  --seconary-color: #8db3da;
+  --secondary-color: #8db3da;
 }
 
 body {
   font-family: 'JetBrains Mono', monospace !important;
+}
+
+.language .nav-link {
+  padding: 0;
+  color: #212529;
 }

@@ -10,6 +10,7 @@ const Profile = React.lazy(() => import('../Pages/Profile'));
 const TermsAndConditions = React.lazy(() => import('../Pages/TermsAndConditions'));
 const AboutUs = React.lazy(() => import('../Pages/AboutUs'));
 const Help = React.lazy(() => import('../Pages/Help'));
+const Login = React.lazy(() => import('../Pages/Login'));
 const Error = React.lazy(() => import('../Pages/404'));
 
 export default function Router() {
@@ -25,6 +26,7 @@ export default function Router() {
         <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
         <Route path="/AboutUs" element={<AboutUs />} />
         <Route path="/Help" element={<Help />} />
+        <Route path="/Login" element={<Login />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Suspense>

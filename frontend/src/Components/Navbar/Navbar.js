@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -14,14 +15,14 @@ export default function NavBar() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#book" className='me-3 fw-semibold '>Book</Nav.Link>
-            <Nav.Link href="#explore" className='me-3 fw-semibold '>Explore</Nav.Link>
-            <Nav.Link href="#about" className='me-3 fw-semibold '>About</Nav.Link>
-            <Nav.Link href="#help" className='me-3 fw-semibold '>Help</Nav.Link>
+            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Book">Book</NavLink>
+            <NavLink  className='me-3 fw-semibold text-dark text-decoration-none' to="/">Explore</NavLink>
+            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/AboutUs">About</NavLink>
+            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Help">Help</NavLink>
           </Nav>
           <Nav>
-            <Nav.Link href="#login" className='fw-semibold'><FontAwesomeIcon icon={faArrowRightToBracket} /> Login</Nav.Link>
-            <NavDropdown title="En" id="collapsible-nav-dropdown" className='fw-semibold'>
+            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Login"><FontAwesomeIcon icon={faArrowRightToBracket} /> Login</NavLink>
+            <NavDropdown title="En" id="collapsible-nav-dropdown" className='fw-semibold language'>
               <NavDropdown.Item href="#action/3.1" className='fw-semibold'>En</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2" className='fw-semibold'>Ar</NavDropdown.Item>
             </NavDropdown>
