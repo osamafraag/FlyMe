@@ -21,28 +21,30 @@ class Country(models.Model):
     callingCode = models.CharField(max_length=5, null=True)
     nationality = models.CharField(max_length=150, null=True, blank=True, help_text="like Egyptian, etc..")
     isFeatured = models.BooleanField(help_text="IF you Choose it , Must Enter Value as Event")
-    event = models.ForeignKey(Event, on_delete=models.CASCADE,null=True, blank=True)
+    event = models.ManyToManyField(Event,blank=True)
 
     def __str__(self):
         return self.name.name
-    
-    # def save(self, *args, **kwargs):
-    #     if self.isFeatured and not self.event:
-    #         raise ValueError("A featured country must have an associated event.")
-    #     super().save(*args, **kwargs)
+
     def save(self, *args, **kwargs):
         if not self.isFeatured:
-            self.event = None
+            self.event.clear()
         elif self.isFeatured and not self.event:
-            self.event = None
+            self.event.clear()
             self.isFeatured = None
 
         super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.isFeatured:
+    #         self.isFeatured = None
+    #         self.event.clear()
+    #     elif self.isFeatured and not self.event:
+    #         self.event = None
+    #     super().save(*args, **kwargs)
 
 
 class AirPort(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='airPort/photos/',null=True,blank=True)
     name = models.CharField(max_length=150, unique=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)

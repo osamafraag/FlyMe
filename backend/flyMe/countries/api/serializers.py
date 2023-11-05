@@ -3,10 +3,12 @@ from countries.models import Country, AirPort, TrendingPlace, Route, MultiImages
 
 
 class EventSerializer(serializers.ModelSerializer):
+    sale_amount = serializers.SerializerMethodField()
     class Meta:
         model = Event
         fields = ('id', 'nameEvent','description','startDate','endDate','sale_amount' )
-
+    def get_sale_amount(self, obj):
+        return f"{obj.sale_amount:.2f} %"
 class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
     class Meta:
         model = MultiImagesTrendingPlace
@@ -21,7 +23,7 @@ class MultiImagesSerializerCountry(serializers.ModelSerializer):
 
 class CountrySerializer(serializers.ModelSerializer):
     multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
-    event = EventSerializer(read_only=True)
+    event = EventSerializer(many=True,read_only=True)
     name = serializers.CharField(source='name.name')
 
 
@@ -50,8 +52,8 @@ class TrendingPlaceSerializer(serializers.ModelSerializer):
 
 
 class RouteSerializer(serializers.ModelSerializer):
-    start_airport_name = serializers.CharField(source='startAirport.name.name', read_only=True)
-    end_airport_name = serializers.CharField(source='endAirport.name.name', read_only=True)
+    start_airport_name = serializers.SerializerMethodField()
+    end_airport_name = serializers.SerializerMethodField()
     distance_km = serializers.SerializerMethodField()
 
     class Meta:
@@ -60,5 +62,14 @@ class RouteSerializer(serializers.ModelSerializer):
 
     def get_distance_km(self, obj):
         return f"{obj.distance} KM"
+
+    def get_start_airport_name(self, obj):
+        start_airport = obj.startAirport
+        return f"{start_airport.name} ({start_airport.country})"
+    
+    def get_end_airport_name(self, obj):
+        end_airport = obj.endAirport
+        return f"{end_airport.name} ({end_airport.country})"
+
 
 
