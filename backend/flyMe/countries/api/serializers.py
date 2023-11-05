@@ -34,11 +34,25 @@ class CountrySerializer(serializers.ModelSerializer):
 
 class AirPortSerializer(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name.name', read_only=True)
+    country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country', write_only=True)
+
     
 
     class Meta:
         model = AirPort
-        fields = ('id', 'country_name', 'name', 'latitude', 'longitude')
+        fields = ('id','country_id', 'country_name', 'name', 'latitude', 'longitude')
+
+    def create(self, validated_data):
+        return AirPort.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.country_name =validated_data.get('country_name')
+        instance.name =validated_data.get('name')
+        instance.latitude =validated_data.get('latitude')
+        instance.longitude =validated_data.get('longitude')
+        instance.save()
+        return instance
+
 
 
 
