@@ -23,14 +23,17 @@ class Aircraft(models.Model):
         return cls.objects.get(id=id)
     
 class Flight(models.Model):
-
+    type = [
+        ('d', 'Direct'),
+        ('t', 'Transient')
+    ]
     departureTime = models.DateTimeField(null=True)
     arrivalTime = models.DateTimeField(null=True)
     availableSeats = models.IntegerField(null=False)
     baseCost = models.IntegerField(null=False)
     baggageWeight = models.IntegerField(null=False)
     totalDistance = models.IntegerField(null=False)
-    type = models.BooleanField()
+    type = models.CharField(max_length=1, choices=type, null=True, blank=True)
     aircraft = models.ForeignKey(Aircraft,null=True, blank=True,on_delete=models.CASCADE, related_name='flights')
     sourceCountry = models.ForeignKey(Country,null=True, blank=True,on_delete=models.CASCADE, related_name='outcomingFlights')
     destinationCountry = models.ForeignKey(Country,null=True, blank=True,on_delete=models.CASCADE, related_name='incomingFlights')

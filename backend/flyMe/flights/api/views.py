@@ -15,6 +15,9 @@ def aircraftList(request):
 
     elif request.method=='GET':
         aircrafts = Aircraft.all()
+        name = request.GET.get('name', None)
+        if name is not None:
+            aircrafts = aircrafts.filter(name__icontains=name)
         serializer = AircraftSerializer(aircrafts, many=True)
         return Response(serializer.data)
 
@@ -46,8 +49,36 @@ def flightList(request):
         return Response({'errors':flight.errors}, status=400)
 
     elif request.method=='GET':
-        aircrafts = Flight.all()
-        serializer = FlightSerializer(aircrafts, many=True)
+        flights = Flight.all()
+        source = request.GET.get('source', None)
+        destination = request.GET.get('destination', None)
+        dYear = request.GET.get('dYear', None)
+        dMonth = request.GET.get('dMonth', None)
+        dDay = request.GET.get("dDay", None)
+        aYear = request.GET.get('aYear', None)
+        aMonth = request.GET.get('aMonth', None)
+        aDay = request.GET.get("aDay", None)
+        type = request.GET.get("type", None)
+        if dYear :
+            flights = flights.filter(departureTime__year=dYear)
+        if dMonth :
+            flights = flights.filter(departureTime__month=dMonth)
+        if dDay :
+            flights = flights.filter(departureTime__day=dDay)
+        if aYear :
+            flights = flights.filter(arrivalTime__year=aYear)
+        if aMonth :
+            flights = flights.filter(arrivalTime__month=aMonth)
+        if aDay :
+            flights = flights.filter(arrivalTime__day=aDay)
+        if type :
+            flights = flights.filter(type=type)
+        if source :
+            flights = flights.filter(id__in=Country.objects.filter(name__icontains=source).values('outcomingFlights'))
+        if destination :
+            flights = flights.filter(id__in=Country.objects.filter(name__icontains=destination).values('incomingFlights'))
+
+        serializer = FlightSerializer(flights, many=True)
         return Response(serializer.data)
 
 @api_view(['GET', 'DELETE', 'PUT'])
