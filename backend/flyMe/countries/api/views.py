@@ -41,12 +41,6 @@ def airport_list(request):
         serializer = AirPortSerializer(airport, many=True) 
         return Response(serializer.data)
     
-    # elif request.method == 'POST':
-    #     dataAirPort = AirPortSerializer(data=request.data)
-    #     if dataAirPort.is_valid():
-    #         dataAirPort.save()
-    #         return Response({"Message": "Data Sent Successfully", "AirPort Data": dataAirPort.data},200)
-    #     return Response(dataAirPort.errors, 404 )
     elif request.method == 'POST':
         print(request.data)  
         dataAirPort = AirPortSerializer(data=request.data)

@@ -34,14 +34,6 @@ class Country(models.Model):
             self.isFeatured = None
 
         super().save(*args, **kwargs)
-    # def save(self, *args, **kwargs):
-    #     if not self.isFeatured:
-    #         self.isFeatured = None
-    #         self.event.clear()
-    #     elif self.isFeatured and not self.event:
-    #         self.event = None
-    #     super().save(*args, **kwargs)
-
 
 class AirPort(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
