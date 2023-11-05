@@ -1,4 +1,5 @@
 from rest_framework.decorators import api_view
+from rest_framework import status
 from rest_framework.response import Response
 from countries.models import Country, AirPort, TrendingPlace, Route, MultiImagesCountry, MultiImagesTrendingPlace
 from countries.api.serializers import CountrySerializer, AirPortSerializer, TrendingPlaceSerializer, RouteSerializer, MultiImagesSerializerTrendingPlace,MultiImagesSerializerCountry
@@ -32,21 +33,48 @@ def country_detail(request, pk):
 
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def airport_list(request):
-    airports = AirPort.objects.all()
-    serializer = AirPortSerializer(airports, many=True)
-    return Response(serializer.data)
+    airport = AirPort.objects.all()
+    
+    if request.method == 'GET':
+        serializer = AirPortSerializer(airport, many=True) 
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        print(request.data)  
+        dataAirPort = AirPortSerializer(data=request.data)
+        print(dataAirPort.is_valid())  
+        if dataAirPort.is_valid():
+            dataAirPort.save()
+            return Response({"Message": "Data Sent Successfully", "AirPort Data": dataAirPort.data}, 200)
+        return Response(dataAirPort.errors, 400)
 
-@api_view(['GET'])
-def airport_detail(request, pk):
-    try:
-        airport = AirPort.objects.get(pk=pk)
-    except AirPort.DoesNotExist:
-        return Response(status=404)
 
-    serializer = AirPortSerializer(airport)
-    return Response(serializer.data)
+
+
+
+ 
+@api_view(['GET','PUT','DELETE'])
+def airport_detail(request, id):
+    airport = AirPort.objects.filter(id=id).first()
+
+    if request.method == 'GET':
+        serializer = AirPortSerializer(airport)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        dataUpdated = AirPortSerializer(instance=airport, data=request.data, partial=True)  
+        if dataUpdated.is_valid():
+            dataUpdated.save()
+            return Response({"message": "Edit done", "AirPort Data": dataUpdated.data})
+        return Response(dataUpdated.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        airport.delete()
+        return Response({"message":"Delete Successfully"}, status=200)
+
+
 
 @api_view(['GET'])
 def trending_place_list(request):
