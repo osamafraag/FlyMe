@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from flights.models import *
 from flights.api.serializers import *
+from accounts.models import *
 
 
 @api_view(['GET', 'POST'])
@@ -50,27 +51,18 @@ def flightList(request):
 
     elif request.method=='GET':
         flights = Flight.all()
-        source = request.GET.get('source', None)
-        destination = request.GET.get('destination', None)
-        dYear = request.GET.get('dYear', None)
-        dMonth = request.GET.get('dMonth', None)
-        dDay = request.GET.get("dDay", None)
-        aYear = request.GET.get('aYear', None)
-        aMonth = request.GET.get('aMonth', None)
-        aDay = request.GET.get("aDay", None)
+        source = request.GET.get('from', None)
+        destination = request.GET.get('to', None)
+        year = request.GET.get('year', None)
+        month = request.GET.get('month', None)
+        day = request.GET.get("day", None)
         type = request.GET.get("type", None)
-        if dYear :
-            flights = flights.filter(departureTime__year=dYear)
-        if dMonth :
-            flights = flights.filter(departureTime__month=dMonth)
-        if dDay :
-            flights = flights.filter(departureTime__day=dDay)
-        if aYear :
-            flights = flights.filter(arrivalTime__year=aYear)
-        if aMonth :
-            flights = flights.filter(arrivalTime__month=aMonth)
-        if aDay :
-            flights = flights.filter(arrivalTime__day=aDay)
+        if year :
+            flights = flights.filter(departureTime__year=year)
+        if month :
+            flights = flights.filter(departureTime__month=month)
+        if day :
+            flights = flights.filter(departureTime__day=day)
         if type :
             flights = flights.filter(type=type)
         if source :
