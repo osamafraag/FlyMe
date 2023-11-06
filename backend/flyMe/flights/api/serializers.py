@@ -43,11 +43,3 @@ class BookHistorySerializer(serializers.ModelSerializer):
 
         def create(self, validated_data):
             return BookHistory.objects.create(**validated_data)
-
-class BookFlightSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BookFlight
-        fields = '__all__'
-
-        def create(self, validated_data):
-            return BookFlight.objects.create(**validated_data)

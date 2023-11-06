@@ -163,6 +163,19 @@ def bookHistoryList(request):
         bookHistory = BookHistorySerializer(data=request.data)
         if bookHistory.is_valid():
             bookHistory.save()
+            book = BookHistory.get(bookHistory.data['id'])
+            for flight in book.flights.all() :
+                book.totalCost += flight.baseCost
+            book.totalCost = book.totalCost + book.totalCost*book.category.additionalCostPercentage/100
+            book.cashBack = book.totalCost*0.03
+            book.save()
+            for flight in book.flights.all():
+                flight.destinationCountry.popularity += 1
+                flight.destinationCountry.save()
+            data = {'bookedAt': request.data['bookedAt'], 'status':  request.data['status'], 'totalCost':  book.totalCost, 'cashBack':  book.cashBack, 'paymentMethod':  request.data['paymentMethod'], 'passenger':  request.data['passenger'], 'category':  request.data['category'], 'flights':  request.data['flights']}
+            bookHistory = BookHistorySerializer(data=data)
+            if bookHistory.is_valid():
+                bookHistory.save()
             return Response({"messsage": 'bookHistory add Successfully', "bookHistory":bookHistory.data}, status=201)
         return Response({'errors':bookHistory.errors}, status=400)
 
@@ -189,35 +202,3 @@ def bookHistoryDetail(request, id):
             return Response({"messsage": 'bookHistory updated successfully', "bookHistory": serializedBookHistory.data}, status=201)
         return Response({"errors":serializedBookHistory.errors}, status=400)
     
-
-@api_view(['GET', 'POST'])
-def bookFlightList(request):
-    if request.method == 'POST':
-        bookFlight = BookFlightSerializer(data=request.data)
-        if bookFlight.is_valid():
-            bookFlight.save()
-            return Response({"messsage": 'bookFlight added successfully', "bookFlight":bookFlight.data}, status=201)
-        return Response(bookFlight.errors, status=400)
-
-    elif request.method=='GET':
-        bookFlights = BookFlight.all() 
-        serlizedBookFlights = BookFlightSerializer(bookFlights, many=True)
-        return Response({"message": "bookFlights receieved successfully", 'bookFlights': serlizedBookFlights.data})
-    
-@api_view(['GET', 'DELETE', 'PUT'])
-def bookFlightDetail(request, id):
-    bookFlight = Aircraft.get(id)
-    if request.method=='GET':
-        serlizedBookFlight = BookFlightSerializer(bookFlight)
-        return Response({'data':serlizedBookFlight.data}, status=200)
-
-    elif request.method=='DELETE':
-        bookFlight.delete()
-        return Response({"message":"bookFlight deleted successfully"}, status= 204)
-
-    elif request.method=="PUT":
-        serlizedBookFlight = BookFlightSerializer(instance=bookFlight,data=request.data)
-        if serlizedBookFlight.is_valid():
-            serlizedBookFlight.save()
-            return Response({"messsage": 'bookFlight updated successfully', "bookFlight": serlizedBookFlight.data}, status=201)
-        return Response({"errors":serlizedBookFlight.errors}, status=400)

@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
+from django.db.models import Max
 from countries.models import Country, AirPort, TrendingPlace, Route, MultiImagesCountry, MultiImagesTrendingPlace
 from countries.api.serializers import CountrySerializer, AirPortSerializer, TrendingPlaceSerializer, RouteSerializer, MultiImagesSerializerTrendingPlace,MultiImagesSerializerCountry
 
@@ -188,3 +189,14 @@ def event_country_detail(request, pk):
 
     serializer = CountrySerializer(event_country,many =True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def popularCountries(request):
+    countries = Country.objects.all().order_by('-popularity')[:5]
+    serializer_country = CountrySerializer(countries, many=True).data
+    for country in serializer_country:
+        multi_images = MultiImagesCountry.objects.filter(country=country['id'])
+        multi_images_data = MultiImagesSerializerCountry(multi_images, many=True).data
+        country['multi_images'] = multi_images_data
+
+    return Response(serializer_country)

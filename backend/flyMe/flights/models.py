@@ -124,11 +124,12 @@ class BookHistory(models.Model):
         ('S',"Still")
     ]
     passenger = models.ForeignKey(MyUser,default=None,on_delete=models.CASCADE, related_name='bookHistory')
+    flights = models.ManyToManyField(Flight,default=None,related_name='flightBooks')
     category = models.ForeignKey(Class,default=1,on_delete=models.CASCADE, related_name='bookHistory')
     bookedAt = models.DateTimeField(auto_now_add=True)
-    status = models.BooleanField(max_length=1, choices=statuses, default='S')
-    totalCost = models.PositiveIntegerField(blank=True)
-    cashBack = models.PositiveIntegerField(blank=True)
+    status = models.CharField(max_length=1, choices=statuses, default='S')
+    totalCost = models.PositiveIntegerField(default=0,blank=True)
+    cashBack = models.PositiveIntegerField(default=0,blank=True)
     paymentMethod = models.CharField(max_length=1, choices=paymentMethods, default='O')
 
     def __str__(self) :
@@ -141,34 +142,4 @@ class BookHistory(models.Model):
     @classmethod
     def get(cls,id) :
         return cls.objects.get(id=id)
-    
-    def save(self, *args, **kwarg):
-        self.totalCost = self.totalCost + self.totalCost*self.category.additionalCostPercentage/100
-        self.cashBack = self.totalCost*0.03
-        super(BookHistory, self).save(*args, **kwarg)
-
-class BookFlight(models.Model):
-    types=[
-        ('D','Departure'),
-        ('R','Return'),
-        ('S','Start'),
-        ('E','End'),
-        ('M','Multi'),
-        ('O','One way')
-    ]
-    flight = models.ForeignKey(Flight,default=None,on_delete=models.CASCADE, related_name='flightBooks')
-    book = models.ForeignKey(BookHistory,default=None,on_delete=models.CASCADE, related_name='bookflights')
-    type = models.CharField(max_length=1, choices=types, default='O')
-
-    def __str__(self) :
-        return f"Flight {self.flight} for Book ({self.book})"
-
-    @classmethod
-    def all(cls) :
-        return cls.objects.all()
-    
-    @classmethod
-    def get(cls,id) :
-        return cls.objects.get(id=id)
-
 

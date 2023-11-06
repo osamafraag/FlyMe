@@ -1,5 +1,5 @@
 from django.urls import path
-from countries.api.views import country_list,country_detail,airport_detail,airport_list, event_countries_list, event_country_detail, featured_countries_list, featured_country_detail, multi_images_detail_country, multi_images_detail_trendingPlace, multi_images_list_country, multi_images_list_trendingPlace,trending_place_detail,trending_place_list,route_detail,route_list
+from countries.api.views import *
 urlpatterns = [
     path('countries/', country_list, name='country-list'),
     path('countries/<int:pk>/', country_detail, name='country-detail'),
@@ -17,7 +17,6 @@ urlpatterns = [
     path('featured_countries/<int:pk>/',featured_country_detail, name='featured_country_detail'),
     path('event_countries/',event_countries_list, name='event_countries_list'),
     path('event_countries/<int:pk>',event_country_detail, name='event_countries_list'),
-
-
+    path('popular/',popularCountries, name='popular.countries'),
 
 ]

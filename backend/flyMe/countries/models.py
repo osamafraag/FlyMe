@@ -21,19 +21,16 @@ class Country(models.Model):
     callingCode = models.CharField(max_length=5, null=True)
     nationality = models.CharField(max_length=150, null=True, blank=True, help_text="like Egyptian, etc..")
     isFeatured = models.BooleanField(help_text="IF you Choose it , Must Enter Value as Event")
-    event = models.ManyToManyField(Event,blank=True)
+    event = models.ManyToManyField(Event,blank=True,default=None)
+    popularity = models.PositiveBigIntegerField(default=0)
 
     def __str__(self):
         return self.name.name
 
-    def save(self, *args, **kwargs):
-        if not self.isFeatured:
-            self.event.clear()
-        elif self.isFeatured and not self.event:
-            self.event.clear()
-            self.isFeatured = None
-
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.popularity = Flight.objects.filter(destinationCountry=self).count()
+    #     self.popularity = self.incomingFlights.count()
+    #     super().save(*args, **kwargs)
 
 class AirPort(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
