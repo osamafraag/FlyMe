@@ -26,21 +26,21 @@ class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
         fields = ('id', 'photo', 'trendingPlace')
 
 class MultiImagesSerializerCountry(serializers.ModelSerializer):
-    country_name = serializers.CharField(source='country.name.name', read_only=True)
+    country_name = serializers.CharField(source='country.name', read_only=True)
 
     class Meta:
         model = MultiImagesCountry
         fields = ('id', 'photo','country_name')
 
 class CountrySerializer(serializers.ModelSerializer):
-    # multi_images = MultiImagesSerializerCountry(many=True, read_only=True)'multi_images',
+    multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
     event = EventSerializer(many=True,read_only=True)
 
 
     class Meta:
         model = Country
-        # fields = ['id','name','flag','callingCode','nationality','isFeatured','event']
-        fields = '__all__'
+        fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event']
+        # fields = '__all__'
         
     
     def create(self, validated_data):
@@ -77,12 +77,15 @@ class AirPortSerializer(serializers.ModelSerializer):
 class TrendingPlaceSerializer(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name.name', read_only=True)
     multi_images = MultiImagesSerializerTrendingPlace(many=True, read_only=True)
+    country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country', write_only=True)
+
 
     class Meta:
         model = TrendingPlace
-        fields = ('id', 'name', 'description', 'country_name', 'latitude', 'longitude', 'multi_images')
-
-
+        fields = ('id', 'name', 'description','country_id', 'country_name', 'latitude', 'longitude', 'multi_images')
+    def create(self, validated_data):
+        return TrendingPlace.objects.create(**validated_data)
+ 
 
 
 class RouteSerializer(serializers.ModelSerializer):
@@ -98,16 +101,14 @@ class RouteSerializer(serializers.ModelSerializer):
         distance = obj.distance or 0
         return f'{distance} KM'
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
+    def get_distance_with_unit(self, obj):
+        start_airport = obj.startAirport
+        end_airport = obj.endAirport
 
-        start_coords = (instance.startAirport.latitude, instance.startAirport.longitude)
-        end_coords = (instance.endAirport.latitude, instance.endAirport.longitude)
-
-        distance = geodesic(start_coords, end_coords).kilometers
-
-        representation['startAirport_name'] = instance.startAirport.name
-        representation['endAirport_name'] = instance.endAirport.name
-        representation['distance_with_unit'] = f'{distance:.2f} KM'
-
-        return representation
+        if start_airport and end_airport:
+            start_coords = (start_airport.latitude, start_airport.longitude)
+            end_coords = (end_airport.latitude, end_airport.longitude)
+            distance = geodesic(start_coords, end_coords).kilometers
+            return f'{distance:.2f} KM'
+        else:
+            return 'N/A' 

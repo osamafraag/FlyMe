@@ -2,6 +2,9 @@ from rest_framework import generics
 from countries.models import *
 from .serializers import *
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+
 
 
 class EventListCreateView(generics.ListCreateAPIView):
@@ -53,12 +56,43 @@ class TrendingPlaceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVi
 
 
 
+class RouteListCreateAPIView(APIView):
+    def get(self, request):
+        routes = Route.objects.all()
+        serializer = RouteSerializer(routes, many=True)
+        return Response(serializer.data)
 
-class RouteListCreateView(generics.ListCreateAPIView):
-    queryset = Route.objects.all()
-    serializer_class = RouteSerializer
+    def post(self, request):
+        serializer = RouteSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class RouteRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Route.objects.all()
-    serializer_class = RouteSerializer
+class RouteRetrieveUpdateDestroyAPIView(APIView):
+    def get(self, request, pk):
+        try:
+            route = Route.objects.get(pk=pk)
+            serializer = RouteSerializer(route)
+            return Response(serializer.data)
+        except Route.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
+    def put(self, request, pk):
+        try:
+            route = Route.objects.get(pk=pk)
+            serializer = RouteSerializer(route, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Route.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # def delete(self, request, pk):
+    #     try:
+    #         route = Route.objects.get(pk=pk)
+    #         route.delete()
+    #         return Response(status=status.HTTP_204_NO_CONTENT)
+    #     except Route.DoesNotExist:
+    #         return Response(status=status.HTTP_404_NOT_FOUND)
