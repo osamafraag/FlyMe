@@ -20,8 +20,8 @@ export default function Router() {
         <Route path="/" element={<Home />} />
         <Route path="/Book" element={<Book />} />
         <Route path="/Booking" element={<Booking />} />
-        <Route path="/TripIdeas" element={<TripIdeas />} />
-        <Route path="/Search" element={<Search />} />
+        <Route path="/TripIdeas/:id" element={<TripIdeas />} />
+        <Route path="/SearchResult/:searchType" element={<Search />} />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
         <Route path="/AboutUs" element={<AboutUs />} />

@@ -1,10 +1,10 @@
 import React from 'react'
-import BookComponent from './../Components/Book/Book'
+import BookSearch from './../Components/Book/Book'
 
 export default function Book() {
   return (
     <div>
-      <BookComponent />
+      <BookSearch />
     </div>
   )
 }

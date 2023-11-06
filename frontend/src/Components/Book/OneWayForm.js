@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 
-const OneWayForm = () => {
+const OneWayForm = ({ handleFlightData }) => {
   const [departure, setDeparture] = useState(getTodayDate());
   const [destinationFrom, setDestinationFrom] = useState('');
   const [destinationTo, setDestinationTo] = useState('');
@@ -18,8 +18,23 @@ const OneWayForm = () => {
     return `${year}-${month}-${day}`;
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const searchResults = ["OneWay", "Hi"] 
+    handleFlightData(searchResults);
+  };
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const toQuery = queryParams.get('to');
+    if (toQuery) {
+      setDestinationTo(toQuery);
+    }
+  }, []);
+
   return (
-    <form className='row row-cols-3 align-items-center '>
+    <form className='row row-cols-3 align-items-center ' onSubmit={handleSubmit}>
+      {/* From */}
       <div className='col from'>
         <FloatingLabel
           controlId="floatingInput"
@@ -35,6 +50,7 @@ const OneWayForm = () => {
         </FloatingLabel>
       </div>
 
+      {/* To */}
       <div className='col to'>
         <FloatingLabel
           controlId="floatingInput"
@@ -50,6 +66,7 @@ const OneWayForm = () => {
         </FloatingLabel>
       </div>
 
+      {/* Time */}
       <div className='col departure'>
         <FloatingLabel
           controlId="floatingInput"
@@ -61,20 +78,13 @@ const OneWayForm = () => {
             value={departure}
             onChange={(e) => setDeparture(e.target.value)}
             placeholder="Departure"
+            min={getTodayDate()}
           />
         </FloatingLabel>
       </div>
 
-      <div className='col'>
-        <Form.Select aria-label="Default select example" className="custom-select">
-          <option value="1">Economy</option>
-          <option value="2">Premium Economy</option>
-          <option value="3">Business Class</option>
-          <option value="4">First Class</option>
-        </Form.Select>
-      </div>
-
-      <div className='col'>
+      {/* Direct Or Not */}
+      <div className='col-6'>
         <Form.Check 
           type='checkbox'
           id='default-checkbox'
@@ -82,7 +92,8 @@ const OneWayForm = () => {
         />
       </div>
 
-      <div className='col from text-end'>
+      {/* Submit */}
+      <div className='col-6 from text-end'>
         <Button type="submit" className='search-submit'>Search</Button>
       </div>
     </form>

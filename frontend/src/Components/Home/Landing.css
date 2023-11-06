@@ -1,7 +1,8 @@
 .landing {
   background-image: url("./../../Assets/Images/Landing2.jpg");
+  background-position: center 30%;
+  background-repeat: no-repeat;
   background-size: cover;
-  position: relative;
 }
 
 .search-form {
@@ -43,6 +44,13 @@
   border-radius: 25px;
   padding: 15px 25px;
   background-color: var(--main-color);
+  transition: 0.5s;
+}
+
+.search-submit:hover {
+  background-color: white;
+  color: var(--main-color);
+  border: 1px solid var(--main-color);
 }
 
 .departure-input{

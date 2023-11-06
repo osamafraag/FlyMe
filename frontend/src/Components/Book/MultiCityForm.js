@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
-const MultiCityForm = () => {
+const MultiCityForm = ({ handleFlightData }) => {
   const [flights, setFlights] = useState([
     {
       departure: getTodayDate(),
@@ -38,10 +38,17 @@ const MultiCityForm = () => {
     setFlights(updatedFlights);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const searchResults = ["MultiCities"] 
+    handleFlightData(searchResults);
+  };
+
   return (
-    <form className='row row-cols-3 align-items-center '>
+    <form className='row row-cols-3 align-items-center ' onSubmit={handleSubmit}>
       {flights.map((flight, index) => (
         <>
+        {/* From */}
         <div className='col from' key={index}>
           <FloatingLabel
             controlId={`floatingInputFrom${index}`}
@@ -56,6 +63,8 @@ const MultiCityForm = () => {
             />
           </FloatingLabel>
         </div>
+
+        {/* To */}
         <div className='col to' key={index}>
           <FloatingLabel
             controlId={`floatingInputTo${index}`}
@@ -70,6 +79,8 @@ const MultiCityForm = () => {
             />
           </FloatingLabel>
         </div>
+
+        {/* Time */}
         <div className='col departure' key={index}>
           <FloatingLabel
             controlId={`floatingInputDeparture${index}`}
@@ -81,30 +92,24 @@ const MultiCityForm = () => {
               value={flight.departure}
               onChange={(e) => handleInputChange(index, 'departure', e.target.value)}
               placeholder="Departure"
+              min={getTodayDate()}
             />
           </FloatingLabel>
         </div>
         </>
       ))}
 
-      <div className='col'>
-        <Form.Select aria-label="Default select example" className="custom-select">
-          <option value="1">Economy</option>
-          <option value="2">Premium Economy</option>
-          <option value="3">Business Class</option>
-          <option value="4">First Class</option>
-        </Form.Select>
-      </div>
-
-      <div className='col'>
+      {/* Direct Or Not */}
+      <div className='col-6'>
         <Form.Check
           type='checkbox'
           id='default-checkbox'
           label='Direct Flights Only'
         />
       </div>
-
-      <div className='col text-end'>
+      
+      {/* Submit */}
+      <div className='col-6 text-end'>
         <Button type="submit" className='search-submit'>Search</Button>
       </div>
     </form>
