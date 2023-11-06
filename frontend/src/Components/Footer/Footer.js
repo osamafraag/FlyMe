@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlaneDeparture } from '@fortawesome/free-solid-svg-icons'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
@@ -35,19 +36,19 @@ export default function Footer() {
               <div className="col-lg-3 col-md-6 mx-auto mb-md-0 mb-4">
                 <h6 className="text-uppercase fw-bold mb-4">Extra Links</h6>
                 <p>
-                  <a href="#!" className="text-reset text-decoration-none">Book</a>
+                  <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/Book">Book</NavLink>
                 </p>
                 <p>
-                  <a href="#!" className="text-reset text-decoration-none">Explore</a>
+                  <NavLink  className='me-3 fw-semibold text-white text-decoration-none' to="/">Explore</NavLink>
                 </p>
                 <p>
-                  <a href="#!" className="text-reset text-decoration-none">About</a>
+                  <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/AboutUs">About</NavLink>
                 </p>
                 <p>
-                  <a href="#!" className="text-reset text-decoration-none">Help</a>
+                  <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/Help">Help</NavLink>
                 </p>
                 <p>
-                  <a href="#!" className="text-reset text-decoration-none">Terms and Conditions</a>
+                  <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/TermsAndConditions">Terms and Conditions</NavLink>
                 </p>
               </div>
 

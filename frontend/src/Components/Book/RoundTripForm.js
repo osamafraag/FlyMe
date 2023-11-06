@@ -4,9 +4,8 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
-import { Padding } from '@mui/icons-material';
 
-const RoundTripForm = () => {
+const RoundTripForm = ({ handleFlightData }) => {
   const [departure, setDeparture] = useState(getTodayDate());
   const [returnDate, setReturnDate] = useState('');
   const [destinationFrom, setDestinationFrom] = useState('');
@@ -20,9 +19,16 @@ const RoundTripForm = () => {
     return `${year}-${month}-${day}`;
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const searchResults = ["RoundTrip"] 
+    handleFlightData(searchResults);
+  };
+
   return (
-    <form className='row row-cols-3 align-items-center justify-content-between'>
+    <form className='row row-cols-3 align-items-center justify-content-between' onSubmit={handleSubmit}>
       <div className='col-7 row'>
+        {/* From */}
         <div className='col'>
           <FloatingLabel
             controlId="floatingInput"
@@ -38,6 +44,7 @@ const RoundTripForm = () => {
           </FloatingLabel>
         </div>
         
+        {/* To */}
         <div className='col'>
           <FloatingLabel
             controlId="floatingInput"
@@ -54,7 +61,9 @@ const RoundTripForm = () => {
         </div>
       </div>
 
+      {/* Time */}
       <div className='col-5 departure d-flex'>
+        {/* Going Time */}
         <FloatingLabel
           controlId="floatingInput"
           label={<span><FontAwesomeIcon icon={faLocationDot} /> Departure</span>}
@@ -66,9 +75,12 @@ const RoundTripForm = () => {
             onChange={(e) => setDeparture(e.target.value)}
             placeholder="Departure"
             className='departure-input'
+            min={getTodayDate()}
+            max={returnDate}
           />
         </FloatingLabel>
 
+        {/* Return Time */}
         <FloatingLabel
           controlId="floatingInput"
           label={<span><FontAwesomeIcon icon={faLocationDot} /> Return</span>}
@@ -80,20 +92,13 @@ const RoundTripForm = () => {
             onChange={(e) => setReturnDate(e.target.value)}
             placeholder="Return"
             className='return-input'
+            min={departure}
           />
         </FloatingLabel>
       </div>
 
-      <div className='col'>
-        <Form.Select aria-label="Default select example" className="custom-select" style={{width: "293px"}}>
-          <option value="1">Economy</option>
-          <option value="2">Premium Economy</option>
-          <option value="3">Business Class</option>
-          <option value="4">First Class</option>
-        </Form.Select>
-      </div>
-
-      <div className='col return'>
+      {/* Direct Or Not */}
+      <div className='col-6 return'>
         <Form.Check 
           type='checkbox'
           id='default-checkbox'
@@ -101,7 +106,8 @@ const RoundTripForm = () => {
         />
       </div>
 
-      <div className='col text-end'>
+      {/* Submit */}
+      <div className='col-6 text-end'>
         <Button type="submit" className='search-submit'>Search</Button>
       </div>
     </form>
