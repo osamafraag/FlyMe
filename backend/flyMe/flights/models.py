@@ -3,6 +3,7 @@ from countries.models import Country, Route
 from accounts.models import MyUser
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
 
 class Aircraft(models.Model):
     companies = [
@@ -38,8 +39,8 @@ class Flight(models.Model):
     arrivalTime = models.DateTimeField(default=timezone.now)
     availableSeats = models.PositiveIntegerField(default=0)
     baseCost = models.PositiveIntegerField(default=1000)
-    baggageWeight = models.PositiveIntegerField(default=20)
-    totalDistance = models.PositiveIntegerField(default=500)
+    baggageWeight = models.PositiveIntegerField(default=0)
+    totalDistance = models.PositiveIntegerField(default=0)
     type = models.CharField(max_length=1, choices=type, default='d')
     aircraft = models.ForeignKey(Aircraft,default=1 ,on_delete=models.CASCADE, related_name='flights')
     sourceCountry = models.ForeignKey(Country,default=1,on_delete=models.CASCADE, related_name='outcomingFlights')
@@ -55,6 +56,19 @@ class Flight(models.Model):
     @classmethod
     def get(cls,id) :
         return cls.objects.get(id=id)
+    
+    def clean(self):
+        if self.baggageWeight > self.aircraft.baggageWeight:
+            raise ValidationError({'baggage':'flight baggageWeight can`t be bigger than aircraft baggageWeight'})
+        if self.totalDistance > self.aircraft.maxDistance:
+            raise ValidationError({'distance':'flight destinace can`t be bigger than aircraft distance'})
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        if self.baggageWeight == 0 :
+            self.baggageWeight = self.aircraft.baggageWeight
+        super().save(*args, **kwargs)
+        
     
 class FlightRoute(models.Model):
     flight = models.ForeignKey(Flight,default=1,on_delete=models.CASCADE, related_name='relatedRoutes')
