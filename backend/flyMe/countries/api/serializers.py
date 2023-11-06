@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from geopy.distance import geodesic
-from countries.models import Country, AirPort, TrendingPlace, Route, MultiImagesTrendingPlace,MultiImagesCountry,Event
-
+from countries.models import *
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,38 +20,13 @@ class EventSerializer(serializers.ModelSerializer):
         return super().to_internal_value(data)
 
 class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
+    place_name = serializers.CharField(source='trendingPlace.name', read_only=True)
+
+    
     class Meta:
         model = MultiImagesTrendingPlace
-        fields = ('id', 'photo', 'trendingPlace')
+        fields = ('id', 'photo','place_name')
 
-# class MultiImagesSerializerCountry(serializers.ModelSerializer):
-#     country_name = serializers.CharField(source='country.name', read_only=True)
-
-#     class Meta:
-#         model = MultiImagesCountry
-#         fields = ('id', 'photo','country_name')
-#     def to_representation(self, instance):
-#         representation = super().to_representation(instance)
-#         representation['photo_url'] = instance.photo.url
-#         return representation
-
-
-# class CountrySerializer(serializers.ModelSerializer):
-#     multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
-#     event = EventSerializer(many=True,read_only=True)
-
-
-#     class Meta:
-#         model = Country
-#         fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event']
-#         # fields = '__all__'
-        
-    
-#     def create(self, validated_data):
-#         events_data = validated_data.pop('event', [])
-#         country = Country.objects.create(**validated_data)
-#         country.event.set(events_data)
-#         return country
 class MultiImagesSerializerCountry(serializers.ModelSerializer):
     photo_url = serializers.SerializerMethodField(read_only=True)
     country_name = serializers.CharField(source='country.name', read_only=True)
@@ -69,22 +43,40 @@ class MultiImagesSerializerCountry(serializers.ModelSerializer):
         return representation
 
 
+# class CountrySerializer(serializers.ModelSerializer):
+#     multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
+
+#     class Meta:
+#         model = Country
+#         fields = ['id', 'name', 'flag', 'callingCode', 'nationality', 'multi_images', 'isFeatured', 'event']
+    
+#     def create(self, validated_data):
+#         events_data = validated_data.pop('event', [])
+#         country = Country.objects.create(**validated_data)
+#         country.event.set(events_data)
+#         return country
+
 class CountrySerializer(serializers.ModelSerializer):
     multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
+    event = EventSerializer(many=True, read_only=True)
 
     class Meta:
         model = Country
-        fields = ['id', 'name', 'flag', 'callingCode', 'nationality', 'multi_images', 'isFeatured', 'event']
-    
+        fields = ['id', 'name', 'flag', 'callingCode', 'nationality','multi_images', 'isFeatured', 'event']
+
     def create(self, validated_data):
         events_data = validated_data.pop('event', [])
         country = Country.objects.create(**validated_data)
         country.event.set(events_data)
         return country
 
+
+
+
+
 class AirPortSerializer(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name', read_only=True)
-    country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country', write_only=True)
+    country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country', )
 
     
 
@@ -104,20 +96,24 @@ class AirPortSerializer(serializers.ModelSerializer):
             return instance
 
 
-
-
 class TrendingPlaceSerializer(serializers.ModelSerializer):
-    country_name = serializers.CharField(source='country.name.name', read_only=True)
+    country_name = serializers.SerializerMethodField(source='country')
     multi_images = MultiImagesSerializerTrendingPlace(many=True, read_only=True)
-    country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country', write_only=True)
-
+    country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country')
 
     class Meta:
         model = TrendingPlace
-        fields = ('id', 'name', 'description','country_id', 'country_name', 'latitude', 'longitude', 'multi_images')
+        fields = ('id', 'name', 'description', 'country_id', 'country_name', 'latitude', 'longitude', 'multi_images')
+
     def create(self, validated_data):
         return TrendingPlace.objects.create(**validated_data)
- 
+
+    def get_country_name(self, instance):
+        return instance.country.name
+
+
+
+
 
 
 class RouteSerializer(serializers.ModelSerializer):

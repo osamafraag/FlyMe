@@ -21,7 +21,7 @@ class Country(models.Model):
     event = models.ManyToManyField(Event,blank=True)
 
     def __str__(self):
-        return self.name
+        return self.name    
 
 
 class AirPort(models.Model):
@@ -56,12 +56,15 @@ class MultiImagesTrendingPlace(models.Model):
 
     def __str__(self):
         return f'{self.photo} - Name Of TrendingPlace : {self.trendingPlace.name}'
+    
+
+
 class MultiImagesCountry(models.Model):
     photo = models.ImageField(upload_to='countries/photos/')
     country = models.ForeignKey(Country,on_delete=models.CASCADE,null=True)
 
     def __str__(self):
-        return f'{self.photo} - Name Of TrendingPlace : {self.country}'
+        return f'{self.photo} - Name Of Countries : {self.country}'
 
     
 class Route(models.Model):
