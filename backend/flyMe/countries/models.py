@@ -1,6 +1,5 @@
 from asyncio import exceptions
 from django.db import models
-from geopy.distance import geodesic
 from django_countries.fields import CountryField
     
 
@@ -17,8 +16,8 @@ class Event(models.Model):
 
 class Country(models.Model):
     name = CountryField(blank_label="(select country)", unique=True)
-    flag = models.ImageField(upload_to='countries/photos/')
-    callingCode = models.CharField(max_length=5, null=True)
+    flag = models.ImageField(upload_to='countries/photos/',null=True)
+    callingCode = models.CharField(max_length=10, null=True)
     nationality = models.CharField(max_length=150, null=True, blank=True, help_text="like Egyptian, etc..")
     isFeatured = models.BooleanField(help_text="IF you Choose it , Must Enter Value as Event")
     event = models.ManyToManyField(Event,blank=True)
@@ -80,16 +79,9 @@ class Route(models.Model):
     startAirport = models.ForeignKey(AirPort, on_delete=models.CASCADE,null=True, related_name='routes_from')
     endAirport = models.ForeignKey(AirPort, on_delete=models.CASCADE,null=True, related_name='routes_to')
     distance = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True, help_text="Distance in kilometers")
-    # trending_place = models.ForeignKey(TrendingPlace, on_delete=models.CASCADE, null=True, blank=True)
 
 
     def __str__(self):
         return f'From : {self.startAirport} To : {self.endAirport}'
     
-    def save(self, *args, **kwargs):
 
-        startCoords = (self.startAirport.latitude, self.startAirport.longitude)
-        endCoords = (self.endAirport.latitude, self.endAirport.longitude)
-        self.distance = geodesic(startCoords, endCoords).kilometers
-
-        super().save(*args, **kwargs)

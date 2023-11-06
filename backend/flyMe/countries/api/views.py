@@ -1,9 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.response import Response
-from countries.models import Country, AirPort, TrendingPlace, Route, MultiImagesCountry, MultiImagesTrendingPlace
-from countries.api.serializers import CountrySerializer, AirPortSerializer, TrendingPlaceSerializer, RouteSerializer, MultiImagesSerializerTrendingPlace,MultiImagesSerializerCountry
-
+from countries.models import *
+from countries.api.serializers import *
 @api_view(['GET'])
 def country_list(request):
     countries = Country.objects.all()
@@ -104,22 +103,6 @@ def trending_place_detail(request, pk):
 
 
 @api_view(['GET'])
-def route_list(request):
-    routes = Route.objects.all()
-    serializer = RouteSerializer(routes, many=True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def route_detail(request, pk):
-    try:
-        route = Route.objects.get(pk=pk)
-    except Route.DoesNotExist:
-        return Response(status=404)
-
-    serializer = RouteSerializer(route)
-    return Response(serializer.data)
-
-@api_view(['GET'])
 def multi_images_list_country(request):
     images = MultiImagesCountry.objects.all()
     serializer = MultiImagesSerializerCountry(images, many=True)
@@ -188,3 +171,91 @@ def event_country_detail(request, pk):
 
     serializer = CountrySerializer(event_country,many =True)
     return Response(serializer.data)
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import RouteSerializer
+
+class RouteListCreateAPIView(APIView):
+    def get(self, request):
+        routes = Route.objects.all()
+        serializer = RouteSerializer(routes, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = RouteSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class RouteRetrieveUpdateDestroyAPIView(APIView):
+    def get(self, request, pk):
+        try:
+            route = Route.objects.get(pk=pk)
+            serializer = RouteSerializer(route)
+            return Response(serializer.data)
+        except Route.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, pk):
+        try:
+            route = Route.objects.get(pk=pk)
+            serializer = RouteSerializer(route, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Route.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # def delete(self, request, pk):
+    #     try:
+    #         route = Route.objects.get(pk=pk)
+    #         route.delete()
+    #         return Response(status=status.HTTP_204_NO_CONTENT)
+    #     except Route.DoesNotExist:
+    #         return Response(status=status.HTTP_404_NOT_FOUND)
+
+class CountryListCreateAPIView(APIView):
+    def get(self, request):
+        countries = Country.objects.all()
+        serializer = CountrySerializer(countries, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = CountrySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CountryRetrieveUpdateDestroyAPIView(APIView):
+    def get(self, request, pk):
+        try:
+            country = Country.objects.get(pk=pk)
+            serializer = CountrySerializer(country)
+            return Response(serializer.data)
+        except Country.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, pk):
+        try:
+            country = Country.objects.get(pk=pk)
+            serializer = CountrySerializer(country, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Country.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    def delete(self, request, pk):
+        try:
+            country = Country.objects.get(pk=pk)
+            country.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Country.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)

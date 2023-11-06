@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from geopy.distance import geodesic
 from countries.models import Country, AirPort, TrendingPlace, Route, MultiImagesTrendingPlace,MultiImagesCountry,Event
 
 
@@ -30,6 +31,9 @@ class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
         fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event']
+        
+        def create(self, validated_data):
+            return Country.objects.create(**validated_data)
 
 
 class AirPortSerializer(serializers.ModelSerializer):
@@ -42,16 +46,16 @@ class AirPortSerializer(serializers.ModelSerializer):
         model = AirPort
         fields = ('id','country_id', 'country_name', 'name', 'latitude', 'longitude')
 
-    def create(self, validated_data):
-        return AirPort.objects.create(**validated_data)
+        def create(self, validated_data):
+            return AirPort.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
-        instance.country_name =validated_data.get('country_name')
-        instance.name =validated_data.get('name')
-        instance.latitude =validated_data.get('latitude')
-        instance.longitude =validated_data.get('longitude')
-        instance.save()
-        return instance
+        def update(self, instance, validated_data):
+            instance.country_name =validated_data.get('country_name')
+            instance.name =validated_data.get('name')
+            instance.latitude =validated_data.get('latitude')
+            instance.longitude =validated_data.get('longitude')
+            instance.save()
+            return instance
 
 
 
@@ -65,25 +69,31 @@ class TrendingPlaceSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'country_name', 'latitude', 'longitude', 'multi_images')
 
 
+
+
 class RouteSerializer(serializers.ModelSerializer):
-    start_airport_name = serializers.SerializerMethodField()
-    end_airport_name = serializers.SerializerMethodField()
-    distance_km = serializers.SerializerMethodField()
+    startAirport_name = serializers.CharField(source='startAirport.name', read_only=True)
+    endAirport_name = serializers.CharField(source='endAirport.name', read_only=True)
+    distance_with_unit = serializers.SerializerMethodField()
 
     class Meta:
         model = Route
-        fields = ('id', 'start_airport_name', 'end_airport_name', 'distance_km')
+        fields = ['id', 'startAirport', 'endAirport', 'startAirport_name', 'endAirport_name', 'distance_with_unit']
 
-    def get_distance_km(self, obj):
-        return f"{obj.distance} KM"
+    def get_distance_with_unit(self, obj):
+        distance = obj.distance or 0
+        return f'{distance} KM'
 
-    def get_start_airport_name(self, obj):
-        start_airport = obj.startAirport
-        return f"{start_airport.name} ({start_airport.country})"
-    
-    def get_end_airport_name(self, obj):
-        end_airport = obj.endAirport
-        return f"{end_airport.name} ({end_airport.country})"
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
 
+        start_coords = (instance.startAirport.latitude, instance.startAirport.longitude)
+        end_coords = (instance.endAirport.latitude, instance.endAirport.longitude)
 
+        distance = geodesic(start_coords, end_coords).kilometers
 
+        representation['startAirport_name'] = instance.startAirport.name
+        representation['endAirport_name'] = instance.endAirport.name
+        representation['distance_with_unit'] = f'{distance:.2f} KM'
+
+        return representation
