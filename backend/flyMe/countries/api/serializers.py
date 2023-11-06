@@ -25,30 +25,62 @@ class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
         model = MultiImagesTrendingPlace
         fields = ('id', 'photo', 'trendingPlace')
 
+# class MultiImagesSerializerCountry(serializers.ModelSerializer):
+#     country_name = serializers.CharField(source='country.name', read_only=True)
+
+#     class Meta:
+#         model = MultiImagesCountry
+#         fields = ('id', 'photo','country_name')
+#     def to_representation(self, instance):
+#         representation = super().to_representation(instance)
+#         representation['photo_url'] = instance.photo.url
+#         return representation
+
+
+# class CountrySerializer(serializers.ModelSerializer):
+#     multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
+#     event = EventSerializer(many=True,read_only=True)
+
+
+#     class Meta:
+#         model = Country
+#         fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event']
+#         # fields = '__all__'
+        
+    
+#     def create(self, validated_data):
+#         events_data = validated_data.pop('event', [])
+#         country = Country.objects.create(**validated_data)
+#         country.event.set(events_data)
+#         return country
 class MultiImagesSerializerCountry(serializers.ModelSerializer):
+    photo_url = serializers.SerializerMethodField(read_only=True)
     country_name = serializers.CharField(source='country.name', read_only=True)
 
     class Meta:
         model = MultiImagesCountry
-        fields = ('id', 'photo','country_name')
+        fields = ('id', 'photo', 'photo_url', 'country_name')
+
+    def get_photo_url(self, instance):
+        return instance.photo.url
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return representation
+
 
 class CountrySerializer(serializers.ModelSerializer):
     multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
-    event = EventSerializer(many=True,read_only=True)
-
 
     class Meta:
         model = Country
-        fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event']
-        # fields = '__all__'
-        
+        fields = ['id', 'name', 'flag', 'callingCode', 'nationality', 'multi_images', 'isFeatured', 'event']
     
     def create(self, validated_data):
         events_data = validated_data.pop('event', [])
         country = Country.objects.create(**validated_data)
         country.event.set(events_data)
         return country
-
 
 class AirPortSerializer(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name', read_only=True)

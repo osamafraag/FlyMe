@@ -26,13 +26,62 @@ class EventRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 
 
+# class CountryListCreateView(generics.ListCreateAPIView):
+#     queryset = Country.objects.all()
+#     serializer_class = CountrySerializer
+
+# class CountryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Country.objects.all()
+#     serializer_class = CountrySerializer
+from rest_framework import generics
+
+# class CountryListCreateView(generics.ListCreateAPIView):
+#     queryset = Country.objects.all()
+#     serializer_class = CountrySerializer
+
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.filter_queryset(self.get_queryset())
+#         serializer = self.get_serializer(queryset, many=True)
+
+#         for country in serializer.data:
+#             country_id = country['id']
+#             country['multi_images'] = MultiImagesSerializerCountry(
+#                 MultiImagesCountry.objects.filter(country=country_id), many=True).data
+
+#         return Response(serializer.data)
+
+
 class CountryListCreateView(generics.ListCreateAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        for country in serializer.data:
+            country_id = country['id']
+            country['multi_images'] = MultiImagesSerializerCountry(
+                MultiImagesCountry.objects.filter(country_id=country_id),
+                many=True,
+                context=self.get_serializer_context()
+            ).data
+
+        return Response(serializer.data)
+
 class CountryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+
+        country_id = instance.id
+        serializer.data['multi_images'] = MultiImagesSerializerCountry(
+            MultiImagesCountry.objects.filter(country=country_id), many=True).data
+
+        return Response(serializer.data)
 
 
 
@@ -96,3 +145,22 @@ class RouteRetrieveUpdateDestroyAPIView(APIView):
     #         return Response(status=status.HTTP_204_NO_CONTENT)
     #     except Route.DoesNotExist:
     #         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class MultiImagesCountryListCreateView(generics.ListCreateAPIView):
+    queryset = MultiImagesCountry.objects.all()
+    serializer_class = MultiImagesSerializerCountry
+
+class MultiImagesCountryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = MultiImagesCountry.objects.all()
+    serializer_class = MultiImagesSerializerCountry
+
+
+
+class MultiImagesTrendingPlaceListCreateView(generics.ListCreateAPIView):
+    queryset = MultiImagesTrendingPlace.objects.all()
+    serializer_class = MultiImagesSerializerTrendingPlace
+
+class MultiImagesTrendingPlaceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = MultiImagesTrendingPlace.objects.all()
+    serializer_class = MultiImagesSerializerTrendingPlace
