@@ -4,12 +4,22 @@ from countries.models import Country, AirPort, TrendingPlace, Route, MultiImages
 
 
 class EventSerializer(serializers.ModelSerializer):
-    sale_amount = serializers.SerializerMethodField()
     class Meta:
         model = Event
         fields = ('id', 'nameEvent','description','startDate','endDate','sale_amount' )
-    def get_sale_amount(self, obj):
-        return f"{obj.sale_amount:.2f} %"
+
+    def create(self, validated_data):
+        return Event.objects.create(**validated_data)
+    def to_internal_value(self, data):
+        data = data.copy()
+        sale_amount = data.get('sale_amount')
+        
+        if sale_amount:
+            sale_amount = float(sale_amount.rstrip('%')) / 100.0
+            data['sale_amount'] = sale_amount
+
+        return super().to_internal_value(data)
+
 class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
     class Meta:
         model = MultiImagesTrendingPlace
@@ -23,21 +33,25 @@ class MultiImagesSerializerCountry(serializers.ModelSerializer):
         fields = ('id', 'photo','country_name')
 
 class CountrySerializer(serializers.ModelSerializer):
-    multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
+    # multi_images = MultiImagesSerializerCountry(many=True, read_only=True)'multi_images',
     event = EventSerializer(many=True,read_only=True)
-    name = serializers.CharField(source='name.name')
 
 
     class Meta:
         model = Country
-        fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event']
+        # fields = ['id','name','flag','callingCode','nationality','isFeatured','event']
+        fields = '__all__'
         
-        def create(self, validated_data):
-            return Country.objects.create(**validated_data)
+    
+    def create(self, validated_data):
+        events_data = validated_data.pop('event', [])
+        country = Country.objects.create(**validated_data)
+        country.event.set(events_data)
+        return country
 
 
 class AirPortSerializer(serializers.ModelSerializer):
-    country_name = serializers.CharField(source='country.name.name', read_only=True)
+    country_name = serializers.CharField(source='country.name', read_only=True)
     country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country', write_only=True)
 
     

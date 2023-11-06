@@ -1,0 +1,6 @@
+for POST countries
+curl -X POST -H "Authorization: Bearer YOUR_ACCESS_TOKEN" -F "flag=@/home/osama/Downloads/logo.jpeg" -F "name=Ghana" -F "callingCode=+81" -F "nationality=Japanese" -F "isFeatured=true" http://127.0.0.1:8000/countries/api/countries/
+
+
+
+

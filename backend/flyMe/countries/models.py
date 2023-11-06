@@ -1,6 +1,4 @@
-from asyncio import exceptions
 from django.db import models
-from django_countries.fields import CountryField
     
 
 
@@ -15,7 +13,7 @@ class Event(models.Model):
         return self.nameEvent
 
 class Country(models.Model):
-    name = CountryField(blank_label="(select country)", unique=True)
+    name = models.CharField(max_length=150,unique=True)
     flag = models.ImageField(upload_to='countries/photos/',null=True)
     callingCode = models.CharField(max_length=10, null=True)
     nationality = models.CharField(max_length=150, null=True, blank=True, help_text="like Egyptian, etc..")
@@ -23,16 +21,17 @@ class Country(models.Model):
     event = models.ManyToManyField(Event,blank=True)
 
     def __str__(self):
-        return self.name.name
+        return self.name
 
-    def save(self, *args, **kwargs):
-        if not self.isFeatured:
-            self.event.clear()
-        elif self.isFeatured and not self.event:
-            self.event.clear()
-            self.isFeatured = None
+    # def save(self, *args, **kwargs):
+    #     if not self.isFeatured:
+    #         self.event.clear()
+    #     elif self.isFeatured and not self.event:
+    #         self.event.clear()
+    #         self.isFeatured = False
 
-        super().save(*args, **kwargs)
+    #     super().save(*args, **kwargs)
+
 
 class AirPort(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
