@@ -1,0 +1,78 @@
+.bookingPage {
+    width: 100%;
+    padding: 3.125rem 7.5rem;
+
+    .Container{
+      font-style: normal;
+      color: black;
+      border-radius: 15px;
+      /* box-shadow: none|h-offset v-offset blur spread color |inset|initial|inherit; */
+      box-shadow: 0px 6px 6px rgb(167, 167, 167); 
+    }
+    .Note{
+      font-size: 12px;
+      color: rgb(95, 95, 95);
+      font-weight: 300;  
+    }
+
+    .loginContainer{
+      font-size: 16px;
+      font-weight: 500;
+      padding: 1.3rem 2.7rem;
+
+
+        .custom-btn {
+            color: #8db3da;
+            border-color: #8db3da;
+            font-weight: 700;
+          }
+          
+        .custom-btn:hover {
+            background-color: #8db3da;
+            color: #fff;
+          }
+    }
+
+    /* light grey #f5f1f7 */
+    .stepHeader{
+      padding: 1.3rem 2.7rem;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      font-size: 16px;
+      font-weight: 500;
+      background-color: #f5f1f7;
+        .stepHeaderCounter{
+          padding: 0.7rem;
+          background-color: #cfcfcf;
+        }
+    }
+    .Body{
+      padding: 1.3rem 2.7rem;
+
+      .custom-btn {
+        color: white;
+        background-color: #426a9d;
+        font-weight: 700;
+        padding: 0.6rem;
+      }
+      
+      .custom-btn:hover {
+          background-color: #365986;
+          color: #fff; 
+        }
+    }
+
+    .SideBar{
+      padding: 1.3rem 2.7rem;
+      font-size: 16px;
+      font-weight: 700;
+
+      .data{
+        font-weight: 500;
+        font-size: 14px;
+      }
+    }
+
+
+
+  }
