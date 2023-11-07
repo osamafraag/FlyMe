@@ -1,7 +1,4 @@
-from asyncio import exceptions
 from django.db import models
-from geopy.distance import geodesic
-from django_countries.fields import CountryField
     
 
 
@@ -16,21 +13,16 @@ class Event(models.Model):
         return self.nameEvent
 
 class Country(models.Model):
-    name = CountryField(blank_label="(select country)", unique=True)
-    flag = models.ImageField(upload_to='countries/photos/')
-    callingCode = models.CharField(max_length=5, null=True)
+    name = models.CharField(max_length=150,unique=True)
+    flag = models.ImageField(upload_to='countries/photos/',null=True)
+    callingCode = models.CharField(max_length=10, null=True)
     nationality = models.CharField(max_length=150, null=True, blank=True, help_text="like Egyptian, etc..")
     isFeatured = models.BooleanField(help_text="IF you Choose it , Must Enter Value as Event")
     event = models.ManyToManyField(Event,blank=True,default=None)
     popularity = models.PositiveBigIntegerField(default=0)
 
     def __str__(self):
-        return self.name.name
-
-    # def save(self, *args, **kwargs):
-    #     self.popularity = Flight.objects.filter(destinationCountry=self).count()
-    #     self.popularity = self.incomingFlights.count()
-    #     super().save(*args, **kwargs)
+        return self.name
 
 class AirPort(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
@@ -64,12 +56,15 @@ class MultiImagesTrendingPlace(models.Model):
 
     def __str__(self):
         return f'{self.photo} - Name Of TrendingPlace : {self.trendingPlace.name}'
+    
+
+
 class MultiImagesCountry(models.Model):
     photo = models.ImageField(upload_to='countries/photos/')
     country = models.ForeignKey(Country,on_delete=models.CASCADE,null=True)
 
     def __str__(self):
-        return f'{self.photo} - Name Of TrendingPlace : {self.country}'
+        return f'{self.photo} - Name Of Countries : {self.country}'
 
     
 class Route(models.Model):
@@ -77,16 +72,9 @@ class Route(models.Model):
     startAirport = models.ForeignKey(AirPort, on_delete=models.CASCADE,null=True, related_name='routes_from')
     endAirport = models.ForeignKey(AirPort, on_delete=models.CASCADE,null=True, related_name='routes_to')
     distance = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True, help_text="Distance in kilometers")
-    # trending_place = models.ForeignKey(TrendingPlace, on_delete=models.CASCADE, null=True, blank=True)
 
 
     def __str__(self):
         return f'From : {self.startAirport} To : {self.endAirport}'
     
-    def save(self, *args, **kwargs):
 
-        startCoords = (self.startAirport.latitude, self.startAirport.longitude)
-        endCoords = (self.endAirport.latitude, self.endAirport.longitude)
-        self.distance = geodesic(startCoords, endCoords).kilometers
-
-        super().save(*args, **kwargs)
