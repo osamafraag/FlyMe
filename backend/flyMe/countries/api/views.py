@@ -1,12 +1,10 @@
 from rest_framework import generics
 from rest_framework.decorators import api_view
-from countries.models import *
-from countries.api.serializers import *
 from rest_framework.response import Response
-from django.db.models import Max
 from rest_framework.views import APIView
 from rest_framework import status
-
+from countries.models import *
+from countries.api.serializers import *
 
 
 
