@@ -60,8 +60,6 @@ class Flight(models.Model):
     def clean(self):
         if self.baggageWeight > self.aircraft.baggageWeight:
             raise ValidationError({'baggage':'flight baggageWeight can`t be bigger than aircraft baggageWeight'})
-        if self.totalDistance > self.aircraft.maxDistance:
-            raise ValidationError({'distance':'flight destinace can`t be bigger than aircraft distance'})
     
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -87,6 +85,28 @@ class FlightRoute(models.Model):
     @classmethod
     def get(cls,id) :
         return cls.objects.get(id=id)
+    
+    def clean(self):
+        if self.route.distance > self.flight.aircraft.maxDistance :
+            raise ValidationError({'distance':'route destinace can`t be bigger than aircraft distance'})
+        flightRoutes = FlightRoute.objects.filter(flight=self.flight)
+        lastFlightRoute = flightRoutes.order_by('-index')[:1][0]
+        lastFlightRoute.endTime = self.startTime
+        lastFlightRoute.save(True)
+        self.index = flightRoutes.count() + 1
+        if self.index == 1 :
+            self.startTime = self.flight.departureTime
+        self.endTime = self.flight.arrivalTime
+        
+    
+    def save(self,update = False, *args, **kwargs):
+        if not update :
+            self.full_clean()
+        super().save(*args, **kwargs)
+        self.flight.totalDistance = 0
+        for route in self.flight.relatedRoutes.all():
+            self.flight.totalDistance += route.route.distance
+            self.flight.save()
 
 class Class(models.Model):
     seatCategories = [
