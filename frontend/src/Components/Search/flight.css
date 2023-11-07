@@ -1,0 +1,49 @@
+.flight-line {
+  position: relative;
+}
+
+.flight-line::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  border: 1px solid #adb5bd;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  z-index: 100;
+}
+
+.flight-line::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  border: 1px solid #adb5bd;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  z-index: 100;
+}
+
+.flight:hover .countries {
+  color: var(--main-color) !important;
+}
+
+.flight {
+  position: relative;
+}
+
+.flight::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 77%;
+  width: 3px;
+  height: 100%;
+  border-left: 1px dashed #dee2e6;
+}

@@ -24,8 +24,8 @@ export default function SearchResult() {
         <div className="landing py-5 position-relative" style={{height: "500px"}}>
 
           <div className="heading mx-auto text-white my-5" style={{width: "70%"}}>
-            <h1 className="text-center mb-4">Fly Beyond Boundaries</h1>
-            <p className=" lh-lg fs-5">Traveling is not just about reaching a destination; it's about embracing new experiences, expanding your horizons, and finding inspiration in the unknown.</p>
+            <h1 className="text-center mb-4" style={{color: "var(--main-color)"}}>Fly Beyond Boundaries</h1>
+            <p className=" lh-lg fs-5" style={{color: "var(--main-color)"}}>Traveling is not just about reaching a destination; it's about embracing new experiences, expanding your horizons, and finding inspiration in the unknown.</p>
           </div>
 
           <div className="search-form mx-auto bg-white py-5 rounded-3 shadow" style={{width: "85%"}}>
@@ -39,7 +39,7 @@ export default function SearchResult() {
       {/* Search Result */}
       <div className='container pb-5 px-4'>
         <div className='search-result row'>
-          <div className='col-3 rounded-3 border border-1 p-5'>
+          <div className='col-3 rounded-3 border border-1 p-5 me-4 position-sticky start-0' style={{height: "330px", top: "52px"}}>
             {/* Price */}
             <p className='text-start fw-bold text-uppercase '>Total Trip Price</p>
             <div className='d-flex justify-content-between'>
@@ -59,7 +59,7 @@ export default function SearchResult() {
             />
 
             {/* Stops */}
-            <div className='stops my-4'>
+            <div className='stops mt-4'>
               <p className='text-start fw-bold text-uppercase '>Stops</p>
               <Form.Check 
                 type='checkbox'
@@ -83,7 +83,7 @@ export default function SearchResult() {
           </div>
           
           {/* Flights */}
-          <div className='col'>
+          <div className='col-8'>
             {searchType === 'oneWay' && flightData && (
               <OneWayResult flightData={flightData} />
             )}
