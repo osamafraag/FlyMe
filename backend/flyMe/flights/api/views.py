@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from flights.models import *
 from flights.api.serializers import *
 from accounts.models import *
+from datetime import datetime
 
 
 @api_view(['GET', 'POST'])
@@ -57,6 +58,9 @@ def flightList(request):
         month = request.GET.get('month', None)
         day = request.GET.get("day", None)
         type = request.GET.get("type", None)
+        flightDateTime = datetime(year=year,month=month,day=day)
+        if flightDateTime.timestamp < datetime.now().timestamp():
+            return Response({"error":'can`t search for past dates'})
         if year :
             flights = flights.filter(departureTime__year=year)
         if month :

@@ -1,9 +1,10 @@
 from django.db import models
 from countries.models import Country, Route
 from accounts.models import MyUser
-from django.utils import timezone
+from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+
 
 class Aircraft(models.Model):
     companies = [
@@ -12,12 +13,12 @@ class Aircraft(models.Model):
         ('L', 'Lockheed Martin'),
         ('R', 'Raytheon')
     ]
-    name = models.CharField(default='noName')
+    name = models.CharField(default='noName',unique=True)
     company = models.CharField(max_length=1, choices=companies, default='A')
     capacity = models.PositiveIntegerField(default=100)
     maxLoad = models.PositiveIntegerField(default=10)
     baggageWeight = models.PositiveIntegerField(default=20)
-    maxDistance = models.PositiveIntegerField(default=500)
+    maxDistance = models.PositiveIntegerField(default=1000)
 
     def __str__(self) :
         return self.name
@@ -35,13 +36,13 @@ class Flight(models.Model):
         ('D', 'Direct'),
         ('T', 'Transient')
     ]
-    departureTime = models.DateTimeField(default=timezone.now)
-    arrivalTime = models.DateTimeField(default=timezone.now)
+    departureTime = models.DateTimeField(default=datetime.now)
+    arrivalTime = models.DateTimeField(default=datetime.now)
     availableSeats = models.PositiveIntegerField(default=0)
     baseCost = models.PositiveIntegerField(default=1000)
     baggageWeight = models.PositiveIntegerField(default=0)
     totalDistance = models.PositiveIntegerField(default=0)
-    type = models.CharField(max_length=1, choices=type, default='d')
+    type = models.CharField(max_length=1, choices=type, default='D')
     aircraft = models.ForeignKey(Aircraft,default=1 ,on_delete=models.CASCADE, related_name='flights')
     sourceCountry = models.ForeignKey(Country,default=1,on_delete=models.CASCADE, related_name='outcomingFlights')
     destinationCountry = models.ForeignKey(Country,default=1,on_delete=models.CASCADE, related_name='incomingFlights')
@@ -58,8 +59,12 @@ class Flight(models.Model):
         return cls.objects.get(id=id)
     
     def clean(self):
+        if self.departureTime.timestamp() < datetime.now().timestamp() :
+            raise ValidationError({'departureTime':'departureTime can`t be before now'})
+        if self.arrivalTime.timestamp() < self.departureTime.timestamp() :
+            raise ValidationError({'arrivalTime':'arrivalTime can`t be before departureTime'})
         if self.baggageWeight > self.aircraft.baggageWeight:
-            raise ValidationError({'baggage':'flight baggageWeight can`t be bigger than aircraft baggageWeight'})
+            raise ValidationError({'baggageWeight':'flight baggageWeight can`t be bigger than aircraft baggageWeight'})
     
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -72,8 +77,11 @@ class FlightRoute(models.Model):
     flight = models.ForeignKey(Flight,default=1,on_delete=models.CASCADE, related_name='relatedRoutes')
     route = models.ForeignKey(Route,default=1,on_delete=models.CASCADE, related_name='relatedFlights')
     index = models.PositiveIntegerField(default=1)
-    startTime = models.DateTimeField(default=timezone.now)
-    endTime = models.DateTimeField(default=timezone.now)
+    startTime = models.DateTimeField(default=datetime.now)
+    endTime = models.DateTimeField(default=datetime.now)
+
+    class Meta:
+        unique_together = ('flight', 'route',)
 
     def __str__(self) :
         return f"Route number {self.index} for Flight ({self.flight}) "
@@ -87,14 +95,24 @@ class FlightRoute(models.Model):
         return cls.objects.get(id=id)
     
     def clean(self):
+        if self.startTime.timestamp() < datetime.now().timestamp() :
+            raise ValidationError({'startTime':'startTime can`t be before now'})
         if self.route.distance > self.flight.aircraft.maxDistance :
-            raise ValidationError({'distance':'route destinace can`t be bigger than aircraft distance'})
+            raise ValidationError({'flight':'route destinace can`t be bigger than aircraft distance'})
+        if self.flight.departureTime.timestamp() < datetime.now().timestamp() :
+            raise ValidationError({'flight':'can`t add route to passsed flight'})
         flightRoutes = FlightRoute.objects.filter(flight=self.flight)
-        lastFlightRoute = flightRoutes.order_by('-index')[:1][0]
-        lastFlightRoute.endTime = self.startTime
-        lastFlightRoute.save(True)
-        self.index = flightRoutes.count() + 1
-        if self.index == 1 :
+        if self.flight.type == 'D' and flightRoutes.count() == 1:
+            raise ValidationError({'flight':'can`t add more than one route to direct flights'})
+        if flightRoutes.count() > 0:
+            lastFlightRoute = flightRoutes.order_by('-index')[:1][0]
+            lastFlightRoute.endTime = self.startTime
+            lastFlightRoute.save(True)
+            self.index = flightRoutes.count() + 1
+        else :
+            self.index == 1 
+            if self.route.startAirport.country != self.flight.sourceCountry :
+                raise ValidationError({'route':'route start country must be the same as fight start country'})
             self.startTime = self.flight.departureTime
         self.endTime = self.flight.arrivalTime
         

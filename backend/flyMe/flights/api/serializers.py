@@ -1,20 +1,12 @@
 from rest_framework import serializers
 from flights.models import *
 from django.core.exceptions import *
-from rest_framework.validators import UniqueTogetherValidator
 
 
 class AircraftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Aircraft
         fields = '__all__'
-
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Aircraft.objects.all(),
-                fields=['name']
-            )
-        ]
 
         def create(self, validated_data):
             return Aircraft.objects.create(**validated_data)
