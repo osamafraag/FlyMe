@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faPlaneCircleCheck} from '@fortawesome/free-solid-svg-icons';
 import {faThumbsUp} from '@fortawesome/free-solid-svg-icons';
 import {faEarthAmericas} from '@fortawesome/free-solid-svg-icons';
+import { NavLink } from "react-router-dom";
 
 
 
@@ -183,7 +184,7 @@ export default function AboutUsComponent() {
           <p className=" py-3  text"> When searching for airfares , discount and savings claims are based on multiple factors, including searching over 500 airlines to find our available fare . coupon codes are valid for savings for qualified bookings off our service fees . </p>
           <div className="d-flex">
             <p className="pb-3 text w-auto "> For more information, go to : </p>
-            <a href="#" className="linkk "> Terms and Conditions</a>
+            <NavLink className='me-3 fw-semibold text-decoration-none linkk' to="/TermsAndConditions">Terms and Conditions</NavLink>
           </div>
         </div>
       </div>
