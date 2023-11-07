@@ -21,7 +21,97 @@ const RoundTripForm = ({ handleFlightData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const searchResults = ["RoundTrip"] 
+    const flights1 = [
+      {
+        name: "Flight 1",
+        company: "A",
+        capacity: 150,
+        maxLoad: 12,
+        baggageWeight: 25,
+        maxDistance: 600,
+        departureTime: "2023-11-07",
+        arrivalTime: "2023-11-07",
+        availableSeats: 120,
+        baseCost: 1200,
+        baggageWeight: 20,
+        totalDistance: 550,
+        type: "D",
+        sourceCountry: "Palastine",
+        destinationCountry: "Egypt"
+      },
+      {
+        name: "Flight 2",
+        company: "B",
+        capacity: 200,
+        maxLoad: 10,
+        baggageWeight: 20,
+        maxDistance: 800,
+        departureTime: "2023-11-08",
+        arrivalTime: "2023-11-08",
+        availableSeats: 180,
+        baseCost: 1000,
+        baggageWeight: 15,
+        totalDistance: 700,
+        type: "D",
+        sourceCountry: "Egypt",
+        destinationCountry: "Palastine"
+      },
+    ]
+
+    const flights2 = [
+      {
+        name: "Flight 1",
+        company: "A",
+        capacity: 150,
+        maxLoad: 12,
+        baggageWeight: 25,
+        maxDistance: 600,
+        departureTime: "2023-11-07",
+        arrivalTime: "2023-11-07",
+        availableSeats: 120,
+        baseCost: 1200,
+        baggageWeight: 20,
+        totalDistance: 550,
+        type: "D",
+        sourceCountry: "Palastine",
+        destinationCountry: "Egypt"
+      },
+      {
+        name: "Flight 2",
+        company: "B",
+        capacity: 200,
+        maxLoad: 10,
+        baggageWeight: 20,
+        maxDistance: 800,
+        departureTime: "2023-11-08",
+        arrivalTime: "2023-11-08",
+        availableSeats: 180,
+        baseCost: 1000,
+        baggageWeight: 15,
+        totalDistance: 700,
+        type: "D",
+        sourceCountry: "Egypt",
+        destinationCountry: "Palastine"
+      },
+      {
+        name: "Flight 3",
+        company: "B",
+        capacity: 200,
+        maxLoad: 10,
+        baggageWeight: 20,
+        maxDistance: 800,
+        departureTime: "2023-11-08",
+        arrivalTime: "2023-11-08",
+        availableSeats: 180,
+        baseCost: 1000,
+        baggageWeight: 15,
+        totalDistance: 700,
+        type: "D",
+        sourceCountry: "Egypt",
+        destinationCountry: "Palastine"
+      },
+    ]
+    const searchResults = [flights1, flights2] 
     handleFlightData(searchResults);
   };
 

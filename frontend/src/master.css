@@ -11,3 +11,13 @@ body {
   padding: 0;
   color: #212529;
 }
+
+::selection {
+  background: var(--main-color);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--main-color);
+  color: white;
+}

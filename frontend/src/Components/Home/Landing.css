@@ -1,8 +1,13 @@
 .landing {
-  background-image: url("./../../Assets/Images/Landing2.jpg");
-  background-position: center 30%;
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-image: url("./../../Assets/Images/Landing2.jpg") !important;
+  background-position: center 30% !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  position: relative;
+}
+
+.landing::after {
+  content: "";
 }
 
 .search-form {
