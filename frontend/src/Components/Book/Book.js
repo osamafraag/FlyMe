@@ -3,8 +3,8 @@ import FlightSearchForm from "./FlightSearchForm"
 
 export default function BookSearch() {
   return (
-    <div style={{height: "850px"}}>
-      <div className="landing py-5 position-relative" style={{height: "600px"}}>
+    <div style={{height: "750px"}}>
+      <div className="landing py-5 position-relative" style={{height: "500px"}}>
 
         <div className="heading mx-auto text-white my-5" style={{width: "70%"}}>
           <h1 className="text-center mb-4">Fly Beyond Boundaries</h1>
