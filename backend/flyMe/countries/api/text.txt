@@ -34,3 +34,51 @@ curl -X POST http://127.0.0.1:8000/countries/api/routes/ -H "Content-Type: appli
     "startAirport": 57,
     "endAirport": 26
 }'
+
+
+for Post Airport I wrote :
+{
+    "country_id": 1,
+    "country_name": "Egypt",
+    "name": "OmsaTest",
+    "latitude": "7.977225",
+    "longitude": "34.395761"
+}
+
+for Post trending_places I wrote :
+{
+    "name": "Test",
+    "description": "The world's tallest skyscraper with an observation deck offering stunning views.",
+    "country_id": 21,
+    "country_name": "United Arab Emirates (UAE)",
+    "latitude": "5.276987",
+    "longitude": "55.296249"
+}
+
+for Post Route i wrote :
+{
+    "startAirport":10,
+    "endAirport": 16
+}
+only , distance will calculate automatic and will display name of each airPorts
+
+
+
+for Post countries :
+{
+    "name": "Ghana",
+    "callingCode": "+20",
+    "nationality": "Egyption",
+    "isFeatured": true,
+    "event": [],
+    "popularity": 2653,
+    "trendingPlaces": []
+}
+for Event :
+{
+    "nameEvent": "TestDay",
+    "description": "Commemorates Malawi's independence from British colonial rule.",
+    "startDate": "2024-07-01",
+    "endDate": "2023-11-07",
+    "sale_amount": "23.00"
+}

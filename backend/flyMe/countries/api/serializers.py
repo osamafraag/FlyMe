@@ -43,33 +43,53 @@ class MultiImagesSerializerCountry(serializers.ModelSerializer):
         return representation
 
 
-# class CountrySerializer(serializers.ModelSerializer):
-#     multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
+class TrendingPlaceSerializer(serializers.ModelSerializer):
+    country_name = serializers.SerializerMethodField(source='country')
+    multi_images = MultiImagesSerializerTrendingPlace(many=True, read_only=True)
+    country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country')
 
-#     class Meta:
-#         model = Country
-#         fields = ['id', 'name', 'flag', 'callingCode', 'nationality', 'multi_images', 'isFeatured', 'event']
-    
-#     def create(self, validated_data):
-#         events_data = validated_data.pop('event', [])
-#         country = Country.objects.create(**validated_data)
-#         country.event.set(events_data)
-#         return country
+    class Meta:
+        model = TrendingPlace
+        fields = ('id', 'name', 'description', 'country_id', 'country_name', 'latitude', 'longitude', 'multi_images')
+
+    def create(self, validated_data):
+        return TrendingPlace.objects.create(**validated_data)
+
+    def get_country_name(self, instance):
+        return instance.country.name
+
+
+
 
 class CountrySerializer(serializers.ModelSerializer):
     multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
     event = EventSerializer(many=True, read_only=True)
+    trendingPlaces = TrendingPlaceSerializer(many=True, read_only=True)
 
     class Meta:
         model = Country
-        fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event','popularity']
+        fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event','popularity','trendingPlaces']
 
     def create(self, validated_data):
         events_data = validated_data.pop('event', [])
+        trendingplaces_data = validated_data.pop('trendingPlaces', [])
         country = Country.objects.create(**validated_data)
         country.event.set(events_data)
+        country.trendingPlaces.set(trendingplaces_data)
         return country
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        for trending_place in representation['trendingPlaces']:
+            trending_place_id = trending_place['id']
+            trending_place['multi_images'] = MultiImagesSerializerTrendingPlace(
+                MultiImagesTrendingPlace.objects.filter(trendingPlace_id=trending_place_id),
+                many=True,
+                context=self.context
+            ).data
+
+        return representation
 
 
 
@@ -93,25 +113,6 @@ class AirPortSerializer(serializers.ModelSerializer):
             instance.longitude =validated_data.get('longitude')
             instance.save()
             return instance
-
-
-class TrendingPlaceSerializer(serializers.ModelSerializer):
-    country_name = serializers.SerializerMethodField(source='country')
-    multi_images = MultiImagesSerializerTrendingPlace(many=True, read_only=True)
-    country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country')
-
-    class Meta:
-        model = TrendingPlace
-        fields = ('id', 'name', 'description', 'country_id', 'country_name', 'latitude', 'longitude', 'multi_images')
-
-    def create(self, validated_data):
-        return TrendingPlace.objects.create(**validated_data)
-
-    def get_country_name(self, instance):
-        return instance.country.name
-
-
-
 
 
 
@@ -139,3 +140,10 @@ class RouteSerializer(serializers.ModelSerializer):
             return f'{distance:.2f} KM'
         else:
             return 'N/A' 
+        
+    def validate(self,data):
+        start_airPort = data.get('startAirport')
+        end_airPort = data.get('endAirport')
+        if start_airPort == end_airPort :
+            raise serializers.ValidationError("StartAirport and EndAirport cannot be the same.")
+        return data

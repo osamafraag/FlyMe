@@ -36,7 +36,7 @@ def popularCountries(request):
     return Response(serializer_country)
 
 class CountryListCreateView(generics.ListCreateAPIView):
-    queryset = Country.objects.all()
+    queryset = Country.objects.all().prefetch_related('trendingPlaces')
     serializer_class = CountrySerializer
 
     def list(self, request, *args, **kwargs):
@@ -146,13 +146,13 @@ class RouteRetrieveUpdateDestroyAPIView(APIView):
         except Route.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    # def delete(self, request, pk):
-    #     try:
-    #         route = Route.objects.get(pk=pk)
-    #         route.delete()
-    #         return Response(status=status.HTTP_204_NO_CONTENT)
-    #     except Route.DoesNotExist:
-    #         return Response(status=status.HTTP_404_NOT_FOUND)
+    def delete(self, request, pk):
+        try:
+            route = Route.objects.get(pk=pk)
+            route.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Route.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class MultiImagesCountryListCreateView(generics.ListCreateAPIView):
