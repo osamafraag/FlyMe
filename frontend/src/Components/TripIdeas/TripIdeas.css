@@ -1,0 +1,87 @@
+/* .slider-container {
+    width: 100%;
+    height: 90vh;
+    overflow: hidden; 
+    display: inline-block;
+    text-align: center;
+    justify-content: center
+  }
+
+.slider-item {
+    height: 100%; 
+    object-fit: cover; 
+  }
+
+.carousel-item img {
+    width: 100%;
+    height: 100%; 
+    object-fit: contain; 
+  } */
+ 
+  /* <<<<< */
+  
+  /* body{
+    margin: 0;
+    padding: 0;
+  }
+  .slider-image {
+      width: 100%;
+      height: 500px;
+    }
+  
+  .slider-container {
+      position: relative;
+      width: 100vw !important;
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+    
+  .slider-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 30px;
+      font-weight: bold;
+      color: white;
+    }
+
+  .slider-btn{
+    position: absolute;
+    top: 15%;
+    left: 15%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    border-radius: 30px;
+  } */
+
+  /* <<<<< */
+
+  /* TripIdeas.css */
+.slider-container {
+  position: relative;
+  height: 300px; /* Adjust the height as needed */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.slider-btn {
+  margin-bottom: 10px;
+}
+
+.slider-text {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+h3 {
+  margin-top: 10px;
+}
+.stylee a{
+  padding: 10px;
+}
