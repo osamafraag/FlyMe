@@ -20,13 +20,13 @@ class FlightSerializer(serializers.ModelSerializer):
         def create(self, validated_data):
             return Flight.objects.create(**validated_data)
 
-class FlightRouteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FlightRoute
-        fields = '__all__'
+# class FlightRouteSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = FlightRoute
+#         fields = '__all__'
 
-        def create(self, validated_data):
-            return FlightRoute.objects.create(**validated_data)
+#         def create(self, validated_data):
+#             return FlightRoute.objects.create(**validated_data)
 
 class ClassSerializer(serializers.ModelSerializer):
     class Meta:

@@ -4,6 +4,8 @@ from flights.models import *
 from flights.api.serializers import *
 from accounts.models import *
 from datetime import datetime
+from cities_light.models import Country, City
+
 
 
 @api_view(['GET', 'POST'])
@@ -51,32 +53,48 @@ def flightList(request):
         return Response({'errors':flight.errors}, status=400)
 
     elif request.method=='GET':
-        flights = Flight.all()
+        allFlights = Flight.all()
+        transetFlights = []
         source = request.GET.get('from', None)
         destination = request.GET.get('to', None)
         year = request.GET.get('year', None)
         month = request.GET.get('month', None)
         day = request.GET.get("day", None)
         type = request.GET.get("type", None)
-        flightDateTime = datetime(year=year,month=month,day=day)
-        if flightDateTime.timestamp < datetime.now().timestamp():
-            return Response({"error":'can`t search for past dates'})
         if year :
-            flights = flights.filter(departureTime__year=year)
-        if month :
-            flights = flights.filter(departureTime__month=month)
-        if day :
-            flights = flights.filter(departureTime__day=day)
-        if type :
-            flights = flights.filter(type=type)
-        if source :
-            flights = flights.filter(id__in=Country.objects.filter(name__icontains=source).values('outcomingFlights'))
-        if destination :
-            flights = flights.filter(id__in=Country.objects.filter(name__icontains=destination).values('incomingFlights'))
-
-        serializer = FlightSerializer(flights, many=True)
+            flights = allFlights.filter(departureTime__year=year)
+            if month :
+                flights = flights.filter(departureTime__month=month)
+                if day :
+                    flights = flights.filter(departureTime__day=day)
+                    flightDateTime = datetime(year=int(year),month=int(month),day=int(day))
+                    if flightDateTime.timestamp() < datetime.now().timestamp():
+                        return Response({"error":'can`t search for past dates'})
+                    if type == 'D':
+                        if source :
+                            flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
+                        if destination :
+                            flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
+                        serializer = FlightSerializer(flights, many=True)
+                        return Response(serializer.data)
+                    elif type == 'T':
+                        if source :
+                            sFlights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
+                        if destination :
+                            dFlights = allFlights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
+                        for sFlight in sFlights.all():
+                            for dFlight in dFlights.all():
+                                if sFlight.arrivalTime.date() == dFlight.departureTime.date() and sFlight.arrivalTime.time() < dFlight.departureTime.time() and sFlight.endAirport.city == dFlight.startAirport.city :
+                                    sSerializer = FlightSerializer(sFlight)
+                                    dSerializer = FlightSerializer(dFlight)
+                                    transetFlights.append([sSerializer.data,dSerializer.data])
+                        return Response(transetFlights)  
+                    
+            serializer = FlightSerializer(flights, many=True)
+            return Response(serializer.data)          
+      
+        serializer = FlightSerializer(allFlights, many=True)
         return Response(serializer.data)
-
 @api_view(['GET', 'DELETE', 'PUT'])
 def flightDetail(request, id):
     flight = Flight.get(id)
@@ -128,37 +146,37 @@ def classDetail(request, id):
         return Response({"errors":serializedClass.errors}, status=400)
     
 
-@api_view(['GET', 'POST'])
-def flightRouteList(request):
-    if request.method == 'POST':
-        flightRoute = FlightRouteSerializer(data=request.data)
-        if flightRoute.is_valid():
-            flightRoute.save()
-            return Response({"messsage": 'flightRoute add Successfully', "flightRoute":flightRoute.data}, status=201)
-        return Response({'errors':flightRoute.errors}, status=400)
+# @api_view(['GET', 'POST'])
+# def flightRouteList(request):
+#     if request.method == 'POST':
+#         flightRoute = FlightRouteSerializer(data=request.data)
+#         if flightRoute.is_valid():
+#             flightRoute.save()
+#             return Response({"messsage": 'flightRoute add Successfully', "flightRoute":flightRoute.data}, status=201)
+#         return Response({'errors':flightRoute.errors}, status=400)
 
-    elif request.method=='GET':
-        flightRoutes = FlightRoute.all()
-        serializer = FlightRouteSerializer(flightRoutes, many=True)
-        return Response(serializer.data)
+#     elif request.method=='GET':
+#         flightRoutes = FlightRoute.all()
+#         serializer = FlightRouteSerializer(flightRoutes, many=True)
+#         return Response(serializer.data)
 
-@api_view(['GET', 'DELETE', 'PUT'])
-def flightRouteDetail(request, id):
-    flightRoute = FlightRoute.get(id)
-    if request.method=='GET':
-        serializedFlightRoute = FlightRouteSerializer(flightRoute)
-        return Response({'data':serializedFlightRoute.data}, status=200)
+# @api_view(['GET', 'DELETE', 'PUT'])
+# def flightRouteDetail(request, id):
+#     flightRoute = FlightRoute.get(id)
+#     if request.method=='GET':
+#         serializedFlightRoute = FlightRouteSerializer(flightRoute)
+#         return Response({'data':serializedFlightRoute.data}, status=200)
 
-    elif request.method=='DELETE':
-        flightRoute.delete()
-        return Response({"message":"flightRoute deleted successfully"}, status= 204)
+#     elif request.method=='DELETE':
+#         flightRoute.delete()
+#         return Response({"message":"flightRoute deleted successfully"}, status= 204)
 
-    elif request.method=="PUT":
-        serializedFlightRoute = FlightRouteSerializer(instance=flightRoute,data=request.data)
-        if serializedFlightRoute.is_valid():
-            serializedFlightRoute.save()
-            return Response({"messsage": 'flightRoute updated successfully', "flightRoute": serializedFlightRoute.data}, status=201)
-        return Response({"errors":serializedFlightRoute.errors}, status=400)
+#     elif request.method=="PUT":
+#         serializedFlightRoute = FlightRouteSerializer(instance=flightRoute,data=request.data)
+#         if serializedFlightRoute.is_valid():
+#             serializedFlightRoute.save()
+#             return Response({"messsage": 'flightRoute updated successfully', "flightRoute": serializedFlightRoute.data}, status=201)
+#         return Response({"errors":serializedFlightRoute.errors}, status=400)
 
 
 @api_view(['GET', 'POST'])
@@ -167,19 +185,21 @@ def bookHistoryList(request):
         bookHistory = BookHistorySerializer(data=request.data)
         if bookHistory.is_valid():
             bookHistory.save()
-            book = BookHistory.get(bookHistory.data['id'])
-            for flight in book.flights.all() :
-                book.totalCost += flight.baseCost
-            book.totalCost = book.totalCost + book.totalCost*book.category.additionalCostPercentage/100
-            book.cashBack = book.totalCost*0.03
-            book.save()
-            for flight in book.flights.all():
-                flight.destinationCountry.popularity += 1
-                flight.destinationCountry.save()
-            data = {'bookedAt': request.data['bookedAt'], 'status':  request.data['status'], 'totalCost':  book.totalCost, 'cashBack':  book.cashBack, 'paymentMethod':  request.data['paymentMethod'], 'passenger':  request.data['passenger'], 'category':  request.data['category'], 'flights':  request.data['flights']}
-            bookHistory = BookHistorySerializer(data=data)
-            if bookHistory.is_valid():
-                bookHistory.save()
+            # book = BookHistory.get(bookHistory.data['id'])
+            # for flight in book.flights.all() :
+            #     book.totalCost += flight.baseCost
+            # book.totalCost = book.totalCost + book.totalCost*book.category.additionalCostPercentage/100
+            # book.cashBack = book.totalCost*0.03
+            # book.save()
+            # for flight in book.flights.all():
+            #     flight.destinationCountry.popularity += 1
+            #     flight.availableSeats -= 1 
+            #     flight.save()
+            #     flight.destinationCountry.save()
+            # data = {'bookedAt': request.data['bookedAt'], 'status':  request.data['status'], 'totalCost':  book.totalCost, 'cashBack':  book.cashBack, 'paymentMethod':  request.data['paymentMethod'], 'passenger':  request.data['passenger'], 'category':  request.data['category'], 'flights':  request.data['flights']}
+            # bookHistory = BookHistorySerializer(data=data)
+            # if bookHistory.is_valid():
+            #     bookHistory.save()
             return Response({"messsage": 'bookHistory add Successfully', "bookHistory":bookHistory.data}, status=201)
         return Response({'errors':bookHistory.errors}, status=400)
 

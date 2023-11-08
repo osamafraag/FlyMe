@@ -17,5 +17,6 @@ urlpatterns = [
     path('multi_images_country/<int:pk>/', MultiImagesCountryRetrieveUpdateDestroyView.as_view(), name='multi-images-country-detail'),
     path('multi_images_trending_place/', MultiImagesTrendingPlaceListCreateView.as_view(), name='multi-images-trending-place-list-create'),
     path('multi_images_trending_place/<int:pk>/', MultiImagesTrendingPlaceRetrieveUpdateDestroyView.as_view(), name='multi-images-trending-place-detail'),
-    path('popular/',popularCountries, name='popular.countries')
+    path('popular/',popularCountries, name='popular.countries'),
+    path('cities/',cityList, name='countries.cities')
 ]

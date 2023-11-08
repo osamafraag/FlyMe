@@ -5,7 +5,17 @@ from rest_framework.views import APIView
 from rest_framework import status
 from countries.models import *
 from countries.api.serializers import *
+from cities_light.models import Country, City
 
+
+@api_view(['GET'])
+def cityList(request):
+    cities = City.objects.all()
+    name = request.GET.get('name', None)
+    if name is not None:
+        cities = cities.filter(name__icontains=name)
+    serializer = CitySerializer(cities, many=True)
+    return Response(serializer.data)
 
 
 class EventListCreateView(generics.ListCreateAPIView):
