@@ -82,3 +82,19 @@ for Event :
     "endDate": "2023-11-07",
     "sale_amount": "23.00"
 }
+
+if you want add trending_places to countries :
+use 
+http://127.0.0.1:8000/countries/api/countries/4/manage_trending_places/
+and 
+{
+    "trending_place_ids": [in this put id like 1,2,etc...]
+}
+
+
+
+if you want add events to countries :
+http://127.0.0.1:8000/countries/api/countries/4/manage_events/
+{
+    "event_ids": [in this put id like 1,2,etc..]
+}

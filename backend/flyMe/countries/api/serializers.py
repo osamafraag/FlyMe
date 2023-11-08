@@ -70,11 +70,26 @@ class CountrySerializer(serializers.ModelSerializer):
         model = Country
         fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event','popularity','trendingPlaces']
 
+    # def create(self, validated_data):
+    #     events_data = validated_data.pop('event', [])
+    #     trendingplaces_data = validated_data.pop('trendingPlaces', [])
+    #     country = Country.objects.create(**validated_data)
+    #     country.event.set(events_data)
+    #     country.trendingPlaces.set(trendingplaces_data)
+    #     return country
+
     def create(self, validated_data):
-        events_data = validated_data.pop('event', [])
+        events_data = validated_data.pop('event', [])  
         trendingplaces_data = validated_data.pop('trendingPlaces', [])
+        print("Events Data:", events_data)
+
         country = Country.objects.create(**validated_data)
-        country.event.set(events_data)
+
+        for event_data in events_data:
+            event, created = Event.objects.get_or_create(**event_data)
+            print("Event Created:", created, "Event ID:", event.id)
+            country.event.add(event)
+
         country.trendingPlaces.set(trendingplaces_data)
         return country
 

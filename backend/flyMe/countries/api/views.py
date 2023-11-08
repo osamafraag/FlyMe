@@ -170,3 +170,72 @@ class MultiImagesTrendingPlaceListCreateView(generics.ListCreateAPIView):
 class MultiImagesTrendingPlaceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MultiImagesTrendingPlace.objects.all()
     serializer_class = MultiImagesSerializerTrendingPlace
+
+
+@api_view(['POST', 'PUT', 'DELETE'])
+def manage_events_in_country(request, country_id):
+    try:
+        country = Country.objects.get(pk=country_id)
+    except Country.DoesNotExist:
+        return Response({"error": "Country not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'POST':
+        event_ids = request.data.get("event_ids", [])
+        for event_id in event_ids:
+            try:
+                event = Event.objects.get(pk=event_id)
+                country.event.add(event)
+            except Event.DoesNotExist:
+                return Response({"error": f"Event with ID {event_id} not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Events added to the country successfully."}, status=status.HTTP_201_CREATED)
+
+    elif request.method == 'PUT':
+        event_ids = request.data.get("event_ids", [])
+        country.event.set(event_ids)
+        return Response({"message": "Events replaced in the country successfully."}, status=status.HTTP_200_OK)
+
+
+    elif request.method == 'DELETE':
+        event_ids = request.data.get("event_ids", [])
+        for event_id in event_ids:
+            try:
+                event = Event.objects.get(pk=event_id)
+                country.event.remove(event)
+            except Event.DoesNotExist:
+                return Response({"error": f"Event with ID {event_id} not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Events removed from the country successfully."}, status=status.HTTP_200_OK)
+
+
+
+
+@api_view(['POST', 'PUT', 'DELETE'])
+def manage_trending_places_in_country(request, country_id):
+    try:
+        country = Country.objects.get(pk=country_id)
+    except Country.DoesNotExist:
+        return Response({"error": "Country not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'POST':
+        trending_place_ids = request.data.get("trending_place_ids", [])
+        for place_id in trending_place_ids:
+            try:
+                place = TrendingPlace.objects.get(pk=place_id)
+                country.trendingPlaces.add(place)
+            except TrendingPlace.DoesNotExist:
+                return Response({"error": f"Trending Place with ID {place_id} not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Trending Places added to the country successfully."}, status=status.HTTP_201_CREATED)
+
+    elif request.method == 'PUT':
+        trending_place_ids = request.data.get("trending_place_ids", [])
+        country.trendingPlaces.set(trending_place_ids)
+        return Response({"message": "Trending Places replaced in the country successfully."}, status=status.HTTP_200_OK)
+
+    elif request.method == 'DELETE':
+        trending_place_ids = request.data.get("trending_place_ids", [])
+        for place_id in trending_place_ids:
+            try:
+                place = TrendingPlace.objects.get(pk=place_id)
+                country.trendingPlaces.remove(place)
+            except TrendingPlace.DoesNotExist:
+                return Response({"error": f"Trending Place with ID {place_id} not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Trending Places removed from the country successfully."}, status=status.HTTP_200_OK)
