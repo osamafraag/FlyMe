@@ -1,5 +1,4 @@
 from rest_framework import generics
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -8,15 +7,55 @@ from countries.api.serializers import *
 from cities_light.models import Country, City
 
 
-@api_view(['GET'])
-def cityList(request):
-    cities = City.objects.all()
-    name = request.GET.get('name', None)
-    if name is not None:
-        cities = cities.filter(name__icontains=name)
-    serializer = CitySerializer(cities, many=True)
-    return Response(serializer.data)
+class CityPopuarListCreateView(generics.ListCreateAPIView):
+    queryset = City.objects.all().order_by('-popularity')[:5]
+    serializer_class = CitySerializer
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        for city in serializer.data:
+            city_id = city['id']
+            city['multi_images'] = MultiImagesSerializerCity(
+                MultiImagesCity.objects.filter(city=city_id),
+                many=True,context=self.get_serializer_context()).data
+
+        return Response(serializer.data)
+
+class CityListCreateView(generics.ListCreateAPIView):
+    queryset = City.objects.all()
+    serializer_class = CitySerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        for city in serializer.data:
+            city_id = city['id']
+            city['multi_images'] = MultiImagesSerializerCity(
+                MultiImagesCity.objects.filter(city=city_id),
+                many=True,context=self.get_serializer_context()).data
+
+        return Response(serializer.data)
+
+class CityRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = City.objects.all()
+    serializer_class = CitySerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response([serializer.data,MultiImagesSerializerCity(
+            MultiImagesCity.objects.filter(city=instance.id), many=True).data])
+
+class AirPortListCreateView(generics.ListCreateAPIView):
+    queryset = AirPort.objects.all()
+    serializer_class = AirPortSerializer
+
+class AirPortRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = AirPort.objects.all()
+    serializer_class = AirPortSerializer
 
 class EventListCreateView(generics.ListCreateAPIView):
     queryset = Event.objects.all()
@@ -33,18 +72,22 @@ class EventRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
+    
+class CountryPopularListCreateView(generics.ListCreateAPIView):
+    queryset = Country.objects.all().order_by('-popularity')[:5]
+    serializer_class = CountrySerializer
 
-@api_view(['GET'])
-def popularCountries(request):
-    countries = Country.objects.all().order_by('-popularity')[:5]
-    serializer_country = CountrySerializer(countries, many=True).data
-    for country in serializer_country:
-        multi_images = MultiImagesCountry.objects.filter(country=country['id'])
-        multi_images_data = MultiImagesSerializerCountry(multi_images, many=True).data
-        country['multi_images'] = multi_images_data
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
 
-    return Response(serializer_country)
+        for country in serializer.data:
+            country_id = country['id']
+            country['multi_images'] = MultiImagesSerializerCountry(
+                MultiImagesCountry.objects.filter(country=country_id),
+                many=True,context=self.get_serializer_context()).data
 
+        return Response(serializer.data)
 class CountryListCreateView(generics.ListCreateAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
@@ -56,10 +99,8 @@ class CountryListCreateView(generics.ListCreateAPIView):
         for country in serializer.data:
             country_id = country['id']
             country['multi_images'] = MultiImagesSerializerCountry(
-                MultiImagesCountry.objects.filter(country_id=country_id),
-                many=True,
-                context=self.get_serializer_context()
-            ).data
+                MultiImagesCountry.objects.filter(country=country_id),
+                many=True,context=self.get_serializer_context()).data
 
         return Response(serializer.data)
 
@@ -70,24 +111,8 @@ class CountryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-
-        country_id = instance.id
-        serializer.data['multi_images'] = MultiImagesSerializerCountry(
-            MultiImagesCountry.objects.filter(country=country_id), many=True).data
-
-        return Response(serializer.data)
-
-
-
-class AirPortListCreateView(generics.ListCreateAPIView):
-    queryset = AirPort.objects.all()
-    serializer_class = AirPortSerializer
-
-class AirPortRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = AirPort.objects.all()
-    serializer_class = AirPortSerializer
-
-
+        return Response([serializer.data,MultiImagesSerializerCountry(
+            MultiImagesCountry.objects.filter(country=instance.id), many=True).data])
 
 class TrendingPlaceListCreateView(generics.ListCreateAPIView):
     queryset = TrendingPlace.objects.all()
@@ -101,9 +126,7 @@ class TrendingPlaceListCreateView(generics.ListCreateAPIView):
             trending_place_id = trending_place['id']
             trending_place['multi_images'] = MultiImagesSerializerTrendingPlace(
                 MultiImagesTrendingPlace.objects.filter(trendingPlace_id=trending_place_id),
-                many=True,
-                context=self.get_serializer_context()
-            ).data
+                many=True,context=self.get_serializer_context()).data
 
         return Response(serializer.data)
 
@@ -114,55 +137,8 @@ class TrendingPlaceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVi
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-
-        trending_place_id = instance.id
-        serializer.data['multi_images'] = MultiImagesSerializerTrendingPlace(
-            MultiImagesTrendingPlace.objects.filter(trendingPlace_id=trending_place_id), many=True
-        ).data
-
-        return Response(serializer.data)
-
-
-class RouteListCreateAPIView(APIView):
-    def get(self, request):
-        routes = Route.objects.all()
-        serializer = RouteSerializer(routes, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = RouteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class RouteRetrieveUpdateDestroyAPIView(APIView):
-    def get(self, request, pk):
-        try:
-            route = Route.objects.get(pk=pk)
-            serializer = RouteSerializer(route)
-            return Response(serializer.data)
-        except Route.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def put(self, request, pk):
-        try:
-            route = Route.objects.get(pk=pk)
-            serializer = RouteSerializer(route, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Route.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-    # def delete(self, request, pk):
-    #     try:
-    #         route = Route.objects.get(pk=pk)
-    #         route.delete()
-    #         return Response(status=status.HTTP_204_NO_CONTENT)
-    #     except Route.DoesNotExist:
-    #         return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response([serializer.data,MultiImagesSerializerTrendingPlace(
+            MultiImagesTrendingPlace.objects.filter(trendingPlace_id=instance.id), many=True).data])
 
 
 class MultiImagesCountryListCreateView(generics.ListCreateAPIView):

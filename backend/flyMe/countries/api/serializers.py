@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from geopy.distance import geodesic
 from countries.models import *
 from cities_light.models import City, Country
 
@@ -23,53 +22,34 @@ class EventSerializer(serializers.ModelSerializer):
 class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
     place_name = serializers.CharField(source='trendingPlace.name', read_only=True)
 
-    
     class Meta:
         model = MultiImagesTrendingPlace
         fields = ('id', 'photo','place_name')
 
+class MultiImagesSerializerCity(serializers.ModelSerializer):
+    cityName = serializers.CharField(source='city.name', read_only=True)
+
+    class Meta:
+        model = MultiImagesCity
+        fields = ('id', 'photo','cityName')
+
 class MultiImagesSerializerCountry(serializers.ModelSerializer):
-    photo_url = serializers.SerializerMethodField(read_only=True)
     country_name = serializers.CharField(source='country.name', read_only=True)
 
     class Meta:
         model = MultiImagesCountry
-        fields = ('id', 'photo', 'photo_url', 'country_name')
-
-    def get_photo_url(self, instance):
-        return instance.photo.url
+        fields = ('id', 'photo', 'country_name')
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         return representation
 
 
-# class CountrySerializer(serializers.ModelSerializer):
-#     multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
-
-#     class Meta:
-#         model = Country
-#         fields = ['id', 'name', 'flag', 'callingCode', 'nationality', 'multi_images', 'isFeatured', 'event']
-    
-#     def create(self, validated_data):
-#         events_data = validated_data.pop('event', [])
-#         country = Country.objects.create(**validated_data)
-#         country.event.set(events_data)
-#         return country
-
 class CountrySerializer(serializers.ModelSerializer):
-    multi_images = MultiImagesSerializerCountry(many=True, read_only=True)
-    event = EventSerializer(many=True, read_only=True)
 
     class Meta:
         model = Country
-        fields = ['id','name','flag','callingCode','nationality','multi_images','isFeatured','event','popularity']
-
-    # def create(self, validated_data):
-    #     events_data = validated_data.pop('event', [])
-    #     country = Country.objects.create(**validated_data)
-    #     country.event.set(events_data)
-    #     return country
+        fields = '__all__'
 
 
 class CitySerializer(serializers.ModelSerializer):
@@ -78,15 +58,13 @@ class CitySerializer(serializers.ModelSerializer):
         model = City
         fields = '__all__'
 
-
-
 class AirPortSerializer(serializers.ModelSerializer):
-    # country_name = serializers.CharField(source='country.name', read_only=True)
-    # country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country', )
+    cityName = serializers.SerializerMethodField(source='city')
+    countryName = serializers.SerializerMethodField(source='city')
 
     class Meta:
         model = AirPort
-        fields = '__all__'
+        fields = ('id', 'name','city', 'cityName', 'countryName')
 
         def create(self, validated_data):
             return AirPort.objects.create(**validated_data)
@@ -94,53 +72,30 @@ class AirPortSerializer(serializers.ModelSerializer):
         def update(self, instance, validated_data):
             instance.city =validated_data.get('city')
             instance.name =validated_data.get('name')
-            # instance.latitude =validated_data.get('latitude')
-            # instance.longitude =validated_data.get('longitude')
             instance.save()
             return instance
+        
+    def get_cityName(self, instance):
+        return instance.city.name
+    
+    def get_countryName(self, instance):
+        return instance.city.country.name
 
 
 class TrendingPlaceSerializer(serializers.ModelSerializer):
-    # country_name = serializers.SerializerMethodField(source='country')
+    cityName = serializers.SerializerMethodField(source='city')
+    countryName = serializers.SerializerMethodField(source='city')
     multi_images = MultiImagesSerializerTrendingPlace(many=True, read_only=True)
-    # country_id = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all(), source='country')
 
     class Meta:
         model = TrendingPlace
-        fields = ('id', 'name', 'description', 'city', 'multi_images')
+        fields = ('id', 'name', 'description','city', 'cityName', 'countryName','multi_images')
 
     def create(self, validated_data):
         return TrendingPlace.objects.create(**validated_data)
 
-    # def get_country_name(self, instance):
-    #     return instance.country.name
-
-
-
-
-
-
-# class RouteSerializer(serializers.ModelSerializer):
-#     startAirport_name = serializers.CharField(source='startAirport.name', read_only=True)
-#     endAirport_name = serializers.CharField(source='endAirport.name', read_only=True)
-#     distance_with_unit = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = Route
-#         fields = ['id', 'startAirport', 'endAirport', 'startAirport_name', 'endAirport_name', 'distance_with_unit']
-
-#     def get_distance_with_unit(self, obj):
-#         distance = obj.distance or 0
-#         return f'{distance} KM'
-
-#     def get_distance_with_unit(self, obj):
-#         start_airport = obj.startAirport
-#         end_airport = obj.endAirport
-
-#         if start_airport and end_airport:
-#             start_coords = (start_airport.city.latitude, start_airport.city.longitude)
-#             end_coords = (end_airport.city.latitude, end_airport.city.longitude)
-#             distance = geodesic(start_coords, end_coords).kilometers
-#             return f'{distance:.2f} KM'
-#         else:
-#             return 'N/A' 
+    def get_cityName(self, instance):
+        return instance.city.name
+    
+    def get_countryName(self, instance):
+        return instance.city.country.name

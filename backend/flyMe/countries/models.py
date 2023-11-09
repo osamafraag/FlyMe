@@ -12,47 +12,21 @@ class Event(models.Model):
 
     def __str__(self):
         return self.nameEvent
-
-# class Country(models.Model):
-#     country = models.OneToOneField('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True,related_name='country')
-#     # name = models.CharField(max_length=150,unique=True)
-#     flag = models.ImageField(upload_to='countries/photos/',null=True)
-#     # callingCode = models.CharField(max_length=10, null=True)
-#     nationality = models.CharField(max_length=150, null=True, blank=True, help_text="like Egyptian, etc..")
-#     isFeatured = models.BooleanField(help_text="IF you Choose it , Must Enter Value as Event")
-#     event = models.ManyToManyField(Event,blank=True,default=None)
-#     popularity = models.PositiveBigIntegerField(default=0)
-
-#     def __str__(self):
-#         return self.country
-
+    
 class AirPort(models.Model):
     city = models.OneToOneField('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True,related_name='airport')
-    # country = models.ForeignKey(Country, on_delete=models.CASCADE)
     name = models.CharField(max_length=150, unique=True)
-    # latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    # longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
     def __str__(self):
         return self.name
     
-
-
-
-
 class TrendingPlace(models.Model):
     city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True,related_name='trendingPlaces')
     name = models.CharField(max_length=150, unique=True)
     description = models.TextField()
-    # country = models.ForeignKey(Country, on_delete=models.CASCADE)
-    # latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    # longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
     def __str__(self) :
         return self.name
-    
-
-
     
 class MultiImagesTrendingPlace(models.Model):
     photo = models.ImageField(upload_to='trending_places/photos/')
@@ -61,7 +35,12 @@ class MultiImagesTrendingPlace(models.Model):
     def __str__(self):
         return f'{self.photo} - Name Of TrendingPlace : {self.trendingPlace.name}'
     
+class MultiImagesCity(models.Model):
+    photo = models.ImageField(upload_to='cities/photos/')
+    city = models.ForeignKey('cities_light.City',on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.photo} - Name Of TrendingPlace : {self.city.name}'
 
 class MultiImagesCountry(models.Model):
     photo = models.ImageField(upload_to='countries/photos/')
@@ -69,16 +48,5 @@ class MultiImagesCountry(models.Model):
 
     def __str__(self):
         return f'{self.photo} - Name Of Countries : {self.country}'
-
-    
-# class Route(models.Model):
-
-#     startAirport = models.ForeignKey(AirPort, on_delete=models.CASCADE,null=True, related_name='routes_from')
-#     endAirport = models.ForeignKey(AirPort, on_delete=models.CASCADE,null=True, related_name='routes_to')
-#     distance = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True, help_text="Distance in kilometers")
-
-
-#     def __str__(self):
-#         return f'From : {self.startAirport} To : {self.endAirport}'
     
 

@@ -45,12 +45,6 @@ class Flight(models.Model):
     distance = models.PositiveIntegerField(default=0)
     availableSeats = models.PositiveIntegerField(default=0)
     baseCost = models.PositiveIntegerField(default=1000)
-    # type = models.CharField(max_length=1, choices=type, default='D')
-    # sourceCity = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True,related_name='outcomingFlights') 
-    # destinationCity = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True,related_name='incomingFlights')
-    # sourceCountry = models.ForeignKey(Country,default=1,on_delete=models.CASCADE, related_name='outcomingFlights')
-    # destinationCountry = models.ForeignKey(Country,default=1,on_delete=models.CASCADE, related_name='incomingFlights')
-    # baggageWeight = models.PositiveIntegerField(default=0)
 
     def __str__(self) :
         return f"From {self.startAirport} To {self.endAirport} "
@@ -68,73 +62,16 @@ class Flight(models.Model):
         startCoords = (self.startAirport.city.latitude, self.startAirport.city.longitude)
         endCoords = (self.endAirport.city.latitude, self.endAirport.city.longitude)
         self.distance = geodesic(startCoords, endCoords).kilometers
-    #     if self.departureTime.timestamp() < datetime.now().timestamp() :
-    #         raise ValidationError({'departureTime':'departureTime can`t be before now'})
-    #     if self.arrivalTime.timestamp() < self.departureTime.timestamp() :
-    #         raise ValidationError({'arrivalTime':'arrivalTime can`t be before departureTime'})
-    #     if self.baggageWeight > self.aircraft.baggageWeight:
-    #         raise ValidationError({'baggageWeight':'flight baggageWeight can`t be bigger than aircraft baggageWeight'})
-    #     if self.baggageWeight == 0 :
-    #         self.baggageWeight = self.aircraft.baggageWeight
+        if self.departureTime.timestamp() < datetime.now().timestamp() :
+            raise ValidationError({'departureTime':'departureTime can`t be before now'})
+        if self.arrivalTime.timestamp() < self.departureTime.timestamp() :
+            raise ValidationError({'arrivalTime':'arrivalTime can`t be before departureTime'})
     
     def save(self,update=False, *args, **kwargs):
         if not update:
             self.full_clean()
         super().save(*args, **kwargs)
         
-    
-# class FlightRoute(models.Model):
-#     flight = models.ForeignKey(Flight,default=1,on_delete=models.CASCADE, related_name='relatedRoutes')
-#     route = models.ForeignKey(Route,default=1,on_delete=models.CASCADE, related_name='relatedFlights')
-#     index = models.PositiveIntegerField(default=1)
-#     startTime = models.DateTimeField(default=datetime.now)
-#     endTime = models.DateTimeField(default=datetime.now)
-
-#     class Meta:
-#         unique_together = ('flight', 'route',)
-
-#     def __str__(self) :
-#         return f"Route number {self.index} for Flight ({self.flight}) "
-
-#     @classmethod
-#     def all(cls) :
-#         return cls.objects.all()
-    
-#     @classmethod
-#     def get(cls,id) :
-#         return cls.objects.get(id=id)
-    
-#     def clean(self):
-#         if self.startTime.timestamp() < datetime.now().timestamp() :
-#             raise ValidationError({'startTime':'startTime can`t be before now'})
-#         if self.route.distance > self.flight.aircraft.maxDistance :
-#             raise ValidationError({'flight':'route destinace can`t be bigger than aircraft distance'})
-#         if self.flight.departureTime.timestamp() < datetime.now().timestamp() :
-#             raise ValidationError({'flight':'can`t add route to passsed flight'})
-#         flightRoutes = FlightRoute.objects.filter(flight=self.flight)
-#         if self.flight.type == 'D' and flightRoutes.count() == 1:
-#             raise ValidationError({'flight':'can`t add more than one route to direct flights'})
-#         if flightRoutes.count() > 0:
-#             lastFlightRoute = flightRoutes.order_by('-index')[:1][0]
-#             lastFlightRoute.endTime = self.startTime
-#             lastFlightRoute.save(True)
-#             self.index = flightRoutes.count() + 1
-#         else :
-#             self.index == 1 
-#             if self.route.startAirport.country != self.flight.sourceCountry :
-#                 raise ValidationError({'route':'route start country must be the same as fight start country'})
-#             self.startTime = self.flight.departureTime
-#         self.endTime = self.flight.arrivalTime
-        
-    
-#     def save(self,update = False, *args, **kwargs):
-#         if not update :
-#             self.full_clean()
-#         super().save(*args, **kwargs)
-#         self.flight.totalDistance = 0
-#         for route in self.flight.relatedRoutes.all():
-#             self.flight.totalDistance += route.route.distance
-#             self.flight.save()
 
 class Class(models.Model):
     seatCategories = [
@@ -214,9 +151,12 @@ class BookHistory(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
-        super().save(*args, **kwargs)
         flight = Flight.get(self.flight.id)
+        if flight.availableSeats == 0 :
+            raise ValidationError({'flight':'No Seat Available For This Flight!'})
+        super().save(*args, **kwargs)
         flight.endAirport.city.country.popularity = flight.endAirport.city.country.popularity + 1
+        flight.endAirport.city.popularity = flight.endAirport.city.popularity + 1
         flight.availableSeats = flight.availableSeats - 1
         flight.save(True)
         flight.endAirport.city.country.save()

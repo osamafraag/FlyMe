@@ -11,12 +11,12 @@ urlpatterns = [
     path('airports/<int:pk>/', AirPortRetrieveUpdateDestroyView.as_view(), name='airport-retrieve-update-destroy'),
     path('trending_places/', TrendingPlaceListCreateView.as_view(), name='trending-place-list-create'),
     path('trending_places/<int:pk>/', TrendingPlaceRetrieveUpdateDestroyView.as_view(), name='trending-place-retrieve-update-destroy'),
-    path('routes/', RouteListCreateAPIView.as_view(), name='route-list-create'),
-    path('routes/<int:pk>/', RouteRetrieveUpdateDestroyAPIView.as_view(), name='route-retrieve-update-destroy'),
     path('multi_images_country/', MultiImagesCountryListCreateView.as_view(), name='multi-images-country-list-create'),
     path('multi_images_country/<int:pk>/', MultiImagesCountryRetrieveUpdateDestroyView.as_view(), name='multi-images-country-detail'),
     path('multi_images_trending_place/', MultiImagesTrendingPlaceListCreateView.as_view(), name='multi-images-trending-place-list-create'),
     path('multi_images_trending_place/<int:pk>/', MultiImagesTrendingPlaceRetrieveUpdateDestroyView.as_view(), name='multi-images-trending-place-detail'),
-    path('popular/',popularCountries, name='popular.countries'),
-    path('cities/',cityList, name='countries.cities')
+    path('popular/',CountryPopularListCreateView.as_view(), name='popular.countries'),
+    path('popularCities/',CityPopuarListCreateView.as_view(), name='popular.cities'),
+    path('cities/',CityListCreateView.as_view(), name='countries.cities'),
+    path('cities/<int:pk>', CityRetrieveUpdateDestroyView.as_view(), name='countries.city')
 ]
