@@ -129,7 +129,11 @@ class BookHistory(models.Model):
     status = models.CharField(max_length=1, choices=statuses, default='S')
     totalCost = models.PositiveIntegerField(default=0,blank=True)
     cashBack = models.PositiveIntegerField(default=0,blank=True)
-    paymentMethod = models.CharField(max_length=1, choices=paymentMethods, default='O')
+    paymentMethod = models.CharField(max_length=1, choices=paymentMethods, default='W')
+    adults = models.PositiveBigIntegerField(default=1)
+    kids = models.PositiveBigIntegerField(default=0)
+    infants = models.PositiveBigIntegerField(default=0)
+
 
     class Meta:
         unique_together = ('flight', 'passenger',)
@@ -146,15 +150,32 @@ class BookHistory(models.Model):
         return cls.objects.get(id=id)
     
     def clean(self):
-        self.totalCost = self.flight.baseCost + self.flight.baseCost*self.category.additionalCostPercentage/100
+        flight = Flight.get(self.flight.id)
+        if flight.availableSeats < self.adults + self.kids + self.infants :
+            raise ValidationError({'flight':'No enough Seat Available For This Flight!'})
+        self.totalCost = (self.flight.baseCost + self.flight.baseCost*self.category.additionalCostPercentage/100)*(self.adults + 0.7*self.kids + 0.5*self.infants)
         self.cashBack = self.totalCost*0.03
+        # if self.paymentMethod == 'W':
+        #     if self.totalCost > user.availableBalance :
+        #         raise ValidationError({"paymentMethod":"You don't have enough balance to make this transaction!"})
+        #     else :
+        #         user.availableBalance -= self.totalCost
+        #         user.penddingBalance += self.cashBack
+        #         user.save()
+        #         transaction = Transaction()
+        #         transaction.amount = self.totalCost
+        #         transaction.type = "BW"
+        #         transaction.save()
+        # elif self.paymentMethod == 'C':
+        #     transaction = Transaction()
+        #     transaction.amount = self.totalCost
+        #     transaction.type = "BC"
+        #     transaction.save()
 
     def save(self, *args, **kwargs):
         self.full_clean()
-        flight = Flight.get(self.flight.id)
-        if flight.availableSeats == 0 :
-            raise ValidationError({'flight':'No Seat Available For This Flight!'})
         super().save(*args, **kwargs)
+        flight = Flight.get(self.flight.id)
         flight.endAirport.city.country.popularity = flight.endAirport.city.country.popularity + 1
         flight.endAirport.city.popularity = flight.endAirport.city.popularity + 1
         flight.availableSeats = flight.availableSeats - 1
