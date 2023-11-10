@@ -23,6 +23,7 @@ const RoundTripForm = ({ handleFlightData }) => {
     e.preventDefault();
     const flights1 = [
       {
+        id: "1",
         name: "Flight 1",
         company: "A",
         capacity: 150,
@@ -40,6 +41,7 @@ const RoundTripForm = ({ handleFlightData }) => {
         destinationCountry: "Egypt"
       },
       {
+        id: "2",
         name: "Flight 2",
         company: "B",
         capacity: 200,
@@ -60,6 +62,7 @@ const RoundTripForm = ({ handleFlightData }) => {
 
     const flights2 = [
       {
+        id: "3",
         name: "Flight 1",
         company: "A",
         capacity: 150,
@@ -77,6 +80,7 @@ const RoundTripForm = ({ handleFlightData }) => {
         destinationCountry: "Egypt"
       },
       {
+        id: "4",
         name: "Flight 2",
         company: "B",
         capacity: 200,
@@ -94,6 +98,7 @@ const RoundTripForm = ({ handleFlightData }) => {
         destinationCountry: "Palastine"
       },
       {
+        id: "5",
         name: "Flight 3",
         company: "B",
         capacity: 200,
@@ -122,7 +127,7 @@ const RoundTripForm = ({ handleFlightData }) => {
         <div className='col'>
           <FloatingLabel
             controlId="floatingInput"
-            label={<span><FontAwesomeIcon icon={faLocationDot} /> From</span>}
+            label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> From</span>}
             className="mb-3 "
           >
             <Form.Control 
@@ -138,7 +143,7 @@ const RoundTripForm = ({ handleFlightData }) => {
         <div className='col'>
           <FloatingLabel
             controlId="floatingInput"
-            label={<span><FontAwesomeIcon icon={faLocationDot} /> To</span>}
+            label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> To</span>}
             className="mb-3"
           >
             <Form.Control 
@@ -156,7 +161,7 @@ const RoundTripForm = ({ handleFlightData }) => {
         {/* Going Time */}
         <FloatingLabel
           controlId="floatingInput"
-          label={<span><FontAwesomeIcon icon={faLocationDot} /> Departure</span>}
+          label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> Departure</span>}
           className="mb-3 w-50"
         >
           <Form.Control 
@@ -173,7 +178,7 @@ const RoundTripForm = ({ handleFlightData }) => {
         {/* Return Time */}
         <FloatingLabel
           controlId="floatingInput"
-          label={<span><FontAwesomeIcon icon={faLocationDot} /> Return</span>}
+          label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> Return</span>}
           className="mb-3 w-50"
         >
           <Form.Control 

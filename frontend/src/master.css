@@ -2,6 +2,8 @@
   --main-color: #426a9d;
   --secondary-color: #8db3da;
   --alternative-white-color: #f6f6f6; 
+  --gray-color: #dfdfdf;
+  --text-color: #767676;
 }
 
 body {

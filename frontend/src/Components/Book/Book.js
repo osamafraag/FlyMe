@@ -1,4 +1,5 @@
 import React from 'react'
+import "./../Home/Landing.css"
 import FlightSearchForm from "./FlightSearchForm"
 
 export default function BookSearch() {
