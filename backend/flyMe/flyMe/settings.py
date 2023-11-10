@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'countries.apps.CountriesConfig',
     'flights.apps.FlightsConfig',
     'django_countries',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

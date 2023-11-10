@@ -1,6 +1,11 @@
 from django.contrib import admin
-from accounts.models import MyUser
+from accounts.models import MyUser, Transaction, Wallet, PaymentCard, Complaint, UserReview
 
 # Register your models here.
 
 admin.site.register(MyUser)
+admin.site.register(Transaction)
+admin.site.register(Wallet)
+admin.site.register(PaymentCard)
+admin.site.register(Complaint)
+admin.site.register(UserReview)
