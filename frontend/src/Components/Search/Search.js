@@ -7,6 +7,8 @@ import OneWayResult from './OneWayResult';
 import RoundTripResult from './RoundTripResult';
 import MultiCityResult from './MultiCitiesResult';
 import Form from 'react-bootstrap/Form';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons'
 
 export default function SearchResult() {
   const { searchType } = useParams();
@@ -17,6 +19,10 @@ export default function SearchResult() {
 
   const handleChange = (event) => {
     setSliderValue(event.target.value);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   };
   return (
     <div className='pt-3' style={{backgroundColor: "var(--alternative-white-color)"}}>
@@ -88,6 +94,10 @@ export default function SearchResult() {
               <MultiCityResult flightData={flightData} />
             )}
           </div>
+
+         <div className='container-fluid d-flex justify-content-end position-fixed bottom-0 end-0 '>
+          <button onClick={scrollToTop} className='btn border-0' style={{color: "var(--main-color)", borderRadius: "50%"}}><FontAwesomeIcon icon={faArrowUp} className='p-3 bg-white' style={{borderRadius: "50%"}}/></button>
+         </div>
         </div>
       </div>
       

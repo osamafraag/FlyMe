@@ -29,7 +29,7 @@ body{
 
 .text{
   display: flex;
-  width: 80%;
+  width: 100%;
   flex-direction: column;
   /* justify-content: center ; */
   /* align-items: center ; */
@@ -40,8 +40,8 @@ body{
   width: 80%;
   height: 65%;
   border-radius: 10px;
-  background-color: #F1F0E8;
-  box-shadow: 5px 0px 10px 0px;
+  background-color: var(--alternative-white-color);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   /* background-color:#E0F4FF ; */
 }
 .quote{
