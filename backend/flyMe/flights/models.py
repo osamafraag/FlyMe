@@ -1,6 +1,6 @@
 from django.db import models
 from countries.models import *
-from accounts.models import MyUser
+from accounts.models import MyUser, Transaction
 from datetime import datetime
 from geopy.distance import geodesic
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -33,9 +33,10 @@ class Aircraft(models.Model):
         return cls.objects.get(id=id)
     
 class Flight(models.Model):
-    type = [
-        ('D', 'Direct'),
-        ('T', 'Transient')
+    statuses = [
+        ('p', 'passed'),
+        ('M', 'comming'),
+        ('C', 'canceled')
     ]
     aircraft = models.ForeignKey(Aircraft,default=1 ,on_delete=models.CASCADE, related_name='flights')
     departureTime = models.DateTimeField(default=datetime.now)
@@ -45,6 +46,7 @@ class Flight(models.Model):
     distance = models.PositiveIntegerField(default=0)
     availableSeats = models.PositiveIntegerField(default=0)
     baseCost = models.PositiveIntegerField(default=1000)
+    status = models.CharField(max_length=1, choices=statuses, default='M')
 
     def __str__(self) :
         return f"From {self.startAirport} To {self.endAirport} "
@@ -112,7 +114,11 @@ class Class(models.Model):
     @classmethod
     def get(cls,id) :
         return cls.objects.get(id=id)
-
+class FlightReview(models.Model):
+    passenger = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    flight = models.ForeignKey(Flight, on_delete=models.CASCADE, related_name='reviews')
+    comment = models.TextField()
+    rate = models.PositiveBigIntegerField() 
 class BookHistory(models.Model):
     paymentMethods=[
         ('W',"Wallet"),
@@ -155,22 +161,18 @@ class BookHistory(models.Model):
             raise ValidationError({'flight':'No enough Seat Available For This Flight!'})
         self.totalCost = (self.flight.baseCost + self.flight.baseCost*self.category.additionalCostPercentage/100)*(self.adults + 0.7*self.kids + 0.5*self.infants)
         self.cashBack = self.totalCost*0.03
-        # if self.paymentMethod == 'W':
-        #     if self.totalCost > user.availableBalance :
-        #         raise ValidationError({"paymentMethod":"You don't have enough balance to make this transaction!"})
-        #     else :
-        #         user.availableBalance -= self.totalCost
-        #         user.penddingBalance += self.cashBack
-        #         user.save()
-        #         transaction = Transaction()
-        #         transaction.amount = self.totalCost
-        #         transaction.type = "BW"
-        #         transaction.save()
-        # elif self.paymentMethod == 'C':
-        #     transaction = Transaction()
-        #     transaction.amount = self.totalCost
-        #     transaction.type = "BC"
-        #     transaction.save()
+        if self.paymentMethod == 'W':
+            self.passenger.pendding_balance += self.cashBack
+            self.passenger.save()
+            transaction = Transaction()
+            transaction.amount = self.totalCost
+            transaction.type = 'WPURCHASE'
+            transaction.save()
+        elif self.paymentMethod == 'C':
+            transaction = Transaction()
+            transaction.amount = self.totalCost
+            transaction.type = "CPURCHASE"
+            transaction.save()
 
     def save(self, *args, **kwargs):
         self.full_clean()

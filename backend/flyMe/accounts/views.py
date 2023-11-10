@@ -80,3 +80,4 @@ class Profile(DetailView):
     template_name = 'accounts/profile.html'
     def get_object(self, queryset=None):
         return self.request.user #return the currently logged-in user.
+    
