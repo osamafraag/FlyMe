@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django_countries.fields import CountryField
 from django.contrib.auth import get_user_model
+from flights.models import Flight
 
 
 
@@ -86,6 +87,6 @@ class Complaint(models.Model):
 
 class UserReview(models.Model):
     user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    # flight_id = models.ForeignKey(Flight, on_delete=models.CASCADE) # osama add your model here pls (^_^)
+    flight = models.ForeignKey(Flight, on_delete=models.CASCADE, related_name='reviews')
     comment = models.TextField()
     rate = models.IntegerField() 
