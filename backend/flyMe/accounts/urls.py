@@ -33,4 +33,5 @@ urlpatterns = [
 #     path('editPassword/', change_password, name='profile.edit.Password'),
 
 #     path('activate/<str:uidb64>/<str:token>/', activate_user, name='activate'),
+     path('api/', include('accounts.api.urls'))
 ]
