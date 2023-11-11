@@ -1,0 +1,39 @@
+.headerr {
+    background: url(../../Assets/Images/helppic3.jpeg);
+    height: 90vh;
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    font-weight: 600;
+    color: white;
+}
+.textt{
+    font-size: 60px;
+    margin-bottom: 30px;
+}
+/* .form-row {
+    margin-bottom: 10px;
+}
+.form-row label,
+.form-row input,
+.form-row textarea {
+    display: block;
+    
+    margin-bottom: 5px;
+}
+.form-row label {
+    width: 100px;
+    text-align: right;
+    padding-right: 10px;
+}
+.form-row input[type="submit"] {
+    margin-left: 110px;
+}
+form {
+    max-width: 400px;
+    margin: 0 auto;
+} */
