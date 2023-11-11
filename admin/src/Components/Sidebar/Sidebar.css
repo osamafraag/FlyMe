@@ -1,0 +1,8 @@
+.sidebar {
+  min-height: 100vh;
+  background-color: var(--main-color)
+}
+
+.sidebar hr {
+  margin: 0 1rem 1rem;
+}
