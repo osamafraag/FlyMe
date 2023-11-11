@@ -5,9 +5,9 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
-import { faPlaneDeparture } from '@fortawesome/free-solid-svg-icons'
+import { faPlaneDeparture, faGauge } from '@fortawesome/free-solid-svg-icons'
 
-export default function NavBar() {
+export default function NavBar({isAdmin}) {
   return (
     <Navbar collapseOnSelect expand="lg" className="shadow-sm bg-white position-sticky top-0 start-0 py-3" style={{zIndex: "1000"}}>
       <Container>
@@ -20,13 +20,13 @@ export default function NavBar() {
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/AboutUs">About</NavLink>
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Help">Help</NavLink>
           </Nav>
-          {/* <Nav>
+          <Nav>
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Login"><FontAwesomeIcon icon={faArrowRightToBracket} /> Login</NavLink>
             <NavDropdown title="En" id="collapsible-nav-dropdown" className='fw-semibold language'>
               <NavDropdown.Item href="#action/3.1" className='fw-semibold'>En</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2" className='fw-semibold'>Ar</NavDropdown.Item>
             </NavDropdown>
-          </Nav> */}
+          </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
