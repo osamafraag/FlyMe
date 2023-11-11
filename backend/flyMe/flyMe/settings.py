@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'flights.apps.FlightsConfig',
     'django_countries',
     'rest_framework',
-    'cities_light'
+    'cities_light',
+    'celery',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -171,3 +173,7 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_TIMEZONE = 'UTC'
+CELERY_TASK_ALWAYS_EAGER = True
