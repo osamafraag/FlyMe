@@ -6,7 +6,6 @@ import { NavLink } from "react-router-dom";
 import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-
 export default function BookingComponent() {
 
   return (
