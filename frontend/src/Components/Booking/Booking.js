@@ -2,6 +2,10 @@ import React from 'react'
 import "./Booking.css"
 import SideBar from './SideBar'
 import BookingSteps from './BookingSteps/BookingSteps'
+import { NavLink } from "react-router-dom";
+import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 
 export default function BookingComponent() {
 
@@ -14,7 +18,7 @@ export default function BookingComponent() {
             <p className='mb-2'>Login to book faster!</p>
             <p className='Note py-0 my-0'>Autofill forms with your saved details.</p>
           </div>
-          <button className='btn custom-btn'>Sign in</button>
+          <NavLink className='me-3 fw-semibold btn custom-btn' to="/Login"><FontAwesomeIcon icon={faArrowRightToBracket} /> Login</NavLink>
         </div>
         <br />
         {/* Booking Steps: */}
