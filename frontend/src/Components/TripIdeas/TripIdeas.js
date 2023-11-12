@@ -225,7 +225,9 @@ export default function TripIdeasComponent() {
   }, []);
 
   const startSlider = () => {
-    sliderRef.current.slickPlay();
+    if (sliderRef.current) {
+      sliderRef.current.slickPlay();
+    }
   };
 
   const stopSlider = () => {
@@ -245,11 +247,12 @@ export default function TripIdeasComponent() {
   const [trendingVisits, setTrendingVisits] = useState([]);
   const [selectedSlideIndex, setSelectedSlideIndex] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const API_BASE_URL = 'https://osamafraag.pythonanywhere.com';
 
   useEffect(() => {
     const fetchTrendingVisits = async () => {
       try {
-        const response = await axios.get('API_ENDPOINT_URL');
+        const response = await axios.get(`${API_BASE_URL} countries/api/ {countryId} /trendingPlaces/`);
         setTrendingVisits(response.data);
       } catch (error) {
         console.error('Error fetching trending visits:', error);
@@ -293,14 +296,14 @@ export default function TripIdeasComponent() {
       <div className="container py-5 m-5 ps-5">
         <h2 className="text-start pb-4">Trending Visits</h2>
         <div className="row row-cols-1 row-cols-lg-4 row-cols-md-2 g-4 justify-content-center align-items-center ">
-          {slides.map((slide, index) => (
-            <div className="col d-flex justify-content-center align-items-center" key={index}>
+          {trendingVisits.map(visit => (
+            <div className="col d-flex justify-content-center align-items-center" >
               <Card
-                imageSrc={slide.image}
-                title={slide.title}
-                description={slide.description}
-                handleDetailsClick={() => handleDetailsClick(index)}
-                showDetails={showDetails && selectedSlideIndex === index}
+                key={visit.id}
+                title={visit.title}
+                description={visit.description}
+                images={visit.images}
+                onDetailsClick={() => handleDetailsClick(visit.id)}
               />
             </div>
             ))}
@@ -310,8 +313,8 @@ export default function TripIdeasComponent() {
           {showDetails && selectedSlideIndex !== null && (
               <div className="col">
                 <div className="details-section">
-                  <h2 className='pt-5 pb-3'>Details Section for {slides[selectedSlideIndex].title}</h2>
-                  <p className='ps-5'>This is the detailed information about {slides[selectedSlideIndex].title}.</p>
+                  <h2 className='pt-5 pb-3'>Details Section for {trendingVisits[selectedSlideIndex].title}</h2>
+                  <p className='ps-5'>This is the detailed information about {trendingVisits[selectedSlideIndex].title}.</p>
                   {/* Add any additional content or components for the details section */}
                 </div>
               </div>

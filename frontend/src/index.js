@@ -9,6 +9,9 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 import { Provider } from 'react-redux';
 import Store from './Store';
 
+// const cors = require("cors");
+// App.use(cors());
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
