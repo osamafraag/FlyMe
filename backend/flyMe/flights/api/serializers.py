@@ -27,6 +27,14 @@ class ClassSerializer(serializers.ModelSerializer):
 
         def create(self, validated_data):
             return Class.objects.create(**validated_data)
+        
+class FlightReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FlightReview
+        fields = '__all__'
+
+        def create(self, validated_data):
+            return FlightReview.objects.create(**validated_data)
 
 class BookHistorySerializer(serializers.ModelSerializer):
     class Meta:

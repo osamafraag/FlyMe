@@ -15,4 +15,8 @@ urlpatterns = [
     path('history/<int:id>', bookHistoryDetail, name='flight.history'),
     path('classes/', classList, name='flights.classes'),
     path('classes/<int:id>', classDetail, name='flights.class'),
+    path('reviews/', flightReviewList, name='flights.reviews'),
+    path('user/<int:id>/reviews', userFlightReview, name='user.reviews'),
+    path('<int:id>/reviews', flightReview, name='flight.reviews'),
+    path('reviews/<int:id>', flightReviewDetail, name='flights.review'),
 ]

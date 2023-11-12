@@ -1,7 +1,6 @@
-from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
-from accounts.models import MyUser
-from accounts.api.serializers import UserSerializer, RegisterSerializer
+from accounts.models import *
+from accounts.api.serializers import *
 from rest_framework import status
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.decorators import permission_classes, api_view
@@ -145,3 +144,183 @@ def user_data_view(request):
 
 
 ####################################---------  edit user data  -------------###################################
+@api_view(['GET', 'POST'])
+def paymentCardList(request):
+    if request.method == 'POST':
+        paymentCard = PaymentCard(data=request.data)
+        if paymentCard.is_valid():
+            paymentCard.save()
+            return Response({"messsage": 'paymentCard add Successfully', "paymentCard":paymentCard.data}, status=201)
+        return Response({'errors':paymentCard.errors}, status=400)
+
+    elif request.method=='GET':
+        paymentCards = PaymentCard.objects.all()
+        serializer = PaymentCardSerializer(paymentCards, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def userPaymentCards(request,id):
+    paymentCards = PaymentCard.objects.filter(user=id)
+    serializer = PaymentCardSerializer(paymentCards, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET', 'DELETE', 'PUT'])
+def paymentCardDetail(request, id):
+    paymentCard = PaymentCard.objects.get(id=id)
+    if request.method=='GET':
+        serializedPaymentCard = PaymentCardSerializer(paymentCard)
+        return Response({'data':serializedPaymentCard.data}, status=200)
+
+    elif request.method=='DELETE':
+        paymentCard.delete()
+        return Response({"message":"paymentCard deleted successfully"}, status= 204)
+
+    elif request.method=="PUT":
+        serializedPaymentCard = PaymentCardSerializer(instance=paymentCard,data=request.data)
+        if serializedPaymentCard.is_valid():
+            serializedPaymentCard.save()
+            return Response({"messsage": 'paymentCard updated successfully', "paymentCard": serializedPaymentCard.data}, status=201)
+        return Response({"errors":serializedPaymentCard.errors}, status=400)
+    
+@api_view(['GET', 'POST'])
+def transactionsList(request):
+    if request.method == 'POST':
+        transaction = TransactionSerializer(data=request.data)
+        if transaction.is_valid():
+            transaction.save()
+            return Response({"messsage": 'transaction add Successfully', "transaction":transaction.data}, status=201)
+        return Response({'errors':transaction.errors}, status=400)
+
+    elif request.method=='GET':
+        transactions = Transaction.objects.all()
+        serializer = TransactionSerializer(transactions, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def userTransactions(request,id):
+    transactions = Transaction.objects.filter(user=id)
+    serializer = TransactionSerializer(transactions, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET', 'DELETE', 'PUT'])
+def transactionDetail(request, id):
+    transaction = Transaction.objects.get(id=id)
+    if request.method=='GET':
+        serializedTransaction = TransactionSerializer(transaction)
+        return Response({'data':serializedTransaction.data}, status=200)
+
+    elif request.method=='DELETE':
+        transaction.delete()
+        return Response({"message":"transaction deleted successfully"}, status= 204)
+
+    elif request.method=="PUT":
+        serializedTransaction = TransactionSerializer(instance=transaction,data=request.data)
+        if serializedTransaction.is_valid():
+            serializedTransaction.save()
+            return Response({"messsage": 'transaction updated successfully', "transaction": serializedTransaction.data}, status=201)
+        return Response({"errors":serializedTransaction.errors}, status=400)
+    
+@api_view(['GET', 'POST'])
+def notificationsList(request):
+    if request.method == 'POST':
+        notification = NotificationSerializer(data=request.data)
+        if notification.is_valid():
+            notification.save()
+            return Response({"messsage": 'notification add Successfully', "notification":notification.data}, status=201)
+        return Response({'errors':notification.errors}, status=400)
+
+    elif request.method=='GET':
+        notifications = Notification.objects.all()
+        serializer = NotificationSerializer(notifications, many=True)
+        return Response(serializer.data)
+@api_view(['GET'])
+def userNotifications(request,id):
+    notifications = Notification.objects.filter(user=id)
+    serializer = NotificationSerializer(notifications, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET', 'DELETE', 'PUT'])
+def notificationDetail(request, id):
+    notification = Notification.objects.get(id=id)
+    if request.method=='GET':
+        serializedNotification = NotificationSerializer(notification)
+        return Response({'data':serializedNotification.data}, status=200)
+
+    elif request.method=='DELETE':
+        notification.delete()
+        return Response({"message":"notification deleted successfully"}, status= 204)
+
+    elif request.method=="PUT":
+        serializedNotification = NotificationSerializer(instance=notification,data=request.data)
+        if serializedNotification.is_valid():
+            serializedNotification.save()
+            return Response({"messsage": 'notification updated successfully', "notification": serializedNotification.data}, status=201)
+        return Response({"errors":serializedNotification.errors}, status=400)
+    
+@api_view(['GET', 'POST'])
+def walletsList(request):
+    if request.method == 'POST':
+        wallet = WalletSerializer(data=request.data)
+        if wallet.is_valid():
+            wallet.save()
+            return Response({"messsage": 'wallet add Successfully', "wallet":wallet.data}, status=201)
+        return Response({'errors':wallet.errors}, status=400)
+
+    elif request.method=='GET':
+        wallets = Wallet.objects.all()
+        serializer = WalletSerializer(wallets, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET', 'DELETE', 'PUT'])
+def walletDetail(request, id):
+    wallet = Transaction.objects.get(id=id)
+    if request.method=='GET':
+        serializedWallet = WalletSerializer(wallet)
+        return Response({'data':serializedWallet.data}, status=200)
+
+    elif request.method=='DELETE':
+        wallet.delete()
+        return Response({"message":"wallet deleted successfully"}, status= 204)
+
+    elif request.method=="PUT":
+        serializedWallet = WalletSerializer(instance=wallet,data=request.data)
+        if serializedWallet.is_valid():
+            serializedWallet.save()
+            return Response({"messsage": 'wallet updated successfully', "wallet": serializedWallet.data}, status=201)
+        return Response({"errors":serializedWallet.errors}, status=400)
+    
+@api_view(['GET', 'POST'])
+def complaintsList(request):
+    if request.method == 'POST':
+        complaint = ComplaintSerializer(data=request.data)
+        if complaint.is_valid():
+            complaint.save()
+            return Response({"messsage": 'complaint add Successfully', "complaint":complaint.data}, status=201)
+        return Response({'errors':complaint.errors}, status=400)
+
+    elif request.method=='GET':
+        complaints = Complaint.objects.all()
+        serializer = ComplaintSerializer(complaints, many=True)
+        return Response(serializer.data)
+@api_view(['GET'])
+def userComplaints(request,id):
+    complaints = Complaint.objects.filter(user_id=id)
+    serializer = ComplaintSerializer(complaints, many=True)
+    return Response(serializer.data)
+@api_view(['GET', 'DELETE', 'PUT'])
+def complaintDetail(request, id):
+    complaint = Complaint.objects.get(id=id)
+    if request.method=='GET':
+        serializedComplaint = ComplaintSerializer(complaint)
+        return Response({'data':serializedComplaint.data}, status=200)
+
+    elif request.method=='DELETE':
+        complaint.delete()
+        return Response({"message":"complaint deleted successfully"}, status= 204)
+
+    elif request.method=="PUT":
+        serializedComplaint = ComplaintSerializer(instance=complaint,data=request.data)
+        if serializedComplaint.is_valid():
+            serializedComplaint.save()
+            return Response({"messsage": 'complaint updated successfully', "complaint": serializedComplaint.data}, status=201)
+        return Response({"errors":serializedComplaint.errors}, status=400)

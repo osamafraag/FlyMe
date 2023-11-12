@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from accounts.models import MyUser
+from accounts.models import *
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
@@ -31,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'email', 'first_name', 'last_name', 'passport_number',
             'passport_expire_date', 'phone', 'image', 'is_email_verified',
             'activation_link_created_at', 'birth_date', 'address',
-            'gender', 'post_code', 'created_at', 'updated_at', 'is_superuser', #'country'
+            'gender', 'post_code', 'created_at', 'updated_at', 'is_superuser', 'country', 'city', 'region'
         )
     def update(self, instance, validated_data):
         instance.username = validated_data.get('username', instance.username)
@@ -74,4 +74,44 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+    
+class WalletSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = '__all__'
+
+        def create(self, validated_data):
+            return Wallet.objects.create(**validated_data)
+
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = '__all__'
+
+        def create(self, validated_data):
+            return Transaction.objects.create(**validated_data)
+        
+class ComplaintSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Complaint
+        fields = '__all__'
+
+        def create(self, validated_data):
+            return Complaint.objects.create(**validated_data)
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = '__all__'
+
+        def create(self, validated_data):
+            return Notification.objects.create(**validated_data)
+        
+class PaymentCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentCard
+        fields = '__all__'
+
+        def create(self, validated_data):
+            return PaymentCard.objects.create(**validated_data)
     

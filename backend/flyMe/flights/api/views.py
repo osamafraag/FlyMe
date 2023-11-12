@@ -233,3 +233,48 @@ def bookHistoryDetail(request, id):
             return Response({"messsage": 'bookHistory updated successfully', "bookHistory": serializedBookHistory.data}, status=201)
         return Response({"errors":serializedBookHistory.errors}, status=400)
     
+
+
+@api_view(['GET', 'POST'])
+def flightReviewList(request):
+    if request.method == 'POST':
+        flightReview = FlightReviewSerializer(data=request.data)
+        if flightReview.is_valid():
+            flightReview.save()
+            return Response({"messsage": 'flightReview add Successfully', "flightReview":flightReview.data}, status=201)
+        return Response({'errors':flightReview.errors}, status=400)
+
+    elif request.method=='GET':
+        flightReviews = FlightReview.objects.all()
+        serializer = FlightReviewSerializer(flightReviews, many=True)
+        return Response(serializer.data)
+    
+@api_view(['GET'])
+def flightReview(request,id):
+    flightReviews = FlightReview.objects.filter(flight=id)
+    serializer = FlightReviewSerializer(flightReviews, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def userFlightReview(request,id):
+    flightReviews = FlightReview.objects.filter(passenger=id)
+    serializer = FlightReviewSerializer(flightReviews, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET', 'DELETE', 'PUT'])
+def flightReviewDetail(request, id):
+    flightReview = FlightReview.objects.get(id=id)
+    if request.method=='GET':
+        serializedFlightReview = FlightReviewSerializer(flightReview)
+        return Response({'data':serializedFlightReview.data}, status=200)
+
+    elif request.method=='DELETE':
+        flightReview.delete()
+        return Response({"message":"flightReview deleted successfully"}, status= 204)
+
+    elif request.method=="PUT":
+        serializedFlightReview = FlightReviewSerializer(instance=flightReview,data=request.data)
+        if serializedFlightReview.is_valid():
+            serializedFlightReview.save()
+            return Response({"messsage": 'flightReview updated successfully', "flightReview": serializedFlightReview.data}, status=201)
+        return Response({"errors":serializedFlightReview.errors}, status=400)
