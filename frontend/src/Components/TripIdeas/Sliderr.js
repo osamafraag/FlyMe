@@ -20,13 +20,13 @@
 
 import "./TripIdeas.css";
 import React from 'react';
-import { NavLink } from "react-router-dom";
 
 const SlideContent = ({ image, title }) => {
   const slideStyle = {
     backgroundImage: `url(${image})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
+    height: '500px',
   };
 
   return (

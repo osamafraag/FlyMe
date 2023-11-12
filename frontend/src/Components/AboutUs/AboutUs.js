@@ -5,13 +5,14 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import SlideContent from './Sliderr'
 import SecondSlideContent from './sliderr2'
-import pic1 from './../../Assets/Images/pic1.png'
-import pic2 from './../../Assets/Images/pic2.png'
-import pic3 from './../../Assets/Images/pic5.png'
-import pic4 from './../../Assets/Images/pic6.png'
-import pic5 from './../../Assets/Images/pic7.png'
-import pic6 from './../../Assets/Images/pic12.png'
-import pic8 from './../../Assets/Images/pic10.png'
+import pic3 from './../../Assets/Images/pic1.png'
+import pic2 from './../../Assets/Images/newpic6.jpeg'
+import pic1 from './../../Assets/Images/newpic5.jpeg'
+import pic4 from './../../Assets/Images/newpic2.jpeg'
+import pic5 from './../../Assets/Images/trippic4i.jpeg';
+import pic6 from './../../Assets/Images/newpic4.jpeg';
+import pic7 from './../../Assets/Images/trippic6i.jpeg';
+import pic8 from './../../Assets/Images/trippic7i.jpeg';
 import  { useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faPlaneCircleCheck} from '@fortawesome/free-solid-svg-icons';
@@ -52,7 +53,12 @@ export default function AboutUsComponent() {
     {
       image: pic8,
       title: 'Slide 3',
-    }
+    },
+    {
+      image: pic7,
+      title: 'Slide 3',
+    },
+    
   ];
 
   // const settings = {
@@ -77,15 +83,23 @@ export default function AboutUsComponent() {
   const startSlider = () => {
     // Start the slider automatically
     // sliderRef.current.slickPlay();
-    slider1Ref.current.slickPlay();
-    slider2Ref.current.slickPlay();
+    if (slider1Ref.current) {
+      slider1Ref.current.slickPlay();
+    }
+    if (slider2Ref.current) {
+      slider2Ref.current.slickPlay();
+    }
   };
 
   const stopSlider = () => {
     // Stop the slider
     // sliderRef.current.slickPause();
-    slider1Ref.current.slickPause();
-    slider2Ref.current.slickPause();
+    if (slider1Ref.current) {
+      slider1Ref.current.slickPause();
+    }
+    if (slider2Ref.current) {
+      slider2Ref.current.slickPause();
+    }
   };
 
   const slider1Settings = {
@@ -107,6 +121,7 @@ export default function AboutUsComponent() {
 
   return (
     <>
+    <div className='position-relative '>
       <div className="container ">
         <Slider ref={slider1Ref} {...slider1Settings}>
           {slides.map((slide, index) => (
@@ -119,6 +134,8 @@ export default function AboutUsComponent() {
           ))}
         </Slider>
       </div>
+      <h3 className="position-absolute top-50 start-50 slider-text text-center m-0 text-white" style={{transform: "translate(-50%,-50%)"}}>Travel brings power and love back into your life .</h3>
+    </div>
 
       <div className="text-center pb-5 ps-4">
 
