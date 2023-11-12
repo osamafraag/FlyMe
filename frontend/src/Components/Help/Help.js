@@ -46,14 +46,14 @@ export default function HelpComponent() {
               </div>
             </div>
             
-            <div className="col me-5  mb-5 px-5 rounded-2 shadow bg-light pb-0" style={{marginTop:'80px'}}>
+            <div className="col me-5  mb-5 px-5 rounded-2 shadow bg-light pb-0 mt-5">
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }} className="text-start pb-0 pt-5 ">
-                <div style={{ display: 'flex', marginBottom: '10px' }}>
+                <div style={{ display: 'flex', marginBottom: '10px' }} className="form-group">
                   <div style={{ display: 'flex', flexDirection: 'column', marginRight: '10px' }}>
                     <label htmlFor="first-name">First Name</label>
                     <input
-                      className="border"
+                      className="border form-control"
                       type="text"
                       id="first-name"
                       name="first-name"
@@ -65,7 +65,7 @@ export default function HelpComponent() {
                   <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '20px' }}>
                     <label htmlFor="last-name">Last Name</label>
                     <input
-                      className="border"
+                      className="border form-control"
                       type="text"
                       id="last-name"
                       name="last-name"
@@ -74,11 +74,11 @@ export default function HelpComponent() {
                     />
                   </div>
                 </div>
-                <div style={{ display: 'flex', marginBottom: '10px' }} className="pt-3">
+                <div style={{ display: 'flex', marginBottom: '10px' }} className="pt-3 form-group">
                   <div style={{ display: 'flex', flexDirection: 'column', marginRight: '10px' }}>
                     <label htmlFor="email">Email</label>
                     <input
-                      className="border"
+                      className="border form-control"
                       type="email"
                       id="email"
                       name="email"
@@ -89,7 +89,7 @@ export default function HelpComponent() {
                   <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '20px' }}>
                     <label htmlFor="phone">Phone Number</label>
                     <input
-                      className="border"
+                      className="border form-control"
                       type="text"
                       id="phone"
                       name="phone"
@@ -98,10 +98,11 @@ export default function HelpComponent() {
                     />
                   </div>
                 </div>
-                <div style={{ display: 'flex', marginBottom: '10px' }} className="pt-3">
+                <div style={{ display: 'flex', marginBottom: '10px' }} className="pt-3 form-group">
                   <label htmlFor="message" className="pe-2">Message</label>
                   <textarea
-                    className="border"
+                    style={{width: '470px'}}
+                    className="border form-control"
                     id="message"
                     name="message"
                     rows="4"

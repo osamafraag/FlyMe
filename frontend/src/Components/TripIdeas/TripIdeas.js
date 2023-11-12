@@ -159,9 +159,9 @@ import 'slick-carousel/slick/slick-theme.css';
 import SlideContent from './Sliderr';
 import Card from './TrendingCard';
 import axios from 'axios';
-import pic1 from './../../Assets/Images/trippic0.jpeg';
+import pic1 from './../../Assets/Images/newpic10.jpeg';
 import pic2 from './../../Assets/Images/trippicI.jpeg';
-import pic3 from './../../Assets/Images/trippicII.jpeg';
+import pic3 from './../../Assets/Images/newpic6.jpeg';
 import pic4 from './../../Assets/Images/trippicIII.jpeg';
 import pic5 from './../../Assets/Images/trippic4i.jpeg';
 import pic6 from './../../Assets/Images/trippic5i.jpeg';
@@ -229,7 +229,9 @@ export default function TripIdeasComponent() {
   };
 
   const stopSlider = () => {
-    sliderRef.current.slickPause();
+    if (sliderRef.current) {
+      sliderRef.current.slickPause();
+    }
   };
 
   const sliderSettings = {
@@ -284,8 +286,8 @@ export default function TripIdeasComponent() {
           ))}
         </Slider>
       </div>
-      <NavLink className='position-absolute top-0 start-0 text-decoration-none btn btn-dark slider-btn border-0 text-start' to="/Book" style={{backgroundColor: "var(--main-color)", marginLeft: "8rem", marginTop: "1rem"}}>Book Now</NavLink>
-      <h3 className="position-absolute top-50 start-50 slider-text text-center m-0 text-white" style={{transform: "translate(-50%,-50%)"}}>Trip Ideas ..</h3>
+      <NavLink className='position-absolute top-0 start-0 text-decoration-none btn btn-dark slider-btn border-0 text-start' to="/Book" style={{backgroundColor: "var(--main-color)", marginLeft: "8rem", marginTop: "1.5rem"}}>Book Now</NavLink>
+      <h3 className="position-absolute top-50 start-50 slider-text text-center m-0 text-white" style={{transform: "translate(-50%,-50%)"}}>Travel Far Enough, You Meet Yourself</h3>
       </div>
 
       <div className="container py-5 m-5 ps-5">
