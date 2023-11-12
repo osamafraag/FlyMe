@@ -19,7 +19,7 @@ export default function Router() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/Book" element={<Book />} />
-        <Route path="/Booking" element={<Booking />} />
+        <Route path="/Booking/:flights" element={<Booking />} />
         <Route path="/TripIdeas/:id" element={<TripIdeas />} />
         <Route path="/SearchResult/:searchType" element={<Search />} />
         <Route path="/Profile" element={<Profile />} />

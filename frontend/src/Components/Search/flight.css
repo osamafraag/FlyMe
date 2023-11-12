@@ -42,8 +42,13 @@
   content: "";
   position: absolute;
   top: 0;
-  left: 77%;
+  left: 70%;
   width: 3px;
   height: 100%;
   border-left: 1px dashed #dee2e6;
+}
+
+.flight:hover {
+  border-color: #0000004f !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }

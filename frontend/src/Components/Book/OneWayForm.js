@@ -22,6 +22,7 @@ const OneWayForm = ({ handleFlightData }) => {
     e.preventDefault();
     const searchResults = [
       {
+        id: 1,
         name: "Flight 1",
         company: "A",
         capacity: 150,
@@ -39,6 +40,7 @@ const OneWayForm = ({ handleFlightData }) => {
         destinationCountry: "Egypt"
       },
       {
+        id: 2,
         name: "Flight 2",
         company: "B",
         capacity: 200,
@@ -73,7 +75,7 @@ const OneWayForm = ({ handleFlightData }) => {
       <div className='col from'>
         <FloatingLabel
           controlId="floatingInput"
-          label={<span><FontAwesomeIcon icon={faLocationDot} /> From</span>}
+          label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}} /> From</span>}
           className="mb-3"
         >
           <Form.Control 
@@ -89,7 +91,7 @@ const OneWayForm = ({ handleFlightData }) => {
       <div className='col to'>
         <FloatingLabel
           controlId="floatingInput"
-          label={<span><FontAwesomeIcon icon={faLocationDot} /> To</span>}
+          label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> To</span>}
           className="mb-3"
         >
           <Form.Control 
@@ -105,7 +107,7 @@ const OneWayForm = ({ handleFlightData }) => {
       <div className='col departure'>
         <FloatingLabel
           controlId="floatingInput"
-          label={<span><FontAwesomeIcon icon={faLocationDot} /> Departure</span>}
+          label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}} /> Departure</span>}
           className="mb-3"
         >
           <Form.Control 
