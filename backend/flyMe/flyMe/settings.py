@@ -41,9 +41,9 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'countries.apps.CountriesConfig',
     'flights.apps.FlightsConfig',
-    'django_countries',
     'rest_framework',
-    'cities_light'
+    'cities_light',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -175,3 +175,8 @@ MESSAGE_TAGS = {
 # CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
 # CELERY_TIMEZONE = 'UTC'
 # CELERY_TASK_ALWAYS_EAGER = True
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.TokenAuthentication',
+#     ],
+# }
