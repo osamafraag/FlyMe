@@ -70,16 +70,13 @@ export default function HelpComponent() {
 
       if (validateForm()) {
         const formData = {
-      
-          title: "",
+
           description: message,
-          answer: "",
           status: "IN_PROGRESS",
           first_name: firstName,
           last_name: lastName,
           phone_number: phoneNumber,
-          email: email,
-          user_id: null
+          email: email
         }
 
     // Make a POST request to the API endpoint
@@ -90,25 +87,27 @@ export default function HelpComponent() {
         },
         body: JSON.stringify(formData)
     })
-        .then(response => response.json())
-        .then(data => {
-          // Check if the API request was successful
-          if (data.success) {
-            setSuccessMessage('Data saved successfully!');
-            // Reset form fields
-            setFirstName('');
-            setLastName('');
-            setEmail('');
-            setPhoneNumber('');
-            setMessage('');
+        .then(response => {
+          if (response.ok) {
+            return response.json();
           } else {
-            setSuccessMessage('Failed to save data.');
+            throw new Error('Failed to save data.');
           }
-      })
-      .catch(error => {
-        console.error(error);
-        setSuccessMessage('An error occurred while saving the data.');
-      });
+        })
+        .then(data => {
+          // Process the response data
+          setSuccessMessage('Data saved successfully!');
+          // Reset form fields
+          setFirstName('');
+          setLastName('');
+          setEmail('');
+          setPhoneNumber('');
+          setMessage('');
+        })
+        .catch(error => {
+          console.error(error);
+          setSuccessMessage('An error occurred while saving the data.');
+        });
 
         
       };
