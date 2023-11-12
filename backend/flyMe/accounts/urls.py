@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import views as auth_views
 from accounts.views import Register, login_user, logout_user, Profile
 
+
 urlpatterns = [
 
     path('password_reset/',
@@ -34,4 +35,5 @@ urlpatterns = [
 
 #     path('activate/<str:uidb64>/<str:token>/', activate_user, name='activate'),
      path('api/', include('accounts.api.urls'))
-]
+] 
+
