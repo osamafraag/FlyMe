@@ -42,6 +42,7 @@ const MultiCityForm = ({ handleFlightData }) => {
     e.preventDefault();
     const flights1 = [
       {
+        id: 1,
         name: "Flight 1",
         company: "A",
         capacity: 150,
@@ -59,6 +60,7 @@ const MultiCityForm = ({ handleFlightData }) => {
         destinationCountry: "Egypt"
       },
       {
+        id: 2,
         name: "Flight 2",
         company: "B",
         capacity: 200,
@@ -79,6 +81,7 @@ const MultiCityForm = ({ handleFlightData }) => {
 
     const flights2 = [
       {
+        id: 3,
         name: "Flight 1",
         company: "A",
         capacity: 150,
@@ -96,6 +99,7 @@ const MultiCityForm = ({ handleFlightData }) => {
         destinationCountry: "Egypt"
       },
       {
+        id: 4,
         name: "Flight 2",
         company: "B",
         capacity: 200,
@@ -113,6 +117,7 @@ const MultiCityForm = ({ handleFlightData }) => {
         destinationCountry: "Palastine"
       },
       {
+        id: 5,
         name: "Flight 3",
         company: "B",
         capacity: 200,
@@ -133,6 +138,7 @@ const MultiCityForm = ({ handleFlightData }) => {
 
     const flights3 = [
       {
+        id: 6,
         name: "Flight 1",
         company: "A",
         capacity: 150,
@@ -150,6 +156,7 @@ const MultiCityForm = ({ handleFlightData }) => {
         destinationCountry: "Egypt"
       },
       {
+        id: 7,
         name: "Flight 2",
         company: "B",
         capacity: 200,
@@ -167,6 +174,7 @@ const MultiCityForm = ({ handleFlightData }) => {
         destinationCountry: "Palastine"
       },
       {
+        id: 8,
         name: "Flight 3",
         company: "B",
         capacity: 200,
@@ -184,6 +192,7 @@ const MultiCityForm = ({ handleFlightData }) => {
         destinationCountry: "Palastine"
       },
       {
+        id: 9,
         name: "Flight 4",
         company: "B",
         capacity: 200,
@@ -215,7 +224,7 @@ const MultiCityForm = ({ handleFlightData }) => {
         <div className='col from' key={index}>
           <FloatingLabel
             controlId={`floatingInputFrom${index}`}
-            label={<span><FontAwesomeIcon icon={faLocationDot} /> From</span>}
+            label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> From</span>}
             className="mb-3"
           >
             <Form.Control
@@ -231,7 +240,7 @@ const MultiCityForm = ({ handleFlightData }) => {
         <div className='col to' key={index}>
           <FloatingLabel
             controlId={`floatingInputTo${index}`}
-            label={<span><FontAwesomeIcon icon={faLocationDot} /> To</span>}
+            label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> To</span>}
             className="mb-3"
           >
             <Form.Control
@@ -247,7 +256,7 @@ const MultiCityForm = ({ handleFlightData }) => {
         <div className='col departure' key={index}>
           <FloatingLabel
             controlId={`floatingInputDeparture${index}`}
-            label={<span><FontAwesomeIcon icon={faLocationDot} /> Departure</span>}
+            label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> Departure</span>}
             className="mb-3"
           >
             <Form.Control

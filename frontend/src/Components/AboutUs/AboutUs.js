@@ -139,7 +139,7 @@ export default function AboutUsComponent() {
 
       <div className="text-center pb-5 ps-4">
 
-        <div className="container py-5 m-5">
+        <div className="container py-5 my-5">
           <h2 className="text-start">Why Fly Me ?</h2>
           <p className=" py-3  text"> We’re on a mission to help people discover the real value of travel — to inspire, to give more reasons, to make it easy — for you to go. Our company was founded back in 2005, and since then, we’ve imagined and created some of the most well-loved products for travelers all around the world.</p>
           <p className=" text">Today, Fly Me is used by thousands of people every month — people who travel for adventure, for work, for family, and for many other reasons. That’s why we work tirelessly to make your experience of planning and booking flights as seamless as possible.</p>
@@ -149,13 +149,13 @@ export default function AboutUsComponent() {
 
         </div>
 
-        <div className="container py-5 m-5">
+        <div className="container py-5 my-5">
           <div className="row">
-            <div className="col">
+            <div className="col me-5">
               <h2 className="text-start">Our Mission</h2>
               <p className=" py-5 text">We firmly believe that by helping people travel more, explore the world and experience diversity, we create a meaningful socio-economic impact.</p>
               <div className="stylle">
-                <p className="quote text-start px-5 text-light">"</p>
+                <p className="quote text-start px-5 pt-4 text-dark">"</p>
                 <p  className=" quote-text px-5">Travel is fatal to prejudice, bigotry, and narrow-mindedness, and many of our people need it sorely on these accounts. Broad, wholesome, charitable views of men and things cannot be acquired by vegetating in one little corner of the earth all one’s lifetime.</p>
                 <p className="text-end pt-3 px-5">Mark Twain, 1869</p>
               </div>
@@ -196,7 +196,7 @@ export default function AboutUsComponent() {
           </Slider>
         </div>
 
-        <div className="container py-5 m-5">
+        <div className="container py-5 my-5">
           <h2 className="text-start">Terms and Conditions</h2>
           <p className=" py-3  text"> When searching for airfares , discount and savings claims are based on multiple factors, including searching over 500 airlines to find our available fare . coupon codes are valid for savings for qualified bookings off our service fees . </p>
           <div className="d-flex">

@@ -1,0 +1,26 @@
+:root {
+  --main-color: #426a9d;
+  --secondary-color: #8db3da;
+  --alternative-white-color: #f6f6f6; 
+  --gray-color: #dfdfdf;
+  --text-color: #767676;
+}
+
+body {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+.language .nav-link {
+  padding: 0;
+  color: #212529;
+}
+
+::selection {
+  background: var(--main-color);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--main-color);
+  color: white;
+}

@@ -8,7 +8,7 @@ export default function PopularDestination({popularDestination}) {
     const selectedDestination = popularDestination.find(destination => destination.id === id);
     if (selectedDestination) {
       const { name } = selectedDestination;
-      navigate(`/SearchResult/oneWay?to=${name}`);
+      navigate(`/Book?to=${name}`);
     }
   }
   return (
