@@ -5,6 +5,7 @@ from datetime import datetime
 from geopy.distance import geodesic
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from accounts.models import Notification
 
 
 class Aircraft(models.Model):
@@ -49,7 +50,7 @@ class Flight(models.Model):
     status = models.CharField(max_length=1, choices=statuses, default='M')
 
     def __str__(self) :
-        return f"From {self.startAirport} To {self.endAirport} "
+        return f"From {self.startAirport} To {self.endAirport} At {self.departureTime}"
     
     @classmethod
     def all(cls) :
@@ -64,17 +65,28 @@ class Flight(models.Model):
         startCoords = (self.startAirport.city.latitude, self.startAirport.city.longitude)
         endCoords = (self.endAirport.city.latitude, self.endAirport.city.longitude)
         self.distance = geodesic(startCoords, endCoords).kilometers
+        if self.distance > self.aircraft.maxDistance:
+            raise ValidationError({'aircraft':'aircraft max distance is less than flight distance'})
         if self.departureTime.timestamp() < datetime.now().timestamp() :
             raise ValidationError({'departureTime':'departureTime can`t be before now'})
         if self.arrivalTime.timestamp() < self.departureTime.timestamp() :
             raise ValidationError({'arrivalTime':'arrivalTime can`t be before departureTime'})
+        
     
     def save(self,update=False, *args, **kwargs):
-        if not update:
+        if update:
+            if self.status == 'C':
+                books = BookHistory.objects.filter(flight=self.id)
+            for book in books.all():
+                notify = Notification()
+                notify.user = book.passenger
+                notify.title = 'Flight Canceled'
+                notify.description = f'sorry but your flight from {self.startAirport.city} to {self.endAirport.city} at {self.departureTime} is canceld'
+                notify.save()
+        else:    
             self.full_clean()
         super().save(*args, **kwargs)
         
-
 class Class(models.Model):
     seatCategories = [
         ('E', 'Economy Class Seats'),
@@ -114,11 +126,21 @@ class Class(models.Model):
     @classmethod
     def get(cls,id) :
         return cls.objects.get(id=id)
+
 class FlightReview(models.Model):
     passenger = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE, related_name='reviews')
     comment = models.TextField()
-    rate = models.PositiveBigIntegerField() 
+    rate = models.PositiveBigIntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)]) 
+    
+    def clean(self):
+        if self.flight.arrivalTime.timestamp() > datetime.now().timestamp():
+            raise ValidationError({'flight':'can`t rate or comment on comming flight'})
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
 class BookHistory(models.Model):
     paymentMethods=[
         ('W',"Wallet"),
@@ -140,7 +162,6 @@ class BookHistory(models.Model):
     kids = models.PositiveBigIntegerField(default=0)
     infants = models.PositiveBigIntegerField(default=0)
 
-
     class Meta:
         unique_together = ('flight', 'passenger',)
 
@@ -159,6 +180,10 @@ class BookHistory(models.Model):
         flight = Flight.get(self.flight.id)
         if flight.availableSeats < self.adults + self.kids + self.infants :
             raise ValidationError({'flight':'No enough Seat Available For This Flight!'})
+        if flight.status == 'C' :
+            raise ValidationError({'flight':'can not book canceld flights'})
+        if flight.departureTime.timestamp() < datetime.now().timestamp() :
+            raise ValidationError({'flight':'can not book passed flights'})
         self.totalCost = (self.flight.baseCost + self.flight.baseCost*self.category.additionalCostPercentage/100)*(self.adults + 0.7*self.kids + 0.5*self.infants)
         self.cashBack = self.totalCost*0.03
         if self.paymentMethod == 'W':
@@ -180,6 +205,7 @@ class BookHistory(models.Model):
         flight = Flight.get(self.flight.id)
         flight.endAirport.city.country.popularity = flight.endAirport.city.country.popularity + 1
         flight.endAirport.city.popularity = flight.endAirport.city.popularity + 1
-        flight.availableSeats = flight.availableSeats - 1
+        flight.availableSeats = flight.availableSeats - self.adults + self.kids + self.infants
         flight.save(True)
         flight.endAirport.city.country.save()
+        flight.endAirport.city.save()

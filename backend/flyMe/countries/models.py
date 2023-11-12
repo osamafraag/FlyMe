@@ -9,6 +9,7 @@ class Event(models.Model):
     endDate = models.DateField(null=True, blank=True)
     sale_amount = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True,related_name='events')
+    isFeatured = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nameEvent
@@ -28,19 +29,6 @@ class TrendingPlace(models.Model):
     def __str__(self) :
         return self.name
     
-class MultiImagesTrendingPlace(models.Model):
-    photo = models.ImageField(upload_to='trending_places/photos/')
-    trendingPlace = models.ForeignKey(TrendingPlace,on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.photo} - Name Of TrendingPlace : {self.trendingPlace.name}'
-    
-class MultiImagesCity(models.Model):
-    photo = models.ImageField(upload_to='cities/photos/')
-    city = models.ForeignKey('cities_light.City',on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.photo} - Name Of TrendingPlace : {self.city.name}'
 
 class MultiImagesCountry(models.Model):
     photo = models.ImageField(upload_to='countries/photos/')
@@ -48,5 +36,19 @@ class MultiImagesCountry(models.Model):
 
     def __str__(self):
         return f'{self.photo} - Name Of Countries : {self.country}'
+    
+class MultiImagesCity(models.Model):
+    photo = models.ImageField(upload_to='cities/photos/')
+    city = models.ForeignKey('cities_light.City',on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.photo} - Name Of TrendingPlace : {self.city.name}'
+    
+class MultiImagesTrendingPlace(models.Model):
+    photo = models.ImageField(upload_to='trending_places/photos/')
+    trendingPlace = models.ForeignKey(TrendingPlace,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.photo} - Name Of TrendingPlace : {self.trendingPlace.name}'
     
 

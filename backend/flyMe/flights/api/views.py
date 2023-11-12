@@ -94,7 +94,50 @@ def flightList(request):
       
         serializer = FlightSerializer(allFlights, many=True)
         return Response(serializer.data)
-    
+
+@api_view(['GET'])
+def allFlights(request):
+    flights = Flight.objects.all()
+    cancledFlights = [] 
+    commingFlights = []
+    passedFlights = []
+    liveFlights = []
+    for flight in flights:
+        if flight.status == 'C':
+            cancledFlights.append(flight)
+        else:
+            if flight.departureTime.timestamp() > datetime.now().timestamp():
+                commingFlights.append(flight)
+            elif flight.arrivalTime.timestamp() < datetime.now().timestamp():
+                passedFlights.append(flight)
+            else:
+                liveFlights.append(flight)
+    commingSerializer = FlightSerializer(commingFlights, many=True).data
+    passedSerializer = FlightSerializer(passedFlights, many=True).data
+    liveSerializer = FlightSerializer(liveFlights, many=True).data
+    cancledSerializer = FlightSerializer(cancledFlights, many=True).data
+    return Response({'passed':passedSerializer,'live':liveSerializer,'comming':commingSerializer,'cancled':cancledSerializer})
+
+@api_view(['GET'])
+def userFlights(request,id):
+    books = BookHistory.objects.filter(passenger=id)
+    commingFlights = []
+    liveFlights = []
+    passedFlights = []
+    for book in books.all():
+        print(book.passenger)
+        if book.flight.departureTime.timestamp() > datetime.now().timestamp():
+            commingFlights.append(book.flight)
+        if book.flight.arrivalTime.timestamp() < datetime.now().timestamp():
+            passedFlights.append(book.flight)
+        else:
+            liveFlights.append(book.flight)
+    passedSerializer = FlightSerializer(passedFlights, many=True).data
+    liveSerializer = FlightSerializer(liveFlights, many=True).data
+    commingSerializer = FlightSerializer(commingFlights, many=True).data
+    return Response({'passed':passedSerializer,'live':liveSerializer,'comming':commingSerializer}) 
+
+
 @api_view(['GET', 'DELETE', 'PUT'])
 def flightDetail(request, id):
     flight = Flight.get(id)
@@ -159,6 +202,18 @@ def bookHistoryList(request):
         booksHistory = BookHistory.all()
         serializer = BookHistorySerializer(booksHistory, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+def classBooks(request,id):
+    return Response(BookHistorySerializer(BookHistory.objects.filter(category=id), many=True).data)
+
+@api_view(['GET'])
+def flightBooks(request,id):
+    return Response(BookHistorySerializer(BookHistory.objects.filter(flight=id), many=True).data)
+
+@api_view(['GET'])
+def userBooks(request,id):
+    return Response(BookHistorySerializer(BookHistory.objects.filter(passenger=id), many=True).data)
 
 @api_view(['GET', 'DELETE', 'PUT'])
 def bookHistoryDetail(request, id):
