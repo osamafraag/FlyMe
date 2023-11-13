@@ -5,9 +5,9 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
-import { faPlaneDeparture, faGauge } from '@fortawesome/free-solid-svg-icons'
+import { faPlaneDeparture } from '@fortawesome/free-solid-svg-icons'
 
-export default function NavBar({isAdmin}) {
+export default function NavBar() {
   return (
     <Navbar collapseOnSelect expand="lg" className="shadow-sm bg-white position-sticky top-0 start-0 py-3" style={{zIndex: "1000"}}>
       <Container className=" px-5">

@@ -8,6 +8,7 @@ import "./../Home/Landing.css"
 
 const MultiCityForm = ({ handleFlightData, cities }) => {
   const [toErrors, setToErrors] = useState([false, false, false]);
+  const [fromErrors, setFromErrors] = useState([false, false, false]);
   const [flights, setFlights] = useState([
     { departure: getTodayDate(), destinationFrom: '', destinationTo: ''},
     { departure: getTodayDate(), destinationFrom: '', destinationTo: ''},
@@ -28,22 +29,56 @@ const MultiCityForm = ({ handleFlightData, cities }) => {
     setFlights(updatedFlights);
   };
 
+  const handleFrominput = (e, index) => {
+    handleInputChange(index, 'destinationFrom', e.target.value);
+      setToErrors((prevToErrors) => {
+        const newToErrors = [...prevToErrors];
+        if  (newToErrors[index] != "required")
+        newToErrors[index] = false; 
+        return newToErrors;
+      });
+      setFromErrors((prevFromErrors) => {
+        const newFromErrors = [...prevFromErrors];
+        newFromErrors[index] = false; 
+        return newFromErrors;
+      });
+  }
+
+  const handleToinput = (e, index) => {
+    handleInputChange(index, 'destinationTo', e.target.value);
+      setToErrors((prevToErrors) => {
+        const newToErrors = [...prevToErrors];
+        newToErrors[index] = false; 
+        return newToErrors;
+      });
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const newToErrors = [false, false, false];
+    const newFromErrors = [false, false, false];
 
     for (let i = 0; i < flights.length; i++) {
       const currentFlight = flights[i];
       const fromCity = currentFlight.destinationFrom;
       const toCity = currentFlight.destinationTo;
 
-      if (fromCity === toCity) {
-        newToErrors[i] = true;
+      if (fromCity === toCity & fromCity != "" & toCity != "") {
+        newToErrors[i] = "Equel";
+      } else if (fromCity == "" & toCity == "") {
+        newToErrors[i] = "Required";
+        newFromErrors[i] = "Required";
+      } else if(fromCity == "") {
+        newFromErrors[i] = "Required";
+      } else if(toCity == "") {
+        newToErrors[i] = "Required";
       }
     }
   
     setToErrors(newToErrors);
+    setFromErrors(newFromErrors);
     if (newToErrors.some((error) => error)) return;
+    if (newFromErrors.some((error) => error)) return;
 
     const flights1 = [
       {
@@ -229,17 +264,10 @@ const MultiCityForm = ({ handleFlightData, cities }) => {
         <div className='col from' key={index}>
           <div class="form-floating mb-3">
             <input 
-              className="form-control"
+              className={`form-control ${fromErrors[index] ? "Error" : "" }`}
               type="text"
               value={flight.destinationFrom}
-              onChange={(e) => {
-                handleInputChange(index, 'destinationFrom', e.target.value);
-                setToErrors((prevToErrors) => {
-                  const newToErrors = [...prevToErrors];
-                  newToErrors[index] = false; 
-                  return newToErrors;
-                });
-              }}
+              onChange={(e) => handleFrominput(e, index)}
               list={`citiesFrom${index}`}
               id={`from${index}`}
               placeholder='From' 
@@ -257,17 +285,10 @@ const MultiCityForm = ({ handleFlightData, cities }) => {
         <div className='col to' key={index}>
           <div className="form-floating mb-3 ">
             <input
-              className={`form-control ${toErrors[index] ? "toError" : "" }`}
+              className={`form-control ${toErrors[index] ? "Error" : "" }`}
               type="text"
               value={flight.destinationTo}
-              onChange={(e) => {
-                  handleInputChange(index, 'destinationTo', e.target.value);
-                  setToErrors((prevToErrors) => {
-                    const newToErrors = [...prevToErrors];
-                    newToErrors[index] = false; 
-                    return newToErrors;
-                  });
-                }}
+              onChange={(e) => handleToinput(e, index)}
               list={`citiesTo${index}`}
               id={`to${index}`}
               placeholder='To'

@@ -69,6 +69,6 @@
   border-bottom-left-radius: 0;
 }
 
-input.toError {
+input.Error {
   border-color: red;
 }

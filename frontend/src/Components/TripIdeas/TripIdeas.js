@@ -15,6 +15,7 @@ import pic6 from './../../Assets/Images/trippic5i.jpeg';
 import pic7 from './../../Assets/Images/trippic6i.jpeg';
 import pic8 from './../../Assets/Images/trippic7i.jpeg';
 import { NavLink } from "react-router-dom";
+import { Trending } from "./../../APIs/TrendingPlaces";
 
 import './TripIdeas.css';
 
@@ -97,26 +98,27 @@ export default function TripIdeasComponent() {
   const [trendingPlaces, setTrendingPlaces] = useState([]);
   const API_BASE_URL = 'https://osamafraag.pythonanywhere.com';
 
-  const { cityId } = useParams();
-
+  const  params = useParams();
   useEffect(() => {
-    setSelectedCityId(cityId);
-  }, [cityId]);
+    Trending(params.id)
+    .then((result) => {
+      console.log(result.data)
+      setTrendingPlaces(result.data)
+    })
+    .catch((error) => console.log(error));
+    // const fetchTrendingPlaces = async () => {
+    //   try {
+    //     const response = await axios.get(`${API_BASE_URL}/countries/api/cities/${params.id}/trendingPlaces/`);
+    //     setTrendingPlaces(response.data);
+    //   } catch (error) {
+    //     console.error('Error fetching trending visits:', error);
+    //   }
+    // };
 
-  useEffect(() => {
-    const fetchTrendingPlaces = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/countries/api/cities/${selectedCityId}/trendingPlaces/`);
-        setTrendingPlaces(response.data);
-      } catch (error) {
-        console.error('Error fetching trending visits:', error);
-      }
-    };
-
-    if (selectedCityId) {
-      fetchTrendingPlaces();
-    }
-  }, [selectedCityId]);
+    // if (selectedCityId) {
+    //   fetchTrendingPlaces();
+    // }
+  }, []);
 
 
   const handleDetailsClick = (placeId) => {
