@@ -35,9 +35,8 @@ class Aircraft(models.Model):
     
 class Flight(models.Model):
     statuses = [
-        ('p', 'passed'),
-        ('M', 'comming'),
-        ('C', 'canceled')
+        ('A', 'Active'),
+        ('C', 'cancelled')
     ]
     aircraft = models.ForeignKey(Aircraft,default=1 ,on_delete=models.CASCADE, related_name='flights')
     departureTime = models.DateTimeField(default=datetime.now)
@@ -83,6 +82,11 @@ class Flight(models.Model):
                 notify.title = 'Flight Canceled'
                 notify.description = f'sorry but your flight from {self.startAirport.city} to {self.endAirport.city} at {self.departureTime} is canceld'
                 notify.save()
+                book.passenger.available_balance += book.totalCost
+                book.passenger.pendding_balance -= book.cashBack
+                book.passenger.save()
+                book.status = 'C'
+                book.save(True)
         else:    
             self.full_clean()
         super().save(*args, **kwargs)
@@ -147,14 +151,14 @@ class BookHistory(models.Model):
         ('C',"Card")
     ]
     statuses=[
-        ('D',"Done"),
-        ('S',"Still")
+        ('C',"Cancelled"),
+        ('A',"Active"),
     ]
     passenger = models.ForeignKey(MyUser,default=None,on_delete=models.CASCADE, related_name='bookHistory')
     flight = models.ForeignKey(Flight,null=True,on_delete=models.CASCADE, related_name='flightBooks')
     category = models.ForeignKey(Class,default=1,on_delete=models.CASCADE, related_name='bookHistory')
     bookedAt = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=1, choices=statuses, default='S')
+    status = models.CharField(max_length=1, choices=statuses, default='A')
     totalCost = models.PositiveIntegerField(default=0,blank=True)
     cashBack = models.PositiveIntegerField(default=0,blank=True)
     paymentMethod = models.CharField(max_length=1, choices=paymentMethods, default='W')
@@ -199,13 +203,27 @@ class BookHistory(models.Model):
             transaction.type = "CPURCHASE"
             transaction.save()
 
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-        flight = Flight.get(self.flight.id)
-        flight.endAirport.city.country.popularity = flight.endAirport.city.country.popularity + 1
-        flight.endAirport.city.popularity = flight.endAirport.city.popularity + 1
-        flight.availableSeats = flight.availableSeats - self.adults + self.kids + self.infants
-        flight.save(True)
-        flight.endAirport.city.country.save()
-        flight.endAirport.city.save()
+    def save(self,update=False ,*args, **kwargs):
+        if update:
+            super().save(*args, **kwargs)
+        else:
+            self.full_clean()
+            super().save(*args, **kwargs)
+            flight = Flight.get(self.flight.id)
+            flight.endAirport.city.country.popularity = flight.endAirport.city.country.popularity + 1
+            flight.endAirport.city.popularity = flight.endAirport.city.popularity + 1
+            flight.availableSeats = flight.availableSeats - (self.adults + self.kids + self.infants)
+            flight.save(True)
+            flight.endAirport.city.country.save()
+            flight.endAirport.city.save()
+
+
+# import schedule
+
+# def job():
+#     print("Hello, world!")
+
+# schedule.every().day.at("10:00").do(job)
+
+# while True:
+#     schedule.run_pending()
