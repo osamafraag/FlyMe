@@ -7,7 +7,7 @@ import { faPlaneUp } from '@fortawesome/free-solid-svg-icons'
 const Flight = ({ flight }) => {
   const formatTime = (dateTimeString) => {
     const dateTime = new Date(dateTimeString);
-    return dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return dateTime.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hour12: false });
   };
 
   const calculateTimeDifference = (departureTime, arrivalTime) => {
@@ -36,10 +36,10 @@ const Flight = ({ flight }) => {
         <hr style={{border: "solid 1px #6c757d", width:"47%"}}/>
       </div>
 
-      <div className='d-flex justify-content-between align-items-center px-3'>
-        <p className='countries fw-bolder text-secondary mb-0'>{flight.sourceCountry.substring(0, 3)}</p>
-        <p className='text-secondary mb-0' style={{fontSize: "12px"}}>Direct</p>
-        <p className='countries fw-bolder text-secondary mb-0'>{flight.destinationCountry.substring(0, 3)}</p>
+      <div className='d-flex justify-content-between align-items-center'>
+        <p className='countries fw-bolder text-secondary mb-0 me-4'>{flight.from}</p>
+        <p className='text-secondary mb-0 mx-5' style={{fontSize: "12px"}}>Direct</p>
+        <p className='countries fw-bolder text-secondary mb-0'>{flight.to}</p>
       </div>
     </>
   );

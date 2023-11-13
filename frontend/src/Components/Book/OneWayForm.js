@@ -4,14 +4,19 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
+import { SearchFlight } from "./../../APIs/SearchFlights"
 
 const OneWayForm = ({ handleFlightData, cities }) => {
   const [departure, setDeparture] = useState(getTodayDate());
+  const [departureYear, setDepartureYear] = useState();
+  const [departureMonth, setDepartureMonth] = useState();
+  const [departureDay, setDepartureDay] = useState();
   const [destinationFrom, setDestinationFrom] = useState('');
   const [destinationTo, setDestinationTo] = useState('');
+  const [directFlightsOnly, setDirectFlightsOnly] = useState(false);
   const [ errorFrom , setErrorFrom ] = useState('')
   const [ errorTo , setErrorTo ] = useState('')
-
+ 
   function getTodayDate() {
     const today = new Date();
     const year = today.getFullYear();
@@ -31,6 +36,21 @@ const OneWayForm = ({ handleFlightData, cities }) => {
     setErrorTo("")
   }
 
+  const handleDeparture = (e) => {
+    const selectedDate = e.target.value;
+
+    const [year, month, day] = selectedDate.split('-');
+
+    setDeparture(selectedDate);
+    setDepartureYear(Number(year));
+    setDepartureMonth(Number(month));
+    setDepartureDay(Number(day));
+  }
+
+  const handleCheckboxChange = (e) => {
+    setDirectFlightsOnly(e.target.checked);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (destinationFrom === destinationTo & destinationTo != "" & destinationFrom != "") {
@@ -48,45 +68,22 @@ const OneWayForm = ({ handleFlightData, cities }) => {
       return;
     }
     
-    const searchResults = [
-      {
-        id: 1,
-        name: "Flight 1",
-        company: "A",
-        capacity: 150,
-        maxLoad: 12,
-        baggageWeight: 25,
-        maxDistance: 600,
-        departureTime: "2023-05-04 08:12:00",
-        arrivalTime: "2023-05-04 10:12:00",
-        availableSeats: 120,
-        baseCost: 1200,
-        baggageWeight: 20,
-        totalDistance: 550,
-        type: "D",
-        sourceCountry: "Palastine",
-        destinationCountry: "Egypt"
-      },
-      {
-        id: 2,
-        name: "Flight 2",
-        company: "B",
-        capacity: 200,
-        maxLoad: 10,
-        baggageWeight: 20,
-        maxDistance: 800,
-        departureTime: "2023-05-04 08:12:00",
-        arrivalTime: "2023-05-04 08:12:00",
-        availableSeats: 180,
-        baseCost: 1000,
-        baggageWeight: 15,
-        totalDistance: 700,
-        type: "D",
-        sourceCountry: "Egypt",
-        destinationCountry: "Palastine"
-      },
-    ]
-    handleFlightData(searchResults);
+    SearchFlight(
+      destinationFrom,
+      destinationTo,
+      departureYear,
+      departureMonth,
+      departureDay,
+      directFlightsOnly
+   )
+   .then((searchResults) => {
+      console.log(searchResults.data)
+      handleFlightData(searchResults.data);
+   })
+   .catch((error) => {
+      handleFlightData([]);
+      console.error("Error fetching search results:", error);
+   });
   };
 
   useEffect(() => {
@@ -148,7 +145,7 @@ const OneWayForm = ({ handleFlightData, cities }) => {
             type="date"
             className="form-control"
             value={departure}
-            onChange={(e) => setDeparture(e.target.value)}
+            onChange={(e) => handleDeparture(e)}
             min={getTodayDate()} 
             id="departure"
             placeholder='Departure' 
@@ -159,10 +156,12 @@ const OneWayForm = ({ handleFlightData, cities }) => {
 
       {/* Direct Or Not */}
       <div className='col-6'>
-        <Form.Check 
+      <Form.Check
           type='checkbox'
           id='default-checkbox'
           label='Direct Flights Only'
+          checked={directFlightsOnly}
+          onChange={handleCheckboxChange}
         />
       </div>
 

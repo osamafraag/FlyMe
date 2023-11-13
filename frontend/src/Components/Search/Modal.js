@@ -31,14 +31,14 @@ const CustomModal = ({ show, handleClose, handleBooking, title, flights }) => {
             </div>
             <Flight flight={flight} />
             <div className='other-info mt-5 row row-cols-3 justify-content-center align-item-center'>
-              <p className='text-center mb-4'><FontAwesomeIcon icon={faWeightScale} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Capacity: </span>{flight.capacity}</p>
+              {/* <p className='text-center mb-4'><FontAwesomeIcon icon={faWeightScale} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Capacity: </span>{flight.capacity}</p>
               <p className='text-center mb-4'><FontAwesomeIcon icon={faTruckRampBox} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Max Load: </span>{flight.maxLoad}</p>
               <p className='text-center mb-4'><FontAwesomeIcon icon={faCartFlatbedSuitcase} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Baggage Weight: </span>{flight.baggageWeight}</p>
-              <p className='text-center mb-4'><FontAwesomeIcon icon={faRoute} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Max Distance: </span>{flight.maxDistance}</p>
+              <p className='text-center mb-4'><FontAwesomeIcon icon={faRoute} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Max Distance: </span>{flight.maxDistance}</p> */}
               <p className='text-center mb-4'><FontAwesomeIcon icon={faChair} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Available Seats: </span>{flight.availableSeats}</p>
               <p className='text-center mb-4'><FontAwesomeIcon icon={faMoneyCheckDollar} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Base Cost: </span>{flight.baseCost}</p>
-              <p className='text-center mb-4'><FontAwesomeIcon icon={faRoad} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Total Distance: </span>{flight.totalDistance}</p>
-              <p className='text-center mb-4'><FontAwesomeIcon icon={faLayerGroup} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Type: </span>{flight.type}</p>
+              {/* <p className='text-center mb-4'><FontAwesomeIcon icon={faRoad} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Total Distance: </span>{flight.totalDistance}</p>
+              <p className='text-center mb-4'><FontAwesomeIcon icon={faLayerGroup} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Type: </span>{flight.type}</p> */}
             </div>
           </div>
         ))}

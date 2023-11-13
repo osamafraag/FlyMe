@@ -14,7 +14,6 @@ const FlightSearchForm = () => {
   useEffect(() => {
     Cities()
       .then((result) => {
-        console.log(result.data)
         setCities(result.data)
       })
       .catch((error) => console.log(error));
