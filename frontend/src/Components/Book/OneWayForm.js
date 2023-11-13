@@ -9,7 +9,8 @@ const OneWayForm = ({ handleFlightData, cities }) => {
   const [departure, setDeparture] = useState(getTodayDate());
   const [destinationFrom, setDestinationFrom] = useState('');
   const [destinationTo, setDestinationTo] = useState('');
-  const [ error , setError ] = useState('')
+  const [ errorFrom , setErrorFrom ] = useState('')
+  const [ errorTo , setErrorTo ] = useState('')
 
   function getTodayDate() {
     const today = new Date();
@@ -19,12 +20,34 @@ const OneWayForm = ({ handleFlightData, cities }) => {
     return `${year}-${month}-${day}`;
   }
 
+  const handleFrominput = (e) => {
+    setDestinationFrom(e.target.value); 
+    if (errorTo != "Required") setErrorTo("")
+    setErrorFrom("")
+  }
+
+  const handleToinput = (e) => {
+    setDestinationTo(e.target.value); 
+    setErrorTo("")
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (destinationFrom === destinationTo) {
-      setError("You Can't Select Destination To To Be The Same Of From")
+    if (destinationFrom === destinationTo & destinationTo != "" & destinationFrom != "") {
+      setErrorTo("You Can't Select Destination To To Be The Same Of From")
+      return;
+    } else if (destinationFrom == "" & destinationTo == "") {
+      setErrorFrom("Required")
+      setErrorTo("Required")
+      return;
+    } else if (destinationFrom == "") {
+      setErrorFrom("Required")
+      return;
+    } else if (destinationTo == "") {
+      setErrorTo("Required")
       return;
     }
+    
     const searchResults = [
       {
         id: 1,
@@ -80,11 +103,11 @@ const OneWayForm = ({ handleFlightData, cities }) => {
       <div className='col'>
         <div class="form-floating mb-3">
           <input 
-            className="form-control"
+            className={`form-control ${errorFrom != '' ? "Error" : "" }`}
             type="text"
             id='from'
             value={destinationFrom}
-            onChange={(e) => {setDestinationFrom(e.target.value); setError("")}}
+            onChange={(e) => handleFrominput(e)}
             list="citiesFrom"
             placeholder='From' 
           />
@@ -101,10 +124,10 @@ const OneWayForm = ({ handleFlightData, cities }) => {
       <div className='col'>
         <div class="form-floating mb-3 ">
           <input 
-            className={`form-control ${error != '' ? "toError" : "" }`} 
+            className={`form-control ${errorTo != '' ? "Error" : "" }`} 
             type="text"
             value={destinationTo}
-            onChange={(e) => {setDestinationTo(e.target.value); setError("")}}
+            onChange={(e) => handleToinput(e)}
             list="citiesTo"
             id="to" 
             placeholder='To'
