@@ -10,7 +10,7 @@ import { faPlaneDeparture, faGauge } from '@fortawesome/free-solid-svg-icons'
 export default function NavBar({isAdmin}) {
   return (
     <Navbar collapseOnSelect expand="lg" className="shadow-sm bg-white position-sticky top-0 start-0 py-3" style={{zIndex: "1000"}}>
-      <Container>
+      <Container className=" px-5">
         <NavLink className='text-uppercase fw-bold text-dark text-decoration-none me-5 fs-4' to="/"><FontAwesomeIcon icon={faPlaneDeparture} style={{color: "var(--main-color)"}} /> Fly Me</NavLink>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">

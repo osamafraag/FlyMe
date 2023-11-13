@@ -58,7 +58,7 @@
   border: 1px solid var(--main-color);
 }
 
-.departure-input{
+.departure-input {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -67,4 +67,8 @@
   border-left: none;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+}
+
+input.toError {
+  border-color: red;
 }
