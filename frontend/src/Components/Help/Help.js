@@ -123,7 +123,7 @@ export default function HelpComponent() {
           <h1 className="text-start pt-5 textt"> Contact Us</h1>
           <h4 className="text-start pt-2 pb-3 ">Any question or remarks? Just write us a message!</h4>
           <div className="row">
-            <div className="col col-5 bg-dark text-light me-5 mt-5 border border-0 rounded-2 shadow my-5 px-5">
+            <div className="col col-5 text-light me-5 mt-5 border border-0 rounded-2 shadow my-5 px-5" style={{backgroundColor: "var(--main-color)"}}>
               <h2 className="text-start pt-5"> Contact Information</h2>
               <p className="text-start pt-3 ">You can Contact With US Via </p>
 
@@ -146,7 +146,7 @@ export default function HelpComponent() {
             <div className="col me-5  mb-5 px-5 rounded-2 shadow bg-light pb-0 mt-5">
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }} className="text-start pb-0 pt-5 ">
-                <div style={{ display: 'flex', marginBottom: '10px' }} className="form-group">
+                <div style={{ display: 'flex', marginBottom: '10px', justifyContent: 'space-between' }} className="form-group">
                   <div style={{ display: 'flex', flexDirection: 'column', marginRight: '10px' }}>
                     <label htmlFor="first-name">First Name</label>
                     <input
@@ -173,7 +173,7 @@ export default function HelpComponent() {
                     {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
                   </div>
                 </div>
-                <div style={{ display: 'flex', marginBottom: '10px' }} className="pt-3 form-group">
+                <div style={{ display: 'flex', marginBottom: '10px', justifyContent: 'space-between' }} className="pt-3 form-group">
                   <div style={{ display: 'flex', flexDirection: 'column', marginRight: '10px' }}>
                     <label htmlFor="email">Email</label>
                     <input
@@ -202,7 +202,6 @@ export default function HelpComponent() {
                 <div style={{ marginBottom: '10px' }} className="pt-3 form-group">
                   <label htmlFor="message" className="pe-2">Message</label>
                   <textarea
-                    style={{width: '470px'}}
                     className={`border form-control ${errors.message ? 'is-invalid' : ''}`}
                     id="message"
                     name="message"
@@ -214,7 +213,7 @@ export default function HelpComponent() {
                   {errors.message && <div className="invalid-feedback">{errors.message}</div>}
                 </div>
                 <div className="text-end pb-3 pt-3">
-                  <button type="submit" className="btn bg-dark text-light py-2 px-4">Send Message</button>
+                  <button type="submit" className="btn text-light py-2 px-4" style={{backgroundColor: "var(--main-color)"}}>Send Message</button>
                 </div>
               </form>
               {successMessage && (
