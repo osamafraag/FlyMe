@@ -11,7 +11,7 @@ export default function TripIdeas({tripIdeas}) {
     <div className='container my-5 px-5 pt-5'>
       <h3 className='text-start mb-5'>Trip Ideas</h3>
       <div className="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-4 justify-content-center align-items-center ">
-        {tripIdeas.map((trip, index) => {
+        {tripIdeas.slice(0, 3).map((trip, index) => {
           return (
             <div className="col d-flex justify-content-center align-items-center" key={index}>
               <HomeCard data={trip} navigation={(id) => redirectToTripIdeas(id)} />

@@ -5,10 +5,11 @@ import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 
-const OneWayForm = ({ handleFlightData }) => {
+const OneWayForm = ({ handleFlightData, cities }) => {
   const [departure, setDeparture] = useState(getTodayDate());
   const [destinationFrom, setDestinationFrom] = useState('');
   const [destinationTo, setDestinationTo] = useState('');
+  const [ error , setError ] = useState('')
 
   function getTodayDate() {
     const today = new Date();
@@ -20,6 +21,10 @@ const OneWayForm = ({ handleFlightData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (destinationFrom === destinationTo) {
+      setError("You Can't Select Destination To To Be The Same Of From")
+      return;
+    }
     const searchResults = [
       {
         id: 1,
@@ -70,54 +75,63 @@ const OneWayForm = ({ handleFlightData }) => {
   }, []);
 
   return (
-    <form className='row row-cols-3 align-items-center ' onSubmit={handleSubmit}>
+    <form className='row row-cols-3 align-items-center form-floating' onSubmit={handleSubmit}>
       {/* From */}
-      <div className='col from'>
-        <FloatingLabel
-          controlId="floatingInput"
-          label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}} /> From</span>}
-          className="mb-3"
-        >
-          <Form.Control 
+      <div className='col'>
+        <div class="form-floating mb-3">
+          <input 
+            className="form-control"
             type="text"
+            id='from'
             value={destinationFrom}
-            onChange={(e) => setDestinationFrom(e.target.value)}
-            placeholder='From'
+            onChange={(e) => {setDestinationFrom(e.target.value); setError("")}}
+            list="citiesFrom"
+            placeholder='From' 
           />
-        </FloatingLabel>
+          <datalist id="citiesFrom">
+            {cities.map((city) => (
+              <option key={city.id} value={city.name} />
+            ))}
+          </datalist>
+          <label for="from"><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> From</label>
+        </div>
       </div>
 
       {/* To */}
-      <div className='col to'>
-        <FloatingLabel
-          controlId="floatingInput"
-          label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> To</span>}
-          className="mb-3"
-        >
-          <Form.Control 
+      <div className='col'>
+        <div class="form-floating mb-3 ">
+          <input 
+            className={`form-control ${error != '' ? "toError" : "" }`} 
             type="text"
             value={destinationTo}
-            onChange={(e) => setDestinationTo(e.target.value)}
+            onChange={(e) => {setDestinationTo(e.target.value); setError("")}}
+            list="citiesTo"
+            id="to" 
             placeholder='To'
           />
-        </FloatingLabel>
+          <datalist id="citiesTo">
+            {cities.map((city) => (
+              <option key={city.id} value={city.name} />
+            ))}
+          </datalist>
+          <label for="to"><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> To</label>
+        </div> 
       </div>
 
       {/* Time */}
-      <div className='col departure'>
-        <FloatingLabel
-          controlId="floatingInput"
-          label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}} /> Departure</span>}
-          className="mb-3"
-        >
-          <Form.Control 
+      <div className='col'>
+        <div class="form-floating mb-3">
+          <input 
             type="date"
+            className="form-control"
             value={departure}
             onChange={(e) => setDeparture(e.target.value)}
-            placeholder="Departure"
-            min={getTodayDate()}
+            min={getTodayDate()} 
+            id="departure"
+            placeholder='Departure' 
           />
-        </FloatingLabel>
+          <label for="departure"><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> Departure</label>
+        </div>
       </div>
 
       {/* Direct Or Not */}
