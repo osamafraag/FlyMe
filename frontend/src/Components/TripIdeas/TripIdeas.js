@@ -166,11 +166,11 @@ export default function TripIdeasComponent() {
         </div>
         
         <div className='text-start py-5'>
-          {showDetails && selectedCityId !== null && (
+          {showDetails  && (
               <div className="col">
                 <div className="details-section">
-                  <h2 className='pt-5 pb-3'>Details Section for {trendingPlaces.find((place) => place.id === selectedPlaceId)?.name}</h2>
-                  <p className='ps-5'>This is the detailed information about {trendingPlaces.find((place) => place.id === selectedPlaceId)?.name}.</p>
+                  <h2 className='pt-5 pb-3'> {trendingPlaces.find((place) => place.id === selectedPlaceId)?.name}</h2>
+                  <p className='ps-5'> {trendingPlaces.find((place) => place.id === selectedPlaceId)?.description}.</p>
                   {/* Add any additional content or components for the details section */}
                 </div>
               </div>
