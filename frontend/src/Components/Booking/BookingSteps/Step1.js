@@ -12,10 +12,10 @@ export default function Step1() {
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     useEffect(() => {
-        fetch('https://restcountries.com/v3.1/all')
+        fetch('https://osamafraag.pythonanywhere.com/countries/api/')
             .then(response => response.json())
             .then(data => {
-                const countryNames = data.map(country => country.name.common);
+                const countryNames = data.map(country => country.name);
                 setCountries(countryNames);
             });
     }, []);
