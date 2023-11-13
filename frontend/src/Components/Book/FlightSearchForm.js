@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OneWayForm from './OneWayForm';
 import RoundTripForm from './RoundTripForm';
 import MultiCityForm from './MultiCityForm';
-import SearchResult from './../Search/Search'
+import { Cities } from '../../APIs/Cities';
 
 const FlightSearchForm = () => {
   const [searchType, setSearchType] = useState('oneWay');
   const [flightData, setFlightData] = useState(null);
+  const [cities, setCities] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    Cities()
+      .then((result) => {
+        console.log(result.data)
+        setCities(result.data)
+      })
+      .catch((error) => console.log(error));
+  
+    }, []);
 
   const handleSearchTypeChange = (type) => {
     setSearchType(type);
@@ -26,9 +37,9 @@ const FlightSearchForm = () => {
         <button className={searchType === 'roundTrip' ? 'btn me-3 search-type active' : 'btn me-3 search-type'}  onClick={() => handleSearchTypeChange('roundTrip')}>Round Trip</button>
         <button className={searchType === 'multiCity' ? 'btn me-3 search-type active' : 'btn me-3 search-type'} onClick={() => handleSearchTypeChange('multiCity')}>Multi City</button>
       </div>
-      {searchType === 'oneWay' && <OneWayForm handleFlightData={handleFlightData} />}
-      {searchType === 'roundTrip' && <RoundTripForm handleFlightData={handleFlightData} />}
-      {searchType === 'multiCity' && <MultiCityForm handleFlightData={handleFlightData} />}
+      {searchType === 'oneWay' && <OneWayForm handleFlightData={handleFlightData} cities={cities} />}
+      {searchType === 'roundTrip' && <RoundTripForm handleFlightData={handleFlightData} cities={cities} />}
+      {searchType === 'multiCity' && <MultiCityForm handleFlightData={handleFlightData} cities={cities} />}
     </div>
   );
 };

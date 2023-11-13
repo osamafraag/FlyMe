@@ -4,24 +4,14 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import "./../Home/Landing.css"
 
-const MultiCityForm = ({ handleFlightData }) => {
+const MultiCityForm = ({ handleFlightData, cities }) => {
+  const [toErrors, setToErrors] = useState([false, false, false]);
   const [flights, setFlights] = useState([
-    {
-      departure: getTodayDate(),
-      destinationFrom: '',
-      destinationTo: '',
-    },
-    {
-      departure: getTodayDate(),
-      destinationFrom: '',
-      destinationTo: '',
-    },
-    {
-      departure: getTodayDate(),
-      destinationFrom: '',
-      destinationTo: '',
-    },
+    { departure: getTodayDate(), destinationFrom: '', destinationTo: ''},
+    { departure: getTodayDate(), destinationFrom: '', destinationTo: ''},
+    { departure: getTodayDate(), destinationFrom: '', destinationTo: ''},
   ]);
 
   function getTodayDate() {
@@ -40,6 +30,21 @@ const MultiCityForm = ({ handleFlightData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const newToErrors = [false, false, false];
+
+    for (let i = 0; i < flights.length; i++) {
+      const currentFlight = flights[i];
+      const fromCity = currentFlight.destinationFrom;
+      const toCity = currentFlight.destinationTo;
+
+      if (fromCity === toCity) {
+        newToErrors[i] = true;
+      }
+    }
+  
+    setToErrors(newToErrors);
+    if (newToErrors.some((error) => error)) return;
+
     const flights1 = [
       {
         id: 1,
@@ -222,51 +227,76 @@ const MultiCityForm = ({ handleFlightData }) => {
         <>
         {/* From */}
         <div className='col from' key={index}>
-          <FloatingLabel
-            controlId={`floatingInputFrom${index}`}
-            label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> From</span>}
-            className="mb-3"
-          >
-            <Form.Control
+          <div class="form-floating mb-3">
+            <input 
+              className="form-control"
               type="text"
               value={flight.destinationFrom}
-              onChange={(e) => handleInputChange(index, 'destinationFrom', e.target.value)}
-              placeholder='From'
+              onChange={(e) => {
+                handleInputChange(index, 'destinationFrom', e.target.value);
+                setToErrors((prevToErrors) => {
+                  const newToErrors = [...prevToErrors];
+                  newToErrors[index] = false; 
+                  return newToErrors;
+                });
+              }}
+              list={`citiesFrom${index}`}
+              id={`from${index}`}
+              placeholder='From' 
             />
-          </FloatingLabel>
+            <datalist  id={`citiesFrom${index}`}>
+              {cities.map((city) => (
+                <option key={city.id} value={city.name} />
+              ))}
+            </datalist>
+            <label for={`from${index}`}><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> From</label>
+          </div>
         </div>
 
         {/* To */}
         <div className='col to' key={index}>
-          <FloatingLabel
-            controlId={`floatingInputTo${index}`}
-            label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> To</span>}
-            className="mb-3"
-          >
-            <Form.Control
+          <div className="form-floating mb-3 ">
+            <input
+              className={`form-control ${toErrors[index] ? "toError" : "" }`}
               type="text"
               value={flight.destinationTo}
-              onChange={(e) => handleInputChange(index, 'destinationTo', e.target.value)}
+              onChange={(e) => {
+                  handleInputChange(index, 'destinationTo', e.target.value);
+                  setToErrors((prevToErrors) => {
+                    const newToErrors = [...prevToErrors];
+                    newToErrors[index] = false; 
+                    return newToErrors;
+                  });
+                }}
+              list={`citiesTo${index}`}
+              id={`to${index}`}
               placeholder='To'
             />
-          </FloatingLabel>
+            <datalist id={`citiesTo${index}`}>
+              {cities.map((city) => (
+                <option key={city.id} value={city.name} />
+              ))}
+            </datalist>
+            <label for={`to${index}`}>
+              <FontAwesomeIcon icon={faLocationDot} style={{ color: 'var(--main-color)' }} /> To
+            </label>
+          </div>
         </div>
 
         {/* Time */}
         <div className='col departure' key={index}>
-          <FloatingLabel
-            controlId={`floatingInputDeparture${index}`}
-            label={<span><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> Departure</span>}
-            className="mb-3"
-          >
-            <Form.Control
+          <div class="form-floating mb-3">
+            <input 
               type="date"
+              className="form-control"
               value={flight.departure}
               onChange={(e) => handleInputChange(index, 'departure', e.target.value)}
-              placeholder="Departure"
-              min={getTodayDate()}
+              min={getTodayDate()} 
+              id="departure"
+              placeholder='Departure' 
             />
-          </FloatingLabel>
+            <label for="departure"><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> Departure</label>
+          </div>
         </div>
         </>
       ))}
