@@ -31,7 +31,7 @@ def getAllUsers(request):
 @method_decorator(csrf_exempt, name='dispatch')
 class RegisterView(generics.CreateAPIView):
     queryset = MyUser.objects.all()
-    permission_classes = AllowAny
+    permission_classes = [AllowAny]
     serializer_class = RegisterSerializer
     
 
