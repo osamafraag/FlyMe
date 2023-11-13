@@ -2,13 +2,23 @@ import React, { useState, useEffect } from 'react'
 import Header from './Header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import Step3 from './Step3';
 
-export default function Step2() {
+export default function Step2({dataSaved}) {
     // handle click on the header to show or not the content of the step
     const [isContentVisible, setIsContentVisible] = useState(false);
     const handleToggle = () => {
+        console.log(dataSaved)
+        if (dataSaved) 
         setIsContentVisible(!isContentVisible)
     }
+
+    // handle click on save and submit button
+    const [dataSavedd, setDataSavedd] = useState(false);
+    const handleOnClickSaveButton = (e) => {
+        e.preventDefault();
+        setDataSavedd=true
+    };
 
     return (
         <>
@@ -26,11 +36,13 @@ export default function Step2() {
                             <div className='d-flex justify-content-end'>
                             <button className='me-3 fw-semibold btn custom-outline-btn'> <FontAwesomeIcon icon={faPlus} /> Add</button>
                             </div>
-                            <center><button className='me-3 fw-semibold btn custom-btn'>Continue To Payment Method</button></center>
+                            <center><button className='me-3 fw-semibold btn custom-btn' onClick={handleOnClickSaveButton}>Continue To Payment Method</button></center>
                         </div>
                     </>
                 }
+                <Step3  dataSaved={dataSavedd} />
             </div>
+            
         </>
     )
 }
