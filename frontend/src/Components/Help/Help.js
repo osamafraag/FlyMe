@@ -11,9 +11,106 @@ export default function HelpComponent() {
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [message, setMessage] = useState('');
+    const [errors, setErrors] = useState({});
+    const [successMessage, setSuccessMessage] = useState('');
+    const API_BASE_URL = 'https://osamafraag.pythonanywhere.com';
+    
+
+    
+    const validateForm = () => {
+      const errors = {};
+  
+      // Validate first name
+      if (firstName.trim() === '') {
+        errors.firstName = 'First name is required';
+      }
+  
+      // Validate last name
+      if (lastName.trim() === '') {
+        errors.lastName = 'Last name is required';
+      }
+  
+      // Validate email
+      if (email.trim() === '') {
+        errors.email = 'Email is required';
+      } else if (!isValidEmail(email)) {
+        errors.email = 'Invalid email format';
+      }
+  
+      // Validate phone number
+      if (phoneNumber.trim() === '') {
+        errors.phoneNumber = 'Phone number is required';
+      } else if (!isValidPhoneNumber(phoneNumber)) {
+        errors.phoneNumber = 'Invalid phone number format';
+      }
+  
+      // Validate message
+      if (message.trim() === '') {
+        errors.message = 'Message is required';
+      }
+  
+      setErrors(errors);
+      return Object.keys(errors).length === 0;
+    };
+
+    const isValidEmail = (email) => {
+      // use a regular expression to validate the email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    };
+  
+    const isValidPhoneNumber = (phoneNumber) => {
+      // use a regular expression to validate the phone number format
+      const phoneNumberRegex = /^\d{11}$/;
+      return phoneNumberRegex.test(phoneNumber);
+    };
   
     const handleSubmit = (e) => {
       e.preventDefault();
+
+      if (validateForm()) {
+        const formData = {
+
+          description: message,
+          status: "IN_PROGRESS",
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber,
+          email: email
+        }
+
+    // Make a POST request to the API endpoint
+       fetch(`${API_BASE_URL}/accounts/api/complaints/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Failed to save data.');
+          }
+        })
+        .then(data => {
+          // Process the response data
+          setSuccessMessage('Data saved successfully!');
+          // Reset form fields
+          setFirstName('');
+          setLastName('');
+          setEmail('');
+          setPhoneNumber('');
+          setMessage('');
+        })
+        .catch(error => {
+          console.error(error);
+          setSuccessMessage('An error occurred while saving the data.');
+        });
+
+        
+      };
       
     };
     return (
@@ -46,14 +143,14 @@ export default function HelpComponent() {
               </div>
             </div>
             
-            <div className="col me-5  mb-5 px-5 rounded-2 shadow bg-light pb-0" style={{marginTop:'80px'}}>
+            <div className="col me-5  mb-5 px-5 rounded-2 shadow bg-light pb-0 mt-5">
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }} className="text-start pb-0 pt-5 ">
-                <div style={{ display: 'flex', marginBottom: '10px' }}>
+                <div style={{ display: 'flex', marginBottom: '10px' }} className="form-group">
                   <div style={{ display: 'flex', flexDirection: 'column', marginRight: '10px' }}>
                     <label htmlFor="first-name">First Name</label>
                     <input
-                      className="border"
+                      className={`border form-control ${errors.firstName ? 'is-invalid' : ''}`}
                       type="text"
                       id="first-name"
                       name="first-name"
@@ -61,47 +158,52 @@ export default function HelpComponent() {
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                     />
+                    {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '20px' }}>
                     <label htmlFor="last-name">Last Name</label>
                     <input
-                      className="border"
+                      className={`border form-control ${errors.lastName ? 'is-invalid' : ''}`}
                       type="text"
                       id="last-name"
                       name="last-name"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                     />
+                    {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
                   </div>
                 </div>
-                <div style={{ display: 'flex', marginBottom: '10px' }} className="pt-3">
+                <div style={{ display: 'flex', marginBottom: '10px' }} className="pt-3 form-group">
                   <div style={{ display: 'flex', flexDirection: 'column', marginRight: '10px' }}>
                     <label htmlFor="email">Email</label>
                     <input
-                      className="border"
+                      className={`border form-control ${errors.email ? 'is-invalid' : ''}`}
                       type="email"
                       id="email"
                       name="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
+                    {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '20px' }}>
                     <label htmlFor="phone">Phone Number</label>
                     <input
-                      className="border"
+                      className={`border form-control ${errors.phoneNumber ? 'is-invalid' : ''}`}
                       type="text"
                       id="phone"
                       name="phone"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                     />
+                    {errors.phoneNumber && <div className="invalid-feedback">{errors.phoneNumber}</div>}
                   </div>
                 </div>
-                <div style={{ display: 'flex', marginBottom: '10px' }} className="pt-3">
+                <div style={{ marginBottom: '10px' }} className="pt-3 form-group">
                   <label htmlFor="message" className="pe-2">Message</label>
                   <textarea
-                    className="border"
+                    style={{width: '470px'}}
+                    className={`border form-control ${errors.message ? 'is-invalid' : ''}`}
                     id="message"
                     name="message"
                     rows="4"
@@ -109,11 +211,17 @@ export default function HelpComponent() {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                   ></textarea>
+                  {errors.message && <div className="invalid-feedback">{errors.message}</div>}
                 </div>
-                <div className="text-end pb-3">
+                <div className="text-end pb-3 pt-3">
                   <button type="submit" className="btn bg-dark text-light py-2 px-4">Send Message</button>
                 </div>
               </form>
+              {successMessage && (
+                <div className="alert alert-info" role="alert">
+                  {successMessage}
+                </div>
+              )}
 
             </div>
           </div>

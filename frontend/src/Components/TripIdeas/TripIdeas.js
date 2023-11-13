@@ -158,10 +158,11 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import SlideContent from './Sliderr';
 import Card from './TrendingCard';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import pic1 from './../../Assets/Images/trippic0.jpeg';
+import pic1 from './../../Assets/Images/newpic10.jpeg';
 import pic2 from './../../Assets/Images/trippicI.jpeg';
-import pic3 from './../../Assets/Images/trippicII.jpeg';
+import pic3 from './../../Assets/Images/newpic6.jpeg';
 import pic4 from './../../Assets/Images/trippicIII.jpeg';
 import pic5 from './../../Assets/Images/trippic4i.jpeg';
 import pic6 from './../../Assets/Images/trippic5i.jpeg';
@@ -225,11 +226,15 @@ export default function TripIdeasComponent() {
   }, []);
 
   const startSlider = () => {
-    sliderRef.current.slickPlay();
+    if (sliderRef.current) {
+      sliderRef.current.slickPlay();
+    }
   };
 
   const stopSlider = () => {
-    sliderRef.current.slickPause();
+    if (sliderRef.current) {
+      sliderRef.current.slickPause();
+    }
   };
 
   const sliderSettings = {
@@ -240,21 +245,22 @@ export default function TripIdeasComponent() {
     slidesToScroll: 1,
   };
 
-  const [trendingVisits, setTrendingVisits] = useState([]);
   const [selectedSlideIndex, setSelectedSlideIndex] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [trendingCities, setTrendingCities] = useState([]);
+  const API_BASE_URL = 'https://osamafraag.pythonanywhere.com';
 
   useEffect(() => {
-    const fetchTrendingVisits = async () => {
+    const fetchTrendingCities = async () => {
       try {
-        const response = await axios.get('API_ENDPOINT_URL');
-        setTrendingVisits(response.data);
+        const response = await axios.get(`${API_BASE_URL} countries/api/{countryId}/trendingPlaces/`);
+        setTrendingCities(response.data);
       } catch (error) {
         console.error('Error fetching trending visits:', error);
       }
     };
 
-    fetchTrendingVisits();
+    fetchTrendingCities();
   }, []);
 
   // const handleDetailsClick = (index) => {
@@ -284,21 +290,21 @@ export default function TripIdeasComponent() {
           ))}
         </Slider>
       </div>
-      <NavLink className='position-absolute top-0 start-0 text-decoration-none btn btn-dark slider-btn border-0 text-start' to="/Book" style={{backgroundColor: "var(--main-color)", marginLeft: "8rem", marginTop: "1rem"}}>Book Now</NavLink>
-      <h3 className="position-absolute top-50 start-50 slider-text text-center m-0 text-white" style={{transform: "translate(-50%,-50%)"}}>Trip Ideas ..</h3>
+      <NavLink className='position-absolute top-0 start-0 text-decoration-none btn btn-dark slider-btn border-0 text-start' to="/Book" style={{backgroundColor: "var(--main-color)", marginLeft: "8rem", marginTop: "1.5rem"}}>Book Now</NavLink>
+      <h3 className="position-absolute top-50 start-50 slider-text text-center m-0 text-white" style={{transform: "translate(-50%,-50%)"}}>Travel Far Enough, You Meet Yourself</h3>
       </div>
 
       <div className="container py-5 m-5 ps-5">
         <h2 className="text-start pb-4">Trending Visits</h2>
         <div className="row row-cols-1 row-cols-lg-4 row-cols-md-2 g-4 justify-content-center align-items-center ">
-          {slides.map((slide, index) => (
-            <div className="col d-flex justify-content-center align-items-center" key={index}>
+          {trendingCities.map((city) => (
+            <div className="col d-flex justify-content-center align-items-center" key={city.id}>
               <Card
-                imageSrc={slide.image}
-                title={slide.title}
-                description={slide.description}
-                handleDetailsClick={() => handleDetailsClick(index)}
-                showDetails={showDetails && selectedSlideIndex === index}
+                key={city.id}
+                title={city.title}
+                description={city.description}
+                images={city.images}
+                onDetailsClick={() => handleDetailsClick(city.id)}
               />
             </div>
             ))}
@@ -308,8 +314,8 @@ export default function TripIdeasComponent() {
           {showDetails && selectedSlideIndex !== null && (
               <div className="col">
                 <div className="details-section">
-                  <h2 className='pt-5 pb-3'>Details Section for {slides[selectedSlideIndex].title}</h2>
-                  <p className='ps-5'>This is the detailed information about {slides[selectedSlideIndex].title}.</p>
+                  <h2 className='pt-5 pb-3'>Details Section for {trendingCities[selectedSlideIndex].title}</h2>
+                  <p className='ps-5'>This is the detailed information about {trendingCities[selectedSlideIndex].title}.</p>
                   {/* Add any additional content or components for the details section */}
                 </div>
               </div>
