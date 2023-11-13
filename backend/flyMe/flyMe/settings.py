@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'flights.apps.FlightsConfig',
     'rest_framework',
     'cities_light',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'corsheaders.middleware.CorsMiddleware',
             ],
         },
     },
@@ -171,6 +173,11 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # or your React app's URL
+    "https://yourdeployedreactapp.com",
+    # Add other allowed origins as needed
+]
 # CELERY_BROKER_URL = "redis://localhost:6379/0"
 # CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
 # CELERY_TIMEZONE = 'UTC'

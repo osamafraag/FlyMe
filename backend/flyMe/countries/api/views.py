@@ -36,6 +36,22 @@ class CountryPopularListCreateView(generics.ListCreateAPIView):
                 many=True,context=self.get_serializer_context()).data
 
         return Response(serializer.data)
+    
+class CountryFeaturedListCreateView(generics.ListCreateAPIView):
+    queryset = Country.objects.filter(isFeatured=True)
+    serializer_class = CountrySerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        for country in serializer.data:
+            country_id = country['id']
+            country['multi_images'] = MultiImagesSerializerCountry(
+                MultiImagesCountry.objects.filter(country=country_id),
+                many=True,context=self.get_serializer_context()).data
+
+        return Response(serializer.data)
 class CountryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
@@ -75,6 +91,21 @@ class CityPopuarListCreateView(generics.ListCreateAPIView):
                 MultiImagesCity.objects.filter(city=city_id),
                 many=True,context=self.get_serializer_context()).data
 
+        return Response(serializer.data)
+
+class CityFeaturedListCreateView(generics.ListCreateAPIView):
+    queryset = City.objects.filter(isFeatured=True)
+    serializer_class = CitySerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        for city in serializer.data:
+            city_id = city['id']
+            city['multi_images'] = MultiImagesSerializerCity(
+                MultiImagesCity.objects.filter(city=city_id),
+                many=True,context=self.get_serializer_context()).data
         return Response(serializer.data)
 
 class CityRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -145,6 +176,7 @@ class TrendingPlaceListCreateView(generics.ListCreateAPIView):
                 many=True,context=self.get_serializer_context()).data
 
         return Response(serializer.data)
+    
 
 class TrendingPlaceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TrendingPlace.objects.all()
@@ -160,6 +192,17 @@ class TrendingPlaceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVi
 def countryTrendingPlaces(request, pk):
     trendingPlaces = TrendingPlace.objects.filter(id__in=City.objects.filter(country=pk).values('trendingPlaces'))
     serializer = TrendingPlaceSerializer(trendingPlaces, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def cityTrendingPlaces(request, pk):
+    trendingPlaces = TrendingPlace.objects.filter(city=pk)
+    serializer = TrendingPlaceSerializer(trendingPlaces, many=True)
+    for trending_place in serializer.data:
+        trending_place_id = trending_place['id']
+        trending_place['multi_images'] = MultiImagesSerializerTrendingPlace(
+            MultiImagesTrendingPlace.objects.filter(trendingPlace_id=trending_place_id),
+            many=True).data
     return Response(serializer.data)
 
 class MultiImagesCountryListCreateView(generics.ListCreateAPIView):

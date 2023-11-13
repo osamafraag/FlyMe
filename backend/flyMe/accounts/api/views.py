@@ -273,7 +273,7 @@ def walletsList(request):
 
 @api_view(['GET', 'DELETE', 'PUT'])
 def walletDetail(request, id):
-    wallet = Transaction.objects.get(id=id)
+    wallet = Wallet.objects.get(id=id)
     if request.method=='GET':
         serializedWallet = WalletSerializer(wallet)
         return Response({'data':serializedWallet.data}, status=200)
