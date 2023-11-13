@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Header from './Header'
+import Step2 from './Step2';
 
 export default function Step1() {
     // handle click on the header to show or not the content of the step
@@ -192,10 +193,12 @@ export default function Step1() {
    const isFormValid = !formError.email && !formError.phoneNumber && !formError.firstName && !formError.lastName && !formError.male && !formError.female && !formError.dateOfBirth && !formError.nationality && !formError.passportNumber && !formError.expirtyDate && form.email && form.phoneNumber && form.firstName && form.lastName && (form.male || form.female) && form.dateOfBirth && form.nationality && form.passportNumber && form.expirtyDate
 
     // handle click on save and submit button
+    const [dataSaved, setDataSaved] = useState(false);
     const handleOnClickSaveButton = (e) => {
         e.preventDefault();
         if (isFormValid) {
             console.log("Form Submitted Successfully");
+            setDataSaved=true
         } else {
             console.log("Form Has Errors");
             console.log(formError);
@@ -290,9 +293,10 @@ export default function Step1() {
                                     <input type="date" className="form-control" name='expirtyDate' value={form.expirtyDate} id="expirtyDate" onChange={handleOnChangeForm} required />
                                     {formError.expirtyDate && <div className="form-text text-danger text-start ">{formError.expirtyDate}</div>}
                                 </div>
-                                <center><button type="submit" className="btn custom-btn" onClick={handleOnClickSaveButton}>Save and continue</button></center>
+                                <center><button type="submit" className="btn custom-btn" onClick={handleOnClickSaveButton} disabled={!isFormValid}>Save and continue</button></center>
                             </form>
                         </div>
+                        <Step2 dataSaved={dataSaved}/>
                     </>
                 }
             </div>
