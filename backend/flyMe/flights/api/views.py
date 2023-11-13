@@ -67,7 +67,7 @@ def flightList(request):
                 if day :
                     flights = flights.filter(departureTime__day=day)
                     flightDateTime = datetime(year=int(year),month=int(month),day=int(day))
-                    if flightDateTime.timestamp() < datetime.now().timestamp():
+                    if flightDateTime.date() < datetime.now().date():
                         return Response({"error":'can`t search for past dates'})
                     if type == 'D':
                         if source :
@@ -75,6 +75,11 @@ def flightList(request):
                         if destination :
                             flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
                         serializer = FlightSerializer(flights, many=True)
+                        for flight in serializer.data:
+                            flightId = flight['id']
+                            flght = Flight.objects.get(id=flightId)
+                            flight['from']=flght.startAirport.city.name
+                            flight['to']=flght.endAirport.city.name
                         return Response(serializer.data)
                     elif type == 'T':
                         if source :
@@ -84,15 +89,33 @@ def flightList(request):
                         for sFlight in sFlights.all():
                             for dFlight in dFlights.all():
                                 if sFlight.arrivalTime.date() == dFlight.departureTime.date() and sFlight.arrivalTime.time() < dFlight.departureTime.time() and sFlight.endAirport.city == dFlight.startAirport.city :
-                                    sSerializer = FlightSerializer(sFlight)
-                                    dSerializer = FlightSerializer(dFlight)
-                                    transetFlights.append([sSerializer.data,dSerializer.data])
+                                    sSerializer = FlightSerializer(sFlight).data
+                                    flightId = sSerializer['id']
+                                    flight = Flight.objects.get(id=flightId)
+                                    sSerializer['from']=flight.startAirport.city.name
+                                    sSerializer['to']=flight.endAirport.city.name
+                                    dSerializer = FlightSerializer(dFlight).data
+                                    flightId = dSerializer['id']
+                                    flight = Flight.objects.get(id=flightId)
+                                    dSerializer['from']=flight.startAirport.city.name
+                                    dSerializer['to']=flight.endAirport.city.name
+                                    transetFlights.append([sSerializer,dSerializer])
                         return Response(transetFlights)  
-                    
+           
             serializer = FlightSerializer(flights, many=True)
+            for flight in serializer.data:
+                flightId = flight['id']
+                flght = Flight.objects.get(id=flightId)
+                flight['from']=flght.startAirport.city.name
+                flight['to']=flght.endAirport.city.name
             return Response(serializer.data)          
       
         serializer = FlightSerializer(allFlights, many=True)
+        for flight in serializer.data:
+            flightId = flight['id']
+            flght = Flight.objects.get(id=flightId)
+            flight['from']=flght.startAirport.city.name
+            flight['to']=flght.endAirport.city.name
         return Response(serializer.data)
 
 @api_view(['GET'])
@@ -113,9 +136,29 @@ def allFlights(request):
             else:
                 liveFlights.append(flight)
     commingSerializer = FlightSerializer(commingFlights, many=True).data
+    for flight in commingSerializer:
+        flightId = flight['id']
+        flght = Flight.objects.get(id=flightId)
+        flight['from']=flght.startAirport.city.name
+        flight['to']=flght.endAirport.city.name
     passedSerializer = FlightSerializer(passedFlights, many=True).data
+    for flight in passedSerializer:
+        flightId = flight['id']
+        flght = Flight.objects.get(id=flightId)
+        flight['from']=flght.startAirport.city.name
+        flight['to']=flght.endAirport.city.name
     liveSerializer = FlightSerializer(liveFlights, many=True).data
+    for flight in liveSerializer:
+        flightId = flight['id']
+        flght = Flight.objects.get(id=flightId)
+        flight['from']=flght.startAirport.city.name
+        flight['to']=flght.endAirport.city.name
     cancledSerializer = FlightSerializer(cancledFlights, many=True).data
+    for flight in cancledSerializer:
+        flightId = flight['id']
+        flght = Flight.objects.get(id=flightId)
+        flight['from']=flght.startAirport.city.name
+        flight['to']=flght.endAirport.city.name
     return Response({'passed':passedSerializer,'live':liveSerializer,'comming':commingSerializer,'cancled':cancledSerializer})
 
 @api_view(['GET'])
@@ -133,8 +176,23 @@ def userFlights(request,id):
         else:
             liveFlights.append(book.flight)
     passedSerializer = FlightSerializer(passedFlights, many=True).data
+    for flight in passedSerializer:
+        flightId = flight['id']
+        flght = Flight.objects.get(id=flightId)
+        flight['from']=flght.startAirport.city.name
+        flight['to']=flght.endAirport.city.name
     liveSerializer = FlightSerializer(liveFlights, many=True).data
+    for flight in liveSerializer:
+        flightId = flight['id']
+        flght = Flight.objects.get(id=flightId)
+        flight['from']=flght.startAirport.city.name
+        flight['to']=flght.endAirport.city.name
     commingSerializer = FlightSerializer(commingFlights, many=True).data
+    for flight in commingSerializer:
+        flightId = flight['id']
+        flght = Flight.objects.get(id=flightId)
+        flight['from']=flght.startAirport.city.name
+        flight['to']=flght.endAirport.city.name
     return Response({'passed':passedSerializer,'live':liveSerializer,'comming':commingSerializer}) 
 
 
@@ -142,8 +200,10 @@ def userFlights(request,id):
 def flightDetail(request, id):
     flight = Flight.get(id)
     if request.method=='GET':
-        serializedFlight = FlightSerializer(flight)
-        return Response({'data':serializedFlight.data}, status=200)
+        serializedFlight = FlightSerializer(flight).data
+        serializedFlight['from']=flight.startAirport.city.name
+        serializedFlight['to']=flight.endAirport.city.name
+        return Response({'data':serializedFlight}, status=200)
 
     elif request.method=='DELETE':
         flight.delete()
