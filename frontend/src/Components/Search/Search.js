@@ -38,8 +38,8 @@ export default function SearchResult() {
         <div className='search-result row justify-content-between g-5 ps-2' >
 
           <div className='col-3 bg-white p-5 mb-3 rounded-3 border border-1' style={{height: "330px"}}>
-            <div>
-              {/* Price */}
+            {/* Price */}
+            {/* <div>
               <p className='text-start fw-bold text-uppercase '>Total Trip Price</p>
               <div className='d-flex justify-content-between'>
                 <p className='text-secondary text-start mb-0'><small>Egp 10000</small></p>
@@ -56,7 +56,7 @@ export default function SearchResult() {
                 className='w-100 border-0 cutom-range'
                 style={{ backgroundColor: 'var(--main-color)' }}
               />
-            </div>
+            </div> */}
 
             {/* Stops */}
             <div className='stops mt-4'>
@@ -70,13 +70,7 @@ export default function SearchResult() {
               <Form.Check 
                 type="checkbox"
                 id="default-checkbox"
-                label="1 Stop"
-                className='w-50'
-              />
-              <Form.Check 
-                type="checkbox"
-                id="default-checkbox"
-                label="2 Stop"
+                label="Transit"
                 className='w-50'
               />
             </div>
