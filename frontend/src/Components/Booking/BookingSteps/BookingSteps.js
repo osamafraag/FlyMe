@@ -7,10 +7,10 @@ export default function BookingSteps() {
   return (
     <>
         <Step1 />
-        <br/>
+        {/* <br/>
         <Step2 />
         <br/>
-        <Step3 />
+        <Step3 /> */}
         
     </>
   )
