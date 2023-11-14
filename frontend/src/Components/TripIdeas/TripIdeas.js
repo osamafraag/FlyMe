@@ -16,10 +16,12 @@ import pic7 from './../../Assets/Images/trippic6i.jpeg';
 import pic8 from './../../Assets/Images/trippic7i.jpeg';
 import { NavLink } from "react-router-dom";
 import { Trending } from "./../../APIs/TrendingPlaces";
+import { useNavigate } from "react-router-dom";
 
 import './TripIdeas.css';
 
 export default function TripIdeasComponent() {
+  const navigate = useNavigate()
   const slides = [
     {
       image: pic1,
@@ -104,6 +106,7 @@ export default function TripIdeasComponent() {
     .then((result) => {
       console.log(result.data)
       setTrendingPlaces(result.data)
+      console.log(result.data)
     })
     .catch((error) => console.log(error));
     // const fetchTrendingPlaces = async () => {
@@ -132,6 +135,10 @@ export default function TripIdeasComponent() {
     }
   };
 
+  const handleNavigate = (name) => {
+    navigate(`/Book?to=${name}`)
+  }
+
   return (
     <>
     <div className='position-relative '>
@@ -144,14 +151,14 @@ export default function TripIdeasComponent() {
           ))}
         </Slider>
       </div>
-      <NavLink className='position-absolute top-0 start-0 text-decoration-none btn btn-dark slider-btn border-0 text-start' to="/Book" style={{backgroundColor: "var(--main-color)", marginLeft: "8rem", marginTop: "1.5rem"}}>Book Now</NavLink>
+      <button className='position-absolute top-0 start-0 text-decoration-none btn btn-dark slider-btn border-0 text-start' onClick={(name) => handleNavigate(trendingPlaces[0].cityName)} style={{backgroundColor: "var(--main-color)", marginLeft: "8rem", marginTop: "1.5rem"}}>Book Now</button>
       <h3 className="position-absolute top-50 start-50 slider-text text-center m-0 text-white" style={{transform: "translate(-50%,-50%)"}}>Travel Far Enough, You Meet Yourself</h3>
       </div>
 
       <div className="container py-5 m-5 ps-5">
         <h2 className="text-start pb-4">Trending Visits</h2>
         <div className="row row-cols-1 row-cols-lg-4 row-cols-md-2 g-4 justify-content-center align-items-center ">
-          {trendingPlaces.map((place) => (
+          {trendingPlaces.slice(0, 4).map((place) => (
             <div className="col d-flex justify-content-center align-items-center" key={place.id}>
               <Card
                 id={place.id}

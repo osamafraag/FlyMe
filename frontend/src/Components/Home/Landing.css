@@ -1,9 +1,13 @@
 .landing {
-  background-image: url("./../../Assets/Images/Landing15.jpg") !important;
+  background-image: url("./../../Assets/Landing15.jpg") !important;
   background-position: center 30% !important;
   background-repeat: no-repeat !important;
   background-size: cover !important;
   position: relative;
+}
+
+.landing-text {
+  text-shadow: 1px 1px 1px 1px #f4f4f4 !important;
 }
 
 .landing::after {
