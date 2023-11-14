@@ -42,15 +42,15 @@ const Card = ({ id ,images, name, description, onDetailsClick, showDetails }) =>
                           slideSpacing={10}>
             {images.map((image, index) => (
               <div  key={index}>
-                <img src={image.photo} className="d-block w-100 rounded-top-2 " alt="..."  style={{height: '250px'}}/>
+                <img src={`https://osamafraag.pythonanywhere.com/${image.photo}`} className="d-block w-100 rounded-top-2 " alt="..."  style={{height: '250px'}}/>
               </div>
-        ))}
+            ))}
           </AliceCarousel>
       </div>
   
-      <div className="card-content">
-        <h5 className="card-title ps-2 pt-3">{name}</h5>
-        <button className="card-btn btn border-0" onClick={onDetailsClick}>
+      <div className="card-content px-3 pb-3">
+        <h5 className="card-title ps-2 pt-3">{name.substr(0,20)}</h5>
+        <button className="card-btn btn border-0 text-end" onClick={onDetailsClick}>
           {showDetails ? <FontAwesomeIcon icon={faEyeSlash} style={{color: "var(--main-color)"}}/> : <FontAwesomeIcon icon={faEye} style={{color: "var(--main-color)"}}/>}
         </button>
       </div>

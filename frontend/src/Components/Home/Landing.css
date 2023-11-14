@@ -6,6 +6,10 @@
   position: relative;
 }
 
+.landing-text {
+  text-shadow: 1px 1px 1px 1px #f4f4f4 !important;
+}
+
 .landing::after {
   content: "";
 }
