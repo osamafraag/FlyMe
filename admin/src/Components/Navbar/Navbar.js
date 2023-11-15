@@ -22,7 +22,7 @@ export default function NavBar() {
             {/* User */}
             <div className="text-secondary">
               Sarah Mohamed
-              <img className="profile rounded-3 ps-3" src={Profile} />
+              <img className="profile rounded-3 ps-3" src={Profile} alt='' />
             </div>
           </Nav>
         </Navbar.Collapse>

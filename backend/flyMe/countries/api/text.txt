@@ -1,0 +1,36 @@
+for POST countries
+curl -X POST -H "Authorization: Bearer YOUR_ACCESS_TOKEN" -F "flag=@/home/osama/Downloads/logo.jpeg" -F "name=Ghana" -F "callingCode=+81" -F "nationality=Japanese" -F "isFeatured=true" http://127.0.0.1:8000/countries/api/countries/
+
+
+for Post Airport
+curl -X POST http://127.0.0.1:8000/countries/api/airports/ -H "Content-Type: application/json" -d '{
+    "country_id": 26,
+    "country_name": "SA",
+    "name": "magarTest Airport",
+    "latitude": "24.962894",
+    "longitude": "46.137165"
+}'
+
+for Post Events 
+curl -X POST http://127.0.0.1:8000/countries/api/events/ -H "Content-Type: application/json" -d '{
+    "nameEvent": "Venice Carnival",
+    "description": "A historic masked carnival in Venice, Italy, with elaborate costumes and masks.",
+    "startDate": "2024-02-01",
+    "endDate": "2024-02-29",
+    "sale_amount": "15.00"
+}'
+
+for Post trending_places
+curl -X POST http://127.0.0.1:8000/countries/api/trending_places/ -H "Content-Type: application/json" -d '{
+    "country_id": 16,
+    "name": "Test Places",
+    "description": "The world's tallest skyscraper With an observation deck offering...",
+    "latitude": "25.276987",
+    "longitude": "55.296249"
+}'
+
+for Post Route
+curl -X POST http://127.0.0.1:8000/countries/api/routes/ -H "Content-Type: application/json" -d '{
+    "startAirport": 57,
+    "endAirport": 26
+}'
