@@ -1,0 +1,20 @@
+.headerr {
+    /* background: url(../../Assets/Images/termpic4.jpeg); */
+    background: url(../../Assets/Images/termpic5.jpeg);
+    height: 90vh;
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    font-weight: 600;
+    color: white;
+}
+.text{
+    display: flex;
+    /* width: 80%; */
+    flex-direction: column;
+    text-align: justify;
+}

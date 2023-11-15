@@ -1,0 +1,78 @@
+.landing {
+  background-image: url("./../../Assets/Landing15.jpg") !important;
+  background-position: center 30% !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  position: relative;
+}
+
+.landing-text {
+  text-shadow: 1px 1px 1px 1px #f4f4f4 !important;
+}
+
+.landing::after {
+  content: "";
+}
+
+.search-form {
+  position: absolute;
+  bottom: 0; 
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.search-type {
+  border: none;
+  background-color: #f4f4f4;
+  border-radius: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.search-type:hover, .search-type.active {
+  background-color: var(--secondary-color);
+  color: var(--main-color);
+  border-radius: 15px;
+}
+
+.custom-select {
+  height: 3.5rem;
+  position: relative;
+}
+
+.custom-select option:checked {
+  color: var(--main-color); 
+}
+
+.custom-select option:hover {
+  background-color: #f4f4f4;
+}
+
+.search-submit {
+  border: none;
+  border-radius: 25px;
+  padding: 15px 25px;
+  background-color: var(--main-color);
+  transition: 0.5s;
+}
+
+.search-submit:hover {
+  background-color: white;
+  color: var(--main-color);
+  border: 1px solid var(--main-color);
+}
+
+.departure-input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.return-input {
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+input.Error {
+  border-color: red;
+}
