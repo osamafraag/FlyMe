@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { faPlaneUp } from '@fortawesome/free-solid-svg-icons'
 
-const Flight = ({ flight }) => {
+const Transit = ({ flights }) => {
   const formatTime = (dateTimeString) => {
     const dateTime = new Date(dateTimeString);
     return dateTime.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hour12: false });
@@ -25,9 +25,9 @@ const Flight = ({ flight }) => {
   return (
     <>
       <div className='time d-flex justify-content-between align-items-center'>
-        <p className='fw-bolder mb-0'>{formatTime(flight.departureTime)}</p>
-        <p className='text-secondary mb-0' style={{fontSize: "12px"}}><FontAwesomeIcon icon={faClock} /> {calculateTimeDifference(flight.departureTime, flight.arrivalTime)}</p>
-        <p className='fw-bolder mb-0'>{formatTime(flight.arrivalTime)}</p>
+        <p className='fw-bolder mb-0'>{formatTime(flights[0].departureTime)}</p>
+        <p className='text-secondary mb-0' style={{fontSize: "12px"}}><FontAwesomeIcon icon={faClock} /> {calculateTimeDifference(flights[0].departureTime, flights[1].arrivalTime)}</p>
+        <p className='fw-bolder mb-0'>{formatTime(flights[1].arrivalTime)}</p>
       </div>
 
       <div className='flight-line mx-4 d-flex justify-content-between '>
@@ -37,12 +37,12 @@ const Flight = ({ flight }) => {
       </div>
 
       <div className='d-flex justify-content-between align-items-center'>
-        <p className='countries fw-bolder text-secondary mb-0 me-2'>{flight.from}</p>
-        <p className='text-secondary mb-0 mx-5' style={{fontSize: "12px"}}>Direct</p>
-        <p className='countries fw-bolder text-secondary mb-0'>{flight.to}</p>
+        <p className='countries fw-bolder text-secondary mb-0 me-2'>{flights[0].from}</p>
+        <p className='countries fw-bolder text-secondary mb-0 me-2'>{flights[0].to}</p>
+        <p className='countries fw-bolder text-secondary mb-0'>{flights[1].to}</p>
       </div>
     </>
   );
 };
 
-export default Flight;
+export default Transit;

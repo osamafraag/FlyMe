@@ -13,7 +13,7 @@ export default function Landing() {
           <p className=" lh-lg fs-5 text-white" style={{color: "var(--main-color)"}}>Traveling is not just about reaching a destination; it's about embracing new experiences, expanding your horizons, and finding inspiration in the unknown.</p>
         </div>
 
-        <div className="search-form mx-auto bg-white py-5 rounded-3 shadow" style={{width: "80%"}}>
+        <div className="search-form mx-auto bg-white py-5 rounded-3 shadow-sm" style={{width: "80%"}}>
           <FlightSearchForm />
         </div>
       </div>

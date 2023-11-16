@@ -1,17 +1,32 @@
-import React, { useState } from 'react';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
+import { SearchFlight } from "./../../APIs/SearchFlights"
 
 const RoundTripForm = ({ handleFlightData, cities }) => {
   const [departure, setDeparture] = useState(getTodayDate());
+  const [departureYear, setDepartureYear] = useState();
+  const [departureMonth, setDepartureMonth] = useState();
+  const [departureDay, setDepartureDay] = useState();
   const [returnDate, setReturnDate] = useState('');
+  const [returnYear, setReturnYear] = useState();
+  const [returnMonth, setReturnMonth] = useState();
+  const [returnDay, setReturnDay] = useState();
   const [destinationFrom, setDestinationFrom] = useState('');
   const [destinationTo, setDestinationTo] = useState('');
+  const [directFlightsOnly, setDirectFlightsOnly] = useState(false);
   const [ errorFrom , setErrorFrom ] = useState('')
   const [ errorTo , setErrorTo ] = useState('')
+
+  useEffect(() => {
+    const today = new Date();
+    
+    setDepartureYear(today.getFullYear());
+    setDepartureMonth(today.getMonth() + 1);
+    setDepartureDay(today.getDate());
+  }, []);
 
   function getTodayDate() {
     const today = new Date();
@@ -21,133 +36,89 @@ const RoundTripForm = ({ handleFlightData, cities }) => {
     return `${year}-${month}-${day}`;
   }
 
+  const handleDeparture = (e) => {
+    const selectedDate = e.target.value;
+
+    const [year, month, day] = selectedDate.split('-');
+
+    setDeparture(selectedDate);
+    setDepartureYear(Number(year));
+    setDepartureMonth(Number(month));
+    setDepartureDay(Number(day));
+  }
+
+  const handleReturn = (e) => {
+    const selectedDate = e.target.value;
+
+    const [year, month, day] = selectedDate.split('-');
+
+    setReturnDate(selectedDate);
+    setReturnYear(Number(year));
+    setReturnMonth(Number(month));
+    setReturnDay(Number(day));
+  }
+
   const handleFrominput = (e) => {
     setDestinationFrom(e.target.value); 
     if (errorTo != "Required") setErrorTo("")
     setErrorFrom("")
-  }
+  } 
 
   const handleToinput = (e) => {
     setDestinationTo(e.target.value); 
     setErrorTo("")
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (destinationFrom === destinationTo & destinationTo != "" & destinationFrom != "") {
-      setErrorTo("You Can't Select Destination To To Be The Same Of From")
-      return;
-    } else if (destinationFrom == "" & destinationTo == "") {
-      setErrorFrom("Required")
-      setErrorTo("Required")
-      return;
-    } else if (destinationFrom == "") {
-      setErrorFrom("Required")
-      return;
-    } else if (destinationTo == "") {
-      setErrorTo("Required")
-      return;
-    }
-
-    const flights1 = [
-      {
-        id: "1",
-        name: "Flight 1",
-        company: "A",
-        capacity: 150,
-        maxLoad: 12,
-        baggageWeight: 25,
-        maxDistance: 600,
-        departureTime: "2023-11-07",
-        arrivalTime: "2023-11-07",
-        availableSeats: 120,
-        baseCost: 1200,
-        baggageWeight: 20,
-        totalDistance: 550,
-        type: "D",
-        sourceCountry: "Palastine",
-        destinationCountry: "Egypt"
-      },
-      {
-        id: "2",
-        name: "Flight 2",
-        company: "B",
-        capacity: 200,
-        maxLoad: 10,
-        baggageWeight: 20,
-        maxDistance: 800,
-        departureTime: "2023-11-08",
-        arrivalTime: "2023-11-08",
-        availableSeats: 180,
-        baseCost: 1000,
-        baggageWeight: 15,
-        totalDistance: 700,
-        type: "D",
-        sourceCountry: "Egypt",
-        destinationCountry: "Palastine"
-      },
-    ]
-
-    const flights2 = [
-      {
-        id: "3",
-        name: "Flight 1",
-        company: "A",
-        capacity: 150,
-        maxLoad: 12,
-        baggageWeight: 25,
-        maxDistance: 600,
-        departureTime: "2023-11-07",
-        arrivalTime: "2023-11-07",
-        availableSeats: 120,
-        baseCost: 1200,
-        baggageWeight: 20,
-        totalDistance: 550,
-        type: "D",
-        sourceCountry: "Palastine",
-        destinationCountry: "Egypt"
-      },
-      {
-        id: "4",
-        name: "Flight 2",
-        company: "B",
-        capacity: 200,
-        maxLoad: 10,
-        baggageWeight: 20,
-        maxDistance: 800,
-        departureTime: "2023-11-08",
-        arrivalTime: "2023-11-08",
-        availableSeats: 180,
-        baseCost: 1000,
-        baggageWeight: 15,
-        totalDistance: 700,
-        type: "D",
-        sourceCountry: "Egypt",
-        destinationCountry: "Palastine"
-      },
-      {
-        id: "5",
-        name: "Flight 3",
-        company: "B",
-        capacity: 200,
-        maxLoad: 10,
-        baggageWeight: 20,
-        maxDistance: 800,
-        departureTime: "2023-11-08",
-        arrivalTime: "2023-11-08",
-        availableSeats: 180,
-        baseCost: 1000,
-        baggageWeight: 15,
-        totalDistance: 700,
-        type: "D",
-        sourceCountry: "Egypt",
-        destinationCountry: "Palastine"
-      },
-    ]
-    const searchResults = [flights1, flights2] 
-    handleFlightData(searchResults);
+  const handleCheckboxChange = (e) => {
+    setDirectFlightsOnly(e.target.checked);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    if (destinationFrom === destinationTo && destinationTo !== "" && destinationFrom !== "") {
+      setErrorTo("You Can't Select Destination To To Be The Same Of From");
+      return;
+    } else if (destinationFrom === "" && destinationTo === "") {
+      setErrorFrom("Required");
+      setErrorTo("Required");
+      return;
+    } else if (destinationFrom === "") {
+      setErrorFrom("Required");
+      return;
+    } else if (destinationTo === "") {
+      setErrorTo("Required");
+      return;
+    }
+  
+    try {
+      const [flights1, flights2] = await Promise.all([
+        SearchFlight(
+          destinationFrom,
+          destinationTo,
+          departureYear,
+          departureMonth,
+          departureDay,
+          directFlightsOnly
+        ),
+        SearchFlight(
+          destinationTo,
+          destinationFrom,
+          returnYear,
+          returnMonth,
+          returnDay,
+          directFlightsOnly
+        )
+      ]);
+  
+      const searchResults = [flights1.data, flights2.data];
+      handleFlightData(searchResults);
+    } catch (error) {
+      handleFlightData([]);
+      console.error(error);
+    }
+  };
+  
   return (
     <form className='row row-cols-3 align-items-center justify-content-between' onSubmit={handleSubmit}>
       <div className='col-7 row'>
@@ -202,7 +173,7 @@ const RoundTripForm = ({ handleFlightData, cities }) => {
             type="date"
             className="form-control departure-input"
             value={departure}
-            onChange={(e) => setDeparture(e.target.value)}
+            onChange={(e) => handleDeparture(e)}
             min={getTodayDate()}
             max={returnDate}
             id="departure"
@@ -217,7 +188,7 @@ const RoundTripForm = ({ handleFlightData, cities }) => {
             type="date"
             className="form-control return-input"
             value={returnDate}
-            onChange={(e) => setReturnDate(e.target.value)}
+            onChange={(e) => handleReturn(e)}
             min={departure}
             id="return"
             placeholder="Return"
@@ -232,6 +203,8 @@ const RoundTripForm = ({ handleFlightData, cities }) => {
           type='checkbox'
           id='default-checkbox'
           label='Direct Flights Only'
+          checked={directFlightsOnly}
+          onChange={handleCheckboxChange}
         />
       </div>
 
