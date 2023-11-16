@@ -12,6 +12,7 @@ const AboutUs = React.lazy(() => import('../Pages/AboutUs'));
 const Help = React.lazy(() => import('../Pages/Help'));
 const Login = React.lazy(() => import('../Pages/Login'));
 const Register = React.lazy(() => import('../Pages/Register'));
+const Nottificate = React.lazy(() => import('../Pages/Notifications'));
 const Error = React.lazy(() => import('../Pages/404'));
 
 
@@ -30,6 +31,7 @@ export default function Router() {
         <Route path="/Help" element={<Help />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
+        <Route path="/Notifications" element={<Nottificate />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Suspense>
