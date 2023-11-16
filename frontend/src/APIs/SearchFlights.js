@@ -10,7 +10,10 @@ export const SearchFlight = (from, to, year, month, day, directFlightsOnly) => {
   return Promise.all([directFlightsPromise, transitFlightsPromise])
     .then(([directFlightsResponse, transitFlightsResponse]) => {
       return {
-        data: [...directFlightsResponse.data, ...transitFlightsResponse.data],
+        data: [
+          ...(directFlightsResponse.data || []),
+          ...(transitFlightsResponse.data || []) 
+        ],
       };
     });
 };

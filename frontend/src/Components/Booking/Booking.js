@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useParams } from 'react'
 import "./Booking.css"
 import SideBar from './SideBar'
 import BookingSteps from './BookingSteps/BookingSteps'
@@ -7,7 +7,6 @@ import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default function BookingComponent() {
-
   return (
     <div className='bookingPage w-100 text-start row'>
       <div className='col-8'>
