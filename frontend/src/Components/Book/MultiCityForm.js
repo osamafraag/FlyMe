@@ -69,28 +69,6 @@ const MultiCityForm = ({ handleFlightData, cities }) => {
   
     const newToErrors = [false, false, false];
     const newFromErrors = [false, false, false];
-
-    for (let i = 0; i < flights.length; i++) {
-      const currentFlight = flights[i];
-      const fromCity = currentFlight.destinationFrom;
-      const toCity = currentFlight.destinationTo;
-
-      if (fromCity === toCity & fromCity != "" & toCity != "") {
-        newToErrors[i] = "Equel";
-      } else if (fromCity == "" & toCity == "") {
-        newToErrors[i] = "Required";
-        newFromErrors[i] = "Required";
-      } else if(fromCity == "") {
-        newFromErrors[i] = "Required";
-      } else if(toCity == "") {
-        newToErrors[i] = "Required";
-      }
-    }
-
-    setToErrors(newToErrors);
-    setFromErrors(newFromErrors);
-    if (newToErrors.some((error) => error)) return;
-    if (newFromErrors.some((error) => error)) return;
   
     try {
       const resultsArray = await Promise.all(
