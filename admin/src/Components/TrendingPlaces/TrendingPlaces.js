@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from "../../APIs/Config";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPencilAlt,faTrash } from '@fortawesome/free-solid-svg-icons';
+
 
 export default function TrendingPlaces() {
   const [trendingPlaces, setTrendingPlaces] = useState([]);
@@ -113,16 +116,18 @@ export default function TrendingPlaces() {
               &rarr; <strong>{place.name}</strong> - {place.cityName},{" "}
               {place.countryName}
               <button
-                className="btn btn-sm btn-primary ms-2"
+                className="btn ms-2"
                 onClick={() => handleEditClick(place)}
               >
-                Edit
+                <FontAwesomeIcon icon={faPencilAlt} />
               </button>
               <button
-                className="btn btn-sm btn-danger ms-2"
+                className="btn  ms-2"
+                style={{ color: 'brown' }}
+
                 onClick={() => handleDelete(place.id)}
               >
-                Delete
+                <FontAwesomeIcon icon={faTrash} />
               </button>
             </li>
           ))}

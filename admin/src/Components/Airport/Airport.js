@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../APIs/Config";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPencilAlt,faTrash } from '@fortawesome/free-solid-svg-icons';
+
 
 export default function Airports() {
   const [airports, setAirports] = useState([]);
@@ -110,16 +113,20 @@ export default function Airports() {
               &rarr; <strong>{airport.name}</strong> - {airport.cityName},{" "}
               {airport.countryName}
               <button
-                className="btn btn-sm btn-primary ms-2"
+                className="btn ms-2"
                 onClick={() => handleEditClick(airport)}
               >
-                Edit
+                {/* Edit */}
+                <FontAwesomeIcon icon={faPencilAlt} />
+
               </button>
               <button
-                className="btn btn-sm btn-danger ms-2"
+                className="btn ms-2"
+                style={{ color: 'brown' }}
                 onClick={() => handleDelete(airport.id)}
               >
-                Delete
+                {/* Delete */}
+                <FontAwesomeIcon icon={faTrash} />
               </button>
             </li>
           ))}
