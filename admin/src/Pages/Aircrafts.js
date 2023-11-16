@@ -16,7 +16,7 @@ export default function Aircrafts() {
   const [aircrafts, setAircrafts] = useState([])
 
   function handleClick() {
-    navigate(`/form`);
+    navigate(`/AircraftForm`);
   }
   
   useEffect(() => {
