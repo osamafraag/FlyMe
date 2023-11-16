@@ -85,11 +85,11 @@ WSGI_APPLICATION = 'flyMe.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "flyme",
-        "USER": "flyme",
-        "PASSWORD": "password",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "reemreham",
         "HOST": "localhost",
-        "PORT": "5432",
+        "PORT": "5433",
     }
 }
 

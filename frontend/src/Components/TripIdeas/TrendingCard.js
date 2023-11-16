@@ -42,7 +42,7 @@ const Card = ({ id ,images, name, description, onDetailsClick, showDetails }) =>
                           slideSpacing={10}>
             {images.map((image, index) => (
               <div  key={index}>
-                <img src={`https://osamafraag.pythonanywhere.com/${image.photo}`} className="d-block w-100 rounded-top-2 " alt="..."  style={{height: '250px'}}/>
+                <img src={`http://127.0.0.1:8000/${image.photo}`} className="d-block w-100 rounded-top-2 " alt="..."  style={{height: '250px'}}/>
               </div>
             ))}
           </AliceCarousel>
