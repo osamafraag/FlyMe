@@ -1,138 +1,21 @@
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-
-// export default function Airports() {
-//   const [airports, setAirports] = useState([]);
-//   const [cities, setCities] = useState([]);
-//   const [newAirport, setNewAirport] = useState({
-//     city: "",
-//     name: "",
-//   });
-
-//   useEffect(() => {
-//     fetchData();
-//   }, []);
-
-//   const fetchData = () => {
-//     axios
-//       .get("https://osamafraag.pythonanywhere.com/countries/api/airports/")
-//       .then((res) => setAirports(res.data))
-//       .catch((err) => console.error("Error fetching data:", err));
-//   };
-
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
-
-//     setNewAirport({
-//       ...newAirport,
-//       [name]: value,
-//     });
-
-//     if (name === "name") {
-//       fetchCities(value);
-//     }
-//   };
-
-//   const fetchCities = (airportName) => {
-//     axios
-//       .get(`https://osamafraag.pythonanywhere.com/countries/api/cities/?search=${airportName}`)
-//       .then((res) => setCities(res.data))
-//       .catch((err) => console.error("Error fetching cities:", err));
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-
-//     axios
-//       .post(
-//         "https://osamafraag.pythonanywhere.com/countries/api/airports/",
-//         newAirport
-//       )
-//       .then(() => {
-//         fetchData();
-//         setNewAirport({
-//           city: "",
-//           name: "",
-//         });
-//       })
-//       .catch((err) => console.error("Error posting data:", err));
-//   };
-
-//   return (
-//     <div>
-//       <div className="row my-4">
-//         <div className="text-start col-7">
-//           <h2 className="text-danger">Available Airports</h2>
-//           {airports && airports.length > 0 ? (
-//             <ul>
-//               {airports.map((airport) => (
-//                 <li key={airport.id}>
-//                   &rarr; <strong>{airport.name}</strong> - {airport.cityName},{" "}
-//                   {airport.countryName}
-//                 </li>
-//               ))}
-//             </ul>
-//           ) : (
-//             <p>Loading...</p>
-//           )}
-//         </div>
-//         <div className="text-start col-5">
-//           <h2 className="text-danger ">Add New Airport</h2>
-//           <form onSubmit={handleSubmit}>
-//             <label className="my-2">
-//               Name:
-//               <input
-//                 type="text"
-//                 name="name"
-//                 value={newAirport.name}
-//                 onChange={handleInputChange}
-//               />
-//             </label><br/>
-//             <label className="my-2">
-//               City:
-//               <input
-//                 type="text"
-//                 name="city"
-//                 value={newAirport.city}
-//                 onChange={handleInputChange}
-//               />
-//             </label>
-//           </form>
-//           <button  className="btn btn-primary my-3" type='submit'>Add Airport</button>
-//           {cities && cities.length > 0 && (
-//             <div>
-//               <p>Possible Cities:</p>
-//               <ul>
-//                 {cities.map((city) => (
-//                   <li key={city.id}>{city.name}</li>
-//                 ))}
-//               </ul>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { axiosInstance } from "../../APIs/Config";
 
 export default function Airports() {
   const [airports, setAirports] = useState([]);
-  const [cities, setCities] = useState([]);
   const [newAirport, setNewAirport] = useState({
     city: "",
     name: "",
   });
-  const [selectedCity, setSelectedCity] = useState(null);
+  const [editingAirportId, setEditingAirportId] = useState(null);
 
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = () => {
-    axios
-      .get("https://osamafraag.pythonanywhere.com/countries/api/airports/")
+    axiosInstance
+      .get("countries/api/airports/")
       .then((res) => setAirports(res.data))
       .catch((err) => console.error("Error fetching data:", err));
   };
@@ -144,116 +27,135 @@ export default function Airports() {
       ...newAirport,
       [name]: value,
     });
-
-    // Fetch cities based on the entered airport name
-    if (name === "name") {
-      fetchCities(value);
-    }
-  };
-
-  const fetchCities = (airportName) => {
-    axios
-      .get(`https://osamafraag.pythonanywhere.com/countries/api/cities/?search=${airportName}`)
-      .then((res) => setCities(res.data))
-      .catch((err) => console.error("Error fetching cities:", err));
-  };
-
-  const handleCityClick = (selectedCity) => {
-    setSelectedCity(selectedCity);
-
-    // You can choose to fetch more details about the selected city if needed
-    // Example: fetchCityDetails(selectedCity.id);
-  };
-
-  const fetchCityDetails = (cityId) => {
-    axios
-      .get(`https://osamafraag.pythonanywhere.com/countries/api/cities/${cityId}/`)
-      .then((res) => {
-        // Handle the detailed city information, you can set it to state or display it as needed
-        console.log('City Details:', res.data);
-      })
-      .catch((err) => console.error("Error fetching city details:", err));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios
-      .post("https://osamafraag.pythonanywhere.com/countries/api/airports/", newAirport)
-      .then(() => {
-        fetchData();
-        setNewAirport({
-          city: "",
-          name: "",
+    if (editingAirportId) {
+      handleEdit(editingAirportId, newAirport);
+    } else {
+      const isDuplicateName = airports.some(
+        (airport) => airport.name === newAirport.name
+      );
+
+      if (isDuplicateName) {
+        alert("Airport name must be unique.");
+        return;
+      }
+
+      axiosInstance
+        .post("/countries/api/airports/", newAirport)
+        .then((response) => {
+          console.log(response.data);
+          fetchData();
+        })
+        .catch((error) => {
+          console.error(error);
         });
+    }
+
+    setNewAirport({
+      city: "",
+      name: "",
+    });
+    setEditingAirportId(null);
+  };
+
+  const handleEdit = (airportId, updatedAirport) => {
+    axiosInstance
+      .put(`/countries/api/airports/${airportId}/`, updatedAirport)  
+      .then((response) => {
+        console.log(response.data);
+        fetchData();
       })
-      .catch((err) => console.error("Error posting data:", err));
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleDelete = (airportId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this airport?");
+  
+    if (!confirmDelete) {
+      return;
+    }
+  
+    axiosInstance
+    .delete(`/countries/api/airports/${airportId}/`)  
+    .then((response) => {
+      console.log(response.data);
+      fetchData(); 
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  };
+
+  const handleEditClick = (airport) => {
+    setNewAirport({
+      city: airport.id,
+      name: airport.name,
+    });
+    setEditingAirportId(airport.id);
   };
 
   return (
-    <div>
-      <div className="row my-4">
-        <div className="text-start col-7">
-          <h2 className="text-danger">Available Airports</h2>
-          {airports && airports.length > 0 ? (
-            <ul>
-              {airports.map((airport) => (
-                <li key={airport.id}>
-                  &rarr; <strong>{airport.name}</strong> - {airport.cityName},{" "}
-                  {airport.countryName}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>Loading...</p>
-          )}
-        </div>
-        <div className=" text-start col-5">
-          <h2 className="text-danger  ">Add New Airport</h2>
-          <form onSubmit={handleSubmit}>
-            <label className="my-2">
-              Name:
-              <input
-                type="text"
-                name="name"
-                value={newAirport.name}
-                onChange={handleInputChange}
-              />
-            </label><br/>
-            <label className="my-2">
-              City:
-              <input
-                type="text"
-                name="city"
-                value={newAirport.city}
-                onChange={handleInputChange}
-              />
-            </label><br/>
-            <button className="btn btn-primary my-3" type="submit">
-              Add Airport
-            </button>
-          </form>
-          {cities && cities.length > 0 && (
-            <div>
-              <p>Possible Cities:</p>
-              <ul>
-                {cities.map((city) => (
-                  <li key={city.id} onClick={() => handleCityClick(city)}>
-                    {city.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {selectedCity && (
-            <div>
-              <h3>Selected City Details:</h3>
-              <p>ID: {selectedCity.id}</p>
-              <p>Name: {selectedCity.name}</p>
-            </div>
-          )}
-        </div>
-      </div>
+    <div className="text-start">
+      <h2 className="text-danger">Available Airports</h2>
+      {airports && airports.length > 0 ? (
+        <ul>
+          {airports.map((airport) => (
+            <li key={airport.id}>
+              &rarr; <strong>{airport.name}</strong> - {airport.cityName},{" "}
+              {airport.countryName}
+              <button
+                className="btn btn-sm btn-primary ms-2"
+                onClick={() => handleEditClick(airport)}
+              >
+                Edit
+              </button>
+              <button
+                className="btn btn-sm btn-danger ms-2"
+                onClick={() => handleDelete(airport.id)}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Loading...</p>
+      )}
+
+      <h2 className="text-danger">
+        {editingAirportId ? "Edit Airport" : "Add New Airport"}
+      </h2>
+      <form onSubmit={handleSubmit}>
+        <label className="my-2">
+          Name:
+          <input
+            type="text"
+            name="name"
+            value={newAirport.name}
+            onChange={handleInputChange}
+          />
+        </label>
+        <br />
+        <label className="my-2">
+          CityID:
+          <input
+            type="text"
+            name="city"
+            value={newAirport.city}
+            onChange={handleInputChange}
+          />
+        </label>
+        <br />
+        <button className="btn btn-primary my-3" type="submit">
+          {editingAirportId ? "Update Airport" : "Add Airport"}
+        </button>
+      </form>
     </div>
   );
 }
