@@ -9,36 +9,31 @@ export default function LoginForm() {
     let navigate = useNavigate()
     // Form State
     const [form, setForm] = useState({
-        email: '',
+        username: '',
         password: '',
 
     })
     const [formError, setFormError] = useState({
-        email: null,
+        username: null,
         password: null,
     });
-
-    // Regex Validations
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const handleOnChangeForm = (event) => {
         let name = event.target.name
         let value = event.target.value
 
-        // Email Validations
-        if (name === 'email') {
+        // username Validations
+        if (name === 'username') {
             setForm({
                 ...form,
-                email: value
+                username: value
             });
             setFormError({
                 ...formError,
-                email:
+                username:
                     value.trim(" ").length === 0
-                        ? "You Should Enter Your Email"
-                        : !value.match(emailRegex)
-                            ? "Invalid Email, Email Should Be Like This name@example.com"
-                            : null
+                        ? "You Should Enter Your username"
+                        : null
             })
         }
         // Password Validations
@@ -57,7 +52,7 @@ export default function LoginForm() {
         }
     }
 
-    const isFormValid = !formError.email && !formError.password && form.email && form.password
+    const isFormValid = !formError.username && !formError.password && form.username && form.password
 
     // handle click on Login button
     const handleOnClickLogin = (e) => {
@@ -66,7 +61,7 @@ export default function LoginForm() {
             console.log("Form Submitted Successfully");
             axios
             .post('https://osamafraag.pythonanywhere.com/accounts/api/login/', {
-                email: form.email,
+                username: form.username,
                 password: form.password,
             })
             .then((res) => {
@@ -98,11 +93,11 @@ export default function LoginForm() {
                     />
                     <div className="col-6 pb-5">
                         <form method="post" encType="multipart/form-data">
-                            {/* Email */}
+                            {/* Username */}
                             <div className=" mb-3">
-                                <label htmlFor="floatingInput" className='form-label'>Email address</label>
-                                <input type="email" className="form-control" id="floatingInput" value={form.email} onChange={handleOnChangeForm} placeholder='Enter your email' name="email" required/>
-                                {formError.email && <div className="form-text text-danger text-start ">{formError.email}</div>}
+                                <label htmlFor="floatingInput" className='form-label'>Username</label>
+                                <input type="username" className="form-control" id="floatingInput" value={form.username} onChange={handleOnChangeForm} placeholder='Enter your username' name="username" required/>
+                                {formError.username && <div className="form-text text-danger text-start ">{formError.username}</div>}
                             </div>
                             {/* Password */}
                             <div className=" mb-3">
