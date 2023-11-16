@@ -13,7 +13,7 @@ export default function HelpComponent() {
     const [message, setMessage] = useState('');
     const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
-    const API_BASE_URL = 'https://osamafraag.pythonanywhere.com';
+    const API_BASE_URL = 'http://127.0.0.1:8000';
     
 
     
@@ -38,11 +38,11 @@ export default function HelpComponent() {
       }
   
       // Validate phone number
-      if (phoneNumber.trim() === '') {
-        errors.phoneNumber = 'Phone number is required';
-      } else if (!isValidPhoneNumber(phoneNumber)) {
-        errors.phoneNumber = 'Invalid phone number format';
-      }
+      // if (phoneNumber.trim() === '') {
+      //   errors.phoneNumber = 'Phone number is required';
+      // } else if (!isValidPhoneNumber(phoneNumber)) {
+      //   errors.phoneNumber = 'Invalid phone number format';
+      // }
   
       // Validate message
       if (message.trim() === '') {
@@ -75,7 +75,7 @@ export default function HelpComponent() {
           status: "IN_PROGRESS",
           first_name: firstName,
           last_name: lastName,
-          phone_number: phoneNumber,
+          phone: phoneNumber,
           email: email
         }
 
@@ -107,6 +107,7 @@ export default function HelpComponent() {
         .catch(error => {
           console.error(error);
           setSuccessMessage('An error occurred while saving the data.');
+          console.log(formData)
         });
 
         
