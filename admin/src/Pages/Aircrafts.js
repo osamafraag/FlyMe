@@ -10,22 +10,54 @@ import boeing from "./../Assets/Images/aircrafts/boeing.png"
 import raytheon from "./../Assets/Images/aircrafts/raytheon.png"
 import lockheed from "./../Assets/Images/aircrafts/lockheedMartin.png"
 import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../APIs/Config";
+
     
 export default function Aircrafts() {
+  
   const navigate = useNavigate()
   const [aircrafts, setAircrafts] = useState([])
+
+  useEffect(() => {fetchData();},[]);
+
+  function refresh(){
+    fetchData()
+  }
+
+  function fetchData(){
+    AircraftsAPI()
+        .then((result) => {
+          setAircrafts(result.data)
+        })
+        .catch((error) => console.log(error));
+  }
+
 
   function handleClick() {
     navigate(`/AircraftForm`);
   }
+
+  function handleEdit(aircraft) {
+    navigate(`/AircraftForm`,{state:{id:aircraft.id}});
+  };
+
+  function handleDelete(aircraftId) {
+    const confirmDelete = window.confirm("Are you sure you want to delete this aircraft?");
   
-  useEffect(() => {
-    AircraftsAPI()
-      .then((result) => {
-        setAircrafts(result.data)
-      })
-      .catch((error) => console.log(error));
-    },[]);
+    if (!confirmDelete) {
+      return;
+    }
+
+    axiosInstance
+    .delete(`/flights/api/aircrafts/${aircraftId}`)  
+    .then((response) => {
+      console.log(response.data);
+      refresh()
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  };
 
  return (
     <div className='container p-5'>
@@ -58,9 +90,10 @@ export default function Aircrafts() {
                     </div>
                   </div>
                   <small className="text-muted mt-4"><FontAwesomeIcon icon={faPlaneDeparture} style={{color: "var(--main-color)"}}/> Fly Me</small>
-                  <a className='btn btn-danger ms-4'>Delete <FontAwesomeIcon icon={faTrash} /></a>
-                  <a className='btn btn-primary ms-2'>Edit <FontAwesomeIcon icon={faPenToSquare} /></a>
+                  <a className='btn btn-danger ms-4' onClick={() => {handleDelete(aircraft.id)}}>Delete <FontAwesomeIcon icon={faTrash} /></a>
+                  <a className='btn btn-primary ms-2' onClick={() => {handleEdit(aircraft)}}>Edit <FontAwesomeIcon icon={faPenToSquare} /></a>
                 </Card.Body>
+                
               </Card>
             </div>
           )
