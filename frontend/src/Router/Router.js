@@ -11,6 +11,7 @@ const TermsAndConditions = React.lazy(() => import('../Pages/TermsAndConditions'
 const AboutUs = React.lazy(() => import('../Pages/AboutUs'));
 const Help = React.lazy(() => import('../Pages/Help'));
 const Login = React.lazy(() => import('../Pages/Login'));
+const Logout = React.lazy(() => import('../Pages/Logout'));
 const Register = React.lazy(() => import('../Pages/Register'));
 const Error = React.lazy(() => import('../Pages/404'));
 
@@ -29,6 +30,7 @@ export default function Router() {
         <Route path="/AboutUs" element={<AboutUs />} />
         <Route path="/Help" element={<Help />} />
         <Route path="/Login" element={<Login />} />
+        <Route path="/Logout" element={<Logout />} />
         <Route path="/Register" element={<Register />} />
         <Route path="*" element={<Error />} />
       </Routes>
