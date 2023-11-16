@@ -94,7 +94,7 @@ export default function Airports() {
 
   const handleEditClick = (airport) => {
     setNewAirport({
-      city: airport.id,
+      city: "",
       name: airport.name,
     });
     setEditingAirportId(airport.id);
