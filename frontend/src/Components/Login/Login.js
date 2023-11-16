@@ -2,6 +2,10 @@ import {React, useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './login.css'
+import { Login } from '../../APIs/Login';
+import { useContext } from "react";
+import { Token } from "../../Context/Token";
+
 
 var loginImage = require('../../Assets/Images/Accounts/login.jpg')
 
@@ -9,36 +13,30 @@ export default function LoginForm() {
     let navigate = useNavigate()
     // Form State
     const [form, setForm] = useState({
-        email: '',
+        username: '',
         password: '',
-
     })
     const [formError, setFormError] = useState({
-        email: null,
+        username: null,
         password: null,
     });
-
-    // Regex Validations
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const handleOnChangeForm = (event) => {
         let name = event.target.name
         let value = event.target.value
 
-        // Email Validations
-        if (name === 'email') {
+        // Username Validations
+        if (name === 'username') {
             setForm({
                 ...form,
-                email: value
+                username: value
             });
             setFormError({
                 ...formError,
-                email:
+                username:
                     value.trim(" ").length === 0
-                        ? "You Should Enter Your Email"
-                        : !value.match(emailRegex)
-                            ? "Invalid Email, Email Should Be Like This name@example.com"
-                            : null
+                        ? "You Should Enter Your username"
+                        : null
             })
         }
         // Password Validations
@@ -57,29 +55,26 @@ export default function LoginForm() {
         }
     }
 
-    const isFormValid = !formError.email && !formError.password && form.email && form.password
+    const isFormValid = !formError.username && !formError.password && form.username && form.password
 
+    let {token, setToken} = useContext(Token)
     // handle click on Login button
     const handleOnClickLogin = (e) => {
         e.preventDefault();
         if (isFormValid) {
             console.log("Form Submitted Successfully");
-            axios
-            .post('https://osamafraag.pythonanywhere.com/accounts/api/login/', {
-                email: form.email,
-                password: form.password,
-            })
-            .then((res) => {
-                console.log('Login successful');
-                console.log(res.data);
-                navigate('/')
-                // handle the successful login
-            })
-            .catch((err) => {
-                console.log('Login failed');
-                console.log(err.response.data);
-                // handle the failed login
-            });
+            Login(form)
+                .then((res) => {
+                    console.log('Login successful');
+                    console.log(res.data);
+                    setToken(res.data.token)
+                    navigate('/');
+                })
+                .catch((err) => {
+                    console.log('Login failed');
+                    console.log(err.response.data);
+                    // handle the failed login
+                });
         } else {
             console.log("Form Has Errors");
             console.log(formError);
@@ -98,11 +93,11 @@ export default function LoginForm() {
                     />
                     <div className="col-6 pb-5">
                         <form method="post" encType="multipart/form-data">
-                            {/* Email */}
+                            {/* Username */}
                             <div className=" mb-3">
-                                <label htmlFor="floatingInput" className='form-label'>Email address</label>
-                                <input type="email" className="form-control" id="floatingInput" value={form.email} onChange={handleOnChangeForm} placeholder='Enter your email' name="email" required/>
-                                {formError.email && <div className="form-text text-danger text-start ">{formError.email}</div>}
+                                <label htmlFor="floatingInput" className='form-label'>Username</label>
+                                <input type="username" className="form-control" id="floatingInput" value={form.username} onChange={handleOnChangeForm} placeholder='Enter your username' name="username" required/>
+                                {formError.username && <div className="form-text text-danger text-start ">{formError.username}</div>}
                             </div>
                             {/* Password */}
                             <div className=" mb-3">

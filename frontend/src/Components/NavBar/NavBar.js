@@ -4,10 +4,14 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRightToBracket, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { faPlaneDeparture ,faBell} from '@fortawesome/free-solid-svg-icons'
+import { useContext } from "react";
+import { Token } from "../../Context/Token";
 
 export default function NavBar() {
+  let {token, setToken} = useContext(Token)
+  console.log(token)
   return (
     <Navbar collapseOnSelect expand="lg" className="shadow-sm bg-white position-sticky top-0 start-0 py-3" style={{zIndex: "1000"}}>
       <Container className=" px-5">
@@ -21,10 +25,7 @@ export default function NavBar() {
           </Nav>
           <Nav>
             <NavLink className='fw-semibold text-dark text-decoration-none' to="/Login"><FontAwesomeIcon icon={faArrowRightToBracket} /> Login</NavLink>
-
             <NavLink className='fw-semibold text-dark text-decoration-none px-4' to="/Notifications"><FontAwesomeIcon icon={faBell} /> Notifications</NavLink>
-            
-
           </Nav>
         </Navbar.Collapse>
       </Container>
