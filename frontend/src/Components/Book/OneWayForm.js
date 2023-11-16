@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -16,7 +15,15 @@ const OneWayForm = ({ handleFlightData, cities }) => {
   const [directFlightsOnly, setDirectFlightsOnly] = useState(false);
   const [ errorFrom , setErrorFrom ] = useState('')
   const [ errorTo , setErrorTo ] = useState('')
- 
+  
+  useEffect(() => {
+    const today = new Date();
+    
+    setDepartureYear(today.getFullYear());
+    setDepartureMonth(today.getMonth() + 1);
+    setDepartureDay(today.getDate());
+  }, []); 
+
   function getTodayDate() {
     const today = new Date();
     const year = today.getFullYear();
@@ -156,7 +163,7 @@ const OneWayForm = ({ handleFlightData, cities }) => {
 
       {/* Direct Or Not */}
       <div className='col-6'>
-      <Form.Check
+        <Form.Check
           type='checkbox'
           id='default-checkbox'
           label='Direct Flights Only'

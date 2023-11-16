@@ -16,16 +16,11 @@ export default function NavBar() {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Book">Book</NavLink>
-            <NavLink  className='me-3 fw-semibold text-dark text-decoration-none' to="/TermsAndConditions">Terms And Conditions</NavLink>
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/AboutUs">About</NavLink>
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Help">Help</NavLink>
           </Nav>
           <Nav>
-            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Login"><FontAwesomeIcon icon={faArrowRightToBracket} /> Login</NavLink>
-            <NavDropdown title="En" id="collapsible-nav-dropdown" className='fw-semibold language'>
-              <NavDropdown.Item href="#action/3.1" className='fw-semibold'>En</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2" className='fw-semibold'>Ar</NavDropdown.Item>
-            </NavDropdown>
+            <NavLink className='fw-semibold text-dark text-decoration-none' to="/Login"><FontAwesomeIcon icon={faArrowRightToBracket} /> Login</NavLink>
           </Nav>
         </Navbar.Collapse>
       </Container>
