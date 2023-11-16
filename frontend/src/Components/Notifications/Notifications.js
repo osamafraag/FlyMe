@@ -49,8 +49,10 @@ export default function NotificationsComponent({ userId }) {
             {notifications.map(notification => (
               !notification.is_read && (
                 <li key={notification.id}>
-                  {notification.description}
-                  <button onClick={() => markNotificationAsRead(notification.id)} style={{backgroundColor: "var(--main-color)"}} className="btn text-light py-2 px-4">
+                  <p className='text-bold text-start'>{notification.title}</p>
+                  <p className='pt-3 px-3'>{notification.description}</p>
+                  <p className='py-2 px-3'>{notification.date}</p>
+                  <button onClick={() => markNotificationAsRead(notification.id)} style={{backgroundColor: "var(--main-color)"}} className="btn text-light py-2 px-4 text-end">
                     Mark as Read
                   </button>
                 </li>
@@ -69,7 +71,9 @@ export default function NotificationsComponent({ userId }) {
             {notifications.map(notification => (
               notification.is_read && (
                 <li key={notification.id}>
-                  {notification.description}
+                  <p className='text-bold text-start'>{notification.title}</p>
+                  <p className='pt-3 px-3'>{notification.description}</p>
+                  <p className='py-2 px-3'>{notification.date} , <span className='bg-body-secondary'>Seen On :</span> {notification.readDate}</p>
                 </li>
               )
             ))}
