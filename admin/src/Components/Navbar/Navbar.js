@@ -13,12 +13,6 @@ export default function NavBar() {
       <Container>
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ms-auto  align-items-center ">
-
-            <NavLink className='fw-semibold text-secondary text-decoration-none' to="/Messages"><FontAwesomeIcon icon={faEnvelope} /><sup>(1)</sup></NavLink>
-
-            <div class="topbar-divider d-none d-sm-block"></div>
-            
-            {/* User */}
             {/* User */}
             <div className="text-secondary">
               Sarah Mohamed

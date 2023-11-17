@@ -79,8 +79,8 @@ export default function Sidebar() {
 
       {/* Nav Item - Messages  */}
       <li className="nav-item active my-3 text-start ps-3">
-        <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/Messages">
-          <FontAwesomeIcon icon={faEnvelope} /> Messages
+        <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/Complaints">
+          <FontAwesomeIcon icon={faEnvelope} /> Complaints
         </NavLink>
       </li>
 
