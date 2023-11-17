@@ -46,6 +46,7 @@ class Flight(models.Model):
     distance = models.PositiveIntegerField(default=0)
     availableSeats = models.PositiveIntegerField(default=0)
     baseCost = models.PositiveIntegerField(default=1000)
+    offerPercentage = models.PositiveIntegerField(default=0,validators=[MaxValueValidator(99)])
     status = models.CharField(max_length=1, choices=statuses, default='M')
 
     def __str__(self) :
