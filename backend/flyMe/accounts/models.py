@@ -60,15 +60,15 @@ class Transaction(models.Model):
     ]
 
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    amount = models.FloatField()
+    amount = models.PositiveBigIntegerField(default=0)
     date = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
 
     def clean(self):
-        if self.amount <=  0 : 
-            raise ValidationError({'amount':'amount must be greater than Zero'})
+        # if self.amount <=  0 : 
+        #     raise ValidationError({'amount':'amount must be greater than Zero'})
         if self.user.wallet.available_balance < self.amount:
-                raise ValidationError({'amount':'amount is bigger than your balance'})
+                raise ValidationError({'totalCost':'amount is bigger than your balance'})
         if self.type == 'WPURCHASE':
             self.user.wallet.available_balance -= self.amount
             self.user.wallet.save()
@@ -91,7 +91,7 @@ class Wallet(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE,related_name='wallet')
     available_balance = models.FloatField(null=True, blank=True,default=0)
     pendding_balance = models.FloatField(null=True, blank=True,default=0)
-    withdrawal = models.BooleanField(null=True, blank=True,default=0)
+    withdrawal = models.FloatField(null=True, blank=True,default=0)
 
     def clean(self) :
         pass

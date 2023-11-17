@@ -72,21 +72,22 @@ class Flight(models.Model):
             raise ValidationError({'arrivalTime':'arrivalTime can`t be before departureTime'})
         
     
-    def save(self,update=False, *args, **kwargs):
+    def save(self,update=True, *args, **kwargs):
         if update:
             if self.status == 'C':
                 books = BookHistory.objects.filter(flight=self.id)
-            for book in books.all():
-                notify = Notification()
-                notify.user = book.passenger
-                notify.title = 'Flight Canceled'
-                notify.description = f'sorry but your flight from {self.startAirport.city} to {self.endAirport.city} at {self.departureTime} is canceld'
-                notify.save()
-                book.passenger.available_balance += book.totalCost
-                book.passenger.pendding_balance -= book.cashBack
-                book.passenger.save()
-                book.status = 'C'
-                book.save(True)
+                for book in books.all():
+                    notify = Notification()
+                    notify.user = book.passenger
+                    notify.title = 'Flight Canceled'
+                    notify.description = f'sorry but your flight from {self.startAirport.city} to {self.endAirport.city} at {self.departureTime} is canceld'
+                    notify.save()
+                    book.passenger.wallet.available_balance += book.totalCost
+                    book.passenger.wallet.pendding_balance -= book.cashBack
+                    book.passenger.save()
+                    book.status = 'C'
+                    book.save(True)
+            
         else:    
             self.full_clean()
         super().save(*args, **kwargs)
@@ -191,14 +192,17 @@ class BookHistory(models.Model):
         self.totalCost = (self.flight.baseCost + self.flight.baseCost*self.category.additionalCostPercentage/100)*(self.adults + 0.7*self.kids + 0.5*self.infants)
         self.cashBack = self.totalCost*0.03
         if self.paymentMethod == 'W':
-            self.passenger.pendding_balance += self.cashBack
+            self.passenger.wallet.pendding_balance += self.cashBack
             self.passenger.save()
             transaction = Transaction()
-            transaction.amount = self.totalCost
+            transaction.user=self.passenger
+            
             transaction.type = 'WPURCHASE'
+            transaction.amount = self.totalCost
             transaction.save()
         elif self.paymentMethod == 'C':
             transaction = Transaction()
+            transaction.user=self.passenger
             transaction.amount = self.totalCost
             transaction.type = "CPURCHASE"
             transaction.save()
