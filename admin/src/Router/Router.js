@@ -8,7 +8,7 @@ const Bookings = React.lazy(() => import('../Pages/Bookings'));
 const Countries = React.lazy(() => import('../Pages/Countries'));
 const Cities = React.lazy(() => import('../Pages/Cities'));
 const TrendingPlaces = React.lazy(() => import('../Pages/TrendingPlaces'));
-const Messages = React.lazy(() => import('../Pages/Messages'));
+const Complaints = React.lazy(() => import('../Pages/Complaints'));
 const Airports = React.lazy(() => import('../Pages/Airports'));
 const Aircrafts = React.lazy(() => import('../Pages/Aircrafts'));
 const Classes = React.lazy(() => import('../Pages/Classes'));
@@ -27,7 +27,7 @@ export default function Router() {
         <Route path="/Countries" element={<Countries />} />
         <Route path="/Cities" element={<Cities />} />
         <Route path="/TrendingPlaces" element={<TrendingPlaces />} />
-        <Route path="/Messages" element={<Messages />} />
+        <Route path="/Complaints" element={<Complaints />} />
         <Route path="/Airports" element={<Airports />} />
         <Route path="/Aircrafts" element={<Aircrafts />} />
         <Route path="/Classes" element={<Classes />} />

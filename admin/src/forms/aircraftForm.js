@@ -1,23 +1,16 @@
-import { useEffect, useState,React} from 'react'
-import { useNavigate } from "react-router-dom";
-import {faWeightHanging, faPlane,faPersonWalkingLuggage,faPeopleGroup} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { axiosInstance } from "../APIs/Config"
-import {useLocation} from 'react-router-dom';
+import {useEffect, useState, React} from 'react';
+import { useNavigate, useLocation } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { axiosInstance } from "../APIs/Config";
+import {faWeightHanging, faPlane,faPersonWalkingLuggage,
+        faPeopleGroup} from '@fortawesome/free-solid-svg-icons';
 
 
-function LoginForm() {
+function AircraftForm() {
 
   const navigate = useNavigate()
   const location = useLocation()
-  const [aircraft, setAircraft] = useState({
-    name: "",
-    company:"",
-    capacity: 0,
-    maxLoad: 0,
-    baggageWeight: 0,
-    maxDistance: 0
-  })
+  const [aircraft,setAircraft]=useState({name:null,company:'A',capacity:null,maxLoad:0,baggageWeight:null,maxDistance:null})
 
   useEffect(() => {
     axiosInstance
@@ -35,7 +28,6 @@ function LoginForm() {
       ...aircraft,
       [name]: value,
     });
-    console.log(aircraft)
   };
   
   const onSubmit = (event) => {
@@ -47,9 +39,9 @@ function LoginForm() {
           navigate(`/Aircrafts`);
         })
         .catch((error) => {
-          console.error(error);
-        }):
-
+          console.error(error.response.data.errors);
+        })
+        :
     axiosInstance
         .post("flights/api/aircrafts/", aircraft)
         .then((response) => {
@@ -66,12 +58,12 @@ function LoginForm() {
     <div className='container p-5'>
       <div class="input-group ">
         <span class="input-group-text">Aircraft Name</span>
-        <input type="text" class="form-control" value={aircraft?.name} name='name'
+        <input type="text" class="form-control" required value={aircraft?.name} name='name'
         onChange={handleInputChange}/>
       </div>
       <div class="input-group mb-3 mt-5">
         <label class="input-group-text" for="inputGroupSelect02">Company Name</label>
-        <select class="form-select" id="inputGroupSelect02" value={aircraft?.company} name='company'
+        <select class="form-select" id="inputGroupSelect02" required value={aircraft?.company} name='company'
         onChange={handleInputChange}>
           <option value="A">Airbus</option>
           <option value="L">Lockheed Martin</option>
@@ -82,12 +74,12 @@ function LoginForm() {
       <div className='row justify-content-center align-items-center'>
         <div className='col my-4'>
           <div class="input-group me-auto w-75 mt-5">
-            <input type="number" class="form-control" value={aircraft?.capacity} name='capacity'
+            <input type="number" class="form-control" required value={aircraft?.capacity} name='capacity'
             onChange={handleInputChange}/>
             <span class="input-group-text"><FontAwesomeIcon icon={faPeopleGroup}/></span>
           </div>
           <div class="input-group me-auto w-75 mt-5">
-            <input type="number" class="form-control" value={aircraft?.maxLoad} name='maxLoad'
+            <input type="number" class="form-control"  value={aircraft?.maxLoad} name='maxLoad'
             onChange={handleInputChange}/>
             <span class="input-group-text">Ton</span>
             <span class="input-group-text"><FontAwesomeIcon icon={faWeightHanging}/></span>
@@ -95,13 +87,13 @@ function LoginForm() {
         </div>
         <div className='col my-4'>
           <div class="input-group ms-auto w-75 mt-5">
-            <input type="number" class="form-control" value={aircraft?.baggageWeight} name='baggageWeight'
+            <input type="number" class="form-control" required value={aircraft?.baggageWeight} name='baggageWeight'
             onChange={handleInputChange} />
             <span class="input-group-text">KG</span>
             <span class="input-group-text"><FontAwesomeIcon icon={faPersonWalkingLuggage}/></span>
           </div>
           <div class="input-group ms-auto w-75 mt-5">
-            <input type="number" class="form-control" value={aircraft?.maxDistance} name='maxDistance'
+            <input type="number" class="form-control" required value={aircraft?.maxDistance} name='maxDistance'
             onChange={handleInputChange} />
             <span class="input-group-text">KM</span>
             <span class="input-group-text"><FontAwesomeIcon icon={faPlane}/></span>
@@ -117,4 +109,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default AircraftForm;

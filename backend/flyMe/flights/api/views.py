@@ -232,7 +232,7 @@ def classList(request):
     
 @api_view(['GET', 'DELETE', 'PUT'])
 def classDetail(request, id):
-    category = Flight.get(id)
+    category = Class.get(id)
     if request.method=='GET':
         serializedClass = ClassSerializer(category)
         return Response({'data':serializedClass.data}, status=200)

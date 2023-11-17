@@ -1,7 +1,7 @@
 import { axiosInstance } from "./Config";
 
 
-export default function AirPorts() {
+export const AirportsAPI = () =>  {
     return axiosInstance.get('countries/api/airports/')
 }
 

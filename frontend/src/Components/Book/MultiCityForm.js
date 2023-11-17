@@ -35,7 +35,7 @@ const MultiCityForm = ({ handleFlightData, cities }) => {
     handleInputChange(index, 'destinationFrom', e.target.value);
     setToErrors((prevToErrors) => {
       const newToErrors = [...prevToErrors];
-      if (newToErrors[index] !== "required") newToErrors[index] = false; 
+      if (newToErrors[index] != "Required" ) newToErrors[index] = false; 
       return newToErrors;
     });
     setFromErrors((prevFromErrors) => {
