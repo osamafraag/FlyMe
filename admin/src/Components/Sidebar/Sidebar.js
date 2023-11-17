@@ -13,7 +13,9 @@ import {
   faEnvelope,
   faCartFlatbedSuitcase,
   faPlane,
-  faLayerGroup
+  faLayerGroup,
+  faImages,
+  
 } from '@fortawesome/free-solid-svg-icons'
 
 export default function Sidebar() {
@@ -95,6 +97,16 @@ export default function Sidebar() {
       <li className="nav-item active my-3 text-start ps-3">
         <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/Aircrafts">
           <FontAwesomeIcon icon={faPlane} /> Aircrafts
+        </NavLink>
+      </li>
+      <li className="nav-item active my-3 text-start ps-3">
+        <NavLink className='me-3 fw-semibold text-white text-decoration-none'to="/ImagesTrendPlaces" >
+        <FontAwesomeIcon icon={faImages} /> ImagesTrendPlaces
+        </NavLink>
+      </li>
+      <li className="nav-item active my-3 text-start ps-3">
+        <NavLink className='me-3 fw-semibold text-white text-decoration-none'to="/ImagesCountry" >
+        <FontAwesomeIcon icon={faImages} /> ImagesCountry
         </NavLink>
       </li>
 
