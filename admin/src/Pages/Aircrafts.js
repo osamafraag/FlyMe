@@ -1,28 +1,22 @@
-import React from 'react'
-import { useState, useEffect } from 'react';
-import { AircraftsAPI } from './../APIs/Aircrafts'
-import Card from 'react-bootstrap/Card';
-import {faWeightHanging, faPlane,faPersonWalkingLuggage,faTrash,faPenToSquare,faPlus,
-  faPeopleGroup,faPlaneDeparture} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import airbus from "./../Assets/Images/aircrafts/airbus.png"
-import boeing from "./../Assets/Images/aircrafts/boeing.png"
-import raytheon from "./../Assets/Images/aircrafts/raytheon.png"
-import lockheed from "./../Assets/Images/aircrafts/lockheedMartin.png"
+import { useState, useEffect, React} from 'react';
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../APIs/Config";
+import { AircraftsAPI } from './../APIs/Aircrafts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Card from 'react-bootstrap/Card';
+import airbus from "./../Assets/Images/aircrafts/airbus.png";
+import boeing from "./../Assets/Images/aircrafts/boeing.png";
+import raytheon from "./../Assets/Images/aircrafts/raytheon.png";
+import lockheed from "./../Assets/Images/aircrafts/lockheedMartin.png";
+import {faWeightHanging, faPlane,faPersonWalkingLuggage,faTrash,faPenToSquare,faPlus,
+        faPeopleGroup,faPlaneDeparture} from '@fortawesome/free-solid-svg-icons';
 
-    
+
 export default function Aircrafts() {
   
   const navigate = useNavigate()
   const [aircrafts, setAircrafts] = useState([])
-
   useEffect(() => {fetchData();},[]);
-
-  function refresh(){
-    fetchData()
-  }
 
   function fetchData(){
     AircraftsAPI()
@@ -32,18 +26,14 @@ export default function Aircrafts() {
         .catch((error) => console.log(error));
   }
 
-
-  function handleClick() {
-    navigate(`/AircraftForm`);
-  }
-
-  function handleEdit(aircraft) {
-    navigate(`/AircraftForm`,{state:{id:aircraft.id}});
-  };
-
-  function handleDelete(aircraftId) {
-    const confirmDelete = window.confirm("Are you sure you want to delete this aircraft?");
   
+
+  function handleAddClick() {navigate(`/AircraftForm`)}
+
+  function handleEditClick(id){ navigate(`/AircraftForm`,{state:{id:id}})}
+
+  function handleDeleteClick(aircraftId) {
+    const confirmDelete = window.confirm("Are you sure you want to delete this aircraft?");
     if (!confirmDelete) {
       return;
     }
@@ -51,8 +41,7 @@ export default function Aircrafts() {
     axiosInstance
     .delete(`/flights/api/aircrafts/${aircraftId}`)  
     .then((response) => {
-      console.log(response.data);
-      refresh()
+      fetchData()
     })
     .catch((error) => {
       console.error(error);
@@ -63,7 +52,7 @@ export default function Aircrafts() {
     <div className='container p-5'>
       <div className='d-flex mb-5'>
         <h3 className='text-start text-secondary'>Aircrafts</h3>
-        <a className='btn btn-info ms-auto' onClick={handleClick}>Add new aircraft <FontAwesomeIcon icon={faPlus} /></a>
+        <a className='btn btn-info ms-auto' onClick={handleAddClick}>Add new aircraft <FontAwesomeIcon icon={faPlus} /></a>
       </div>
       <div className="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-4 justify-content-center align-items-center ">
         {aircrafts?.map((aircraft, index) => {
@@ -90,8 +79,8 @@ export default function Aircrafts() {
                     </div>
                   </div>
                   <small className="text-muted mt-4"><FontAwesomeIcon icon={faPlaneDeparture} style={{color: "var(--main-color)"}}/> Fly Me</small>
-                  <a className='btn btn-danger ms-4' onClick={() => {handleDelete(aircraft.id)}}>Delete <FontAwesomeIcon icon={faTrash} /></a>
-                  <a className='btn btn-primary ms-2' onClick={() => {handleEdit(aircraft)}}>Edit <FontAwesomeIcon icon={faPenToSquare} /></a>
+                  <a className='btn btn-danger  ms-4' onClick={() => {handleDeleteClick(aircraft.id)}}>Delete <FontAwesomeIcon icon={faTrash} /></a>
+                  <a className='btn btn-primary ms-2' onClick={() => {handleEditClick(aircraft.id)}}>Edit <FontAwesomeIcon icon={faPenToSquare} /></a>
                 </Card.Body>
                 
               </Card>
