@@ -3,13 +3,13 @@ import { axiosInstance } from '../../APIs/Config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-export default function ImagesTrendPlaces() {
-  const [imagesTrendPlace, setImagesTrendPlace] = useState([]);
-  const [newImagesTrendPlace, setNewImagesTrendPlace] = useState({
+export default function ImagesCountry() {
+  const [imagesCountry, setImageCountry] = useState([]);
+  const [newImageCountry, setNewImageCountry] = useState({
     photo: null,
-    trendingPlace: '',
+    country: '',
   });
-  const [editingImageTrendingPlaceId, setEditingImageTrendingPlaceId] = useState(null);
+  const [editingImageCountryId, setEditingImageCountryId] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -17,9 +17,9 @@ export default function ImagesTrendPlaces() {
 
   const fetchData = () => {
     axiosInstance
-      .get('countries/api/trendingPlaces/images/add/')
-      .then((res) => setImagesTrendPlace(res.data))
-      .catch((err) => console.log('Error Fetching data ', err));
+      .get('/countries/api/images/add/')
+      .then((res) => setImageCountry(res.data))
+      .catch((err) => console.log(err));
   };
 
   const handleInputChange = (e) => {
@@ -29,17 +29,12 @@ export default function ImagesTrendPlaces() {
     if (type === 'file') {
       const file = e.target.files[0];
       value = file;
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        };
-      reader.readAsDataURL(file);
     } else {
       value = e.target.value;
     }
 
-    setNewImagesTrendPlace({
-      ...newImagesTrendPlace,
+    setNewImageCountry({
+      ...newImageCountry,
       [name]: value,
     });
   };
@@ -48,14 +43,14 @@ export default function ImagesTrendPlaces() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('trendingPlace', newImagesTrendPlace.trendingPlace);
-    formData.append('photo', newImagesTrendPlace.photo);
+    formData.append('country_name', newImageCountry.country);
+    formData.append('photo', newImageCountry.photo);
 
-    if (editingImageTrendingPlaceId) {
-      handleEdit(editingImageTrendingPlaceId, formData);
+    if (editingImageCountryId) {
+      handleEdit(editingImageCountryId, formData);
     } else {
       axiosInstance
-        .post('/countries/api/trendingPlaces/images/add/', formData, {
+        .post('/countries/api/images/add/', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -69,16 +64,16 @@ export default function ImagesTrendPlaces() {
         });
     }
 
-    setNewImagesTrendPlace({
+    setNewImageCountry({
       photo: null,
-      trendingPlace: '',
+      country: '',
     });
-    setEditingImageTrendingPlaceId(null);
+    setEditingImageCountryId(null);
   };
 
   const handleEdit = (imageId, updatedImage) => {
     axiosInstance
-      .put(`countries/api/trendingPlaces/images/${imageId}`, updatedImage, {
+      .put(`/countries/api/images/${imageId}/`, updatedImage, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -91,16 +86,16 @@ export default function ImagesTrendPlaces() {
         console.error(error);
       });
   };
-  
+
   const handleDelete = (imageId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this image?');
-  
+
     if (!confirmDelete) {
       return;
     }
-  
+
     axiosInstance
-      .delete(`countries/api/trendingPlaces/images/${imageId}`)
+      .delete(`/countries/api/images/${imageId}/`)
       .then((response) => {
         console.log(response.data);
         fetchData();
@@ -110,24 +105,23 @@ export default function ImagesTrendPlaces() {
       });
   };
 
-
   const handleEditClick = (image) => {
-    setNewImagesTrendPlace({
+    setNewImageCountry({
       photo: null,
-      trendingPlace: image.trendingPlace,
+      country: image.country_name,
     });
-    setEditingImageTrendingPlaceId(image.id);
+    setEditingImageCountryId(image.id);
   };
 
   return (
     <div className="text-start">
-      <h2 className="text-danger">Trending Places Images</h2>
-      {imagesTrendPlace && imagesTrendPlace.length > 0 ? (
+      <h2 className="text-danger">Country Images</h2>
+      {imagesCountry && imagesCountry.length > 0 ? (
         <ul>
-          {imagesTrendPlace.map((image) => (
+          {imagesCountry.map((image) => (
             <li key={image.id}>
-              <img src={image.photo} alt={`Trending Place: ${image.trendingPlace}`} />
-              <strong>{image.trendingPlace}</strong>
+              <img src={image.photo} alt={`Country: ${image.country_name}`} />
+              <strong>{image.country_name}</strong>
               <button className="btn ms-2" onClick={() => handleEditClick(image)}>
                 <FontAwesomeIcon icon={faPencilAlt} />
               </button>
@@ -145,14 +139,14 @@ export default function ImagesTrendPlaces() {
         <p>Loading...</p>
       )}
 
-      <h2 className="text-danger">{editingImageTrendingPlaceId ? 'Edit Image' : 'Add New Image'}</h2>
+      <h2 className="text-danger">{editingImageCountryId ? 'Edit Image' : 'Add New Country Image'}</h2>
       <form onSubmit={handleSubmit}>
         <label className="my-2">
-          Trending Place:
+          CountryID:
           <input
             type="number"
-            name="trendingPlace"
-            value={newImagesTrendPlace.trendingPlace}
+            name="country"
+            value={newImageCountry.country}
             onChange={handleInputChange}
           />
         </label>
@@ -167,7 +161,7 @@ export default function ImagesTrendPlaces() {
         </label>
         <br />
         <button className="btn btn-primary my-3" type="submit">
-          {editingImageTrendingPlaceId ? 'Update Image' : 'Add Image'}
+          {editingImageCountryId ? 'Update Image' : 'Add Image'}
         </button>
       </form>
     </div>

@@ -15,6 +15,7 @@ const Classes = React.lazy(() => import('../Pages/Classes'));
 const Login = React.lazy(() => import('../Pages/Login'));
 const Error = React.lazy(() => import('../Pages/404'));
 const ImagesTrendPlaces = React.lazy(() => import('../Pages/ImagesTrendPlaces'));
+const ImagesCountry = React.lazy(() => import('../Pages/ImagesCountry'));
 
 
 export default function Router() {
@@ -33,6 +34,7 @@ export default function Router() {
         <Route path="/Classes" element={<Classes />} />
         <Route path="/ImagesTrendPlaces" element={<ImagesTrendPlaces />} />
         <Route path="/Login" element={<Login />} />
+        <Route path="/ImagesCountry" element={<ImagesCountry />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Suspense>
