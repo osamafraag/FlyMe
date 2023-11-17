@@ -9,6 +9,7 @@ import { useState } from "react";
 
 function App() {
   const [token, setToken] = useState("false");
+  const [userId, setUserId] = useState(null);
   return (
     <div className="App">
       <BrowserRouter>
