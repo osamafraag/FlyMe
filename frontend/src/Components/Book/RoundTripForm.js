@@ -19,6 +19,7 @@ const RoundTripForm = ({ handleFlightData, cities }) => {
   const [directFlightsOnly, setDirectFlightsOnly] = useState(false);
   const [ errorFrom , setErrorFrom ] = useState('')
   const [ errorTo , setErrorTo ] = useState('')
+  const [ errorReturn , setErrorReturn ] = useState('')
 
   useEffect(() => {
     const today = new Date();
@@ -88,6 +89,9 @@ const RoundTripForm = ({ handleFlightData, cities }) => {
       return;
     } else if (destinationTo === "") {
       setErrorTo("Required");
+      return;
+    } else if (returnDate === "") {
+      setErrorReturn("Required");
       return;
     }
   
@@ -186,7 +190,7 @@ const RoundTripForm = ({ handleFlightData, cities }) => {
         <div class="form-floating mb-3 w-50">
           <input 
             type="date"
-            className="form-control return-input"
+            className={`form-control return-input ${errorFrom != '' ? "Error" : "" }`}
             value={returnDate}
             onChange={(e) => handleReturn(e)}
             min={departure}

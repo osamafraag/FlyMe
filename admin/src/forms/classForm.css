@@ -1,0 +1,7 @@
+.error {
+  border: 1px solid red;
+}
+
+.form-check-input:checked {
+  background-color: var(--main-color) !important; 
+}

@@ -1,6 +1,10 @@
 .sidebar {
   min-height: 100vh;
-  background-color: var(--main-color)
+  background-color: var(--main-color);
+  width: 15.5%;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 .sidebar hr {

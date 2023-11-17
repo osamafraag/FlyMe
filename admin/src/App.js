@@ -11,10 +11,10 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <div className="d-flex">
-          <div style={{width: "17%"}}>
+          <div style={{width: "15.9%"}}>
             <Sidebar />
           </div>
-          <div className="f flex-grow-1">
+          <div className="flex-grow-1">
             <NavBar />
             <div className="container-fluid p-0">
               <Router />
