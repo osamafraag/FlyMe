@@ -1,11 +1,14 @@
 import React , { useState, useEffect }from 'react'
-import { GetClasses } from "./../APIs/Classes"
+import { GetClasses, DeleteClass } from "./../APIs/Classes"
 import { NavLink } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faPlus, faCheck, faXmark} from '@fortawesome/free-solid-svg-icons'
+import {faPlus, faCheck, faXmark, faPenToSquare, faTrash} from '@fortawesome/free-solid-svg-icons'
 
 export default function Classes() {
   const [classes, setClasses] = useState([])
+  const [classesChange, setClassesChange] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     GetClasses()
@@ -16,7 +19,27 @@ export default function Classes() {
     .catch((error) => {
       console.log(error)
     })
-  }, [])
+  }, [classesChange])
+
+  const handleEditClick = (id) => {
+    navigate(`/ClassForm`,{state:{id:id}})
+  }
+
+  function handleDeleteClick(id, name) {
+    const confirmDelete = window.confirm(`Are You Sure You Want To Delete ${name} Class?`);
+    if (!confirmDelete) {
+      return;
+    }
+
+    DeleteClass(id)
+    .then((response) => {
+      console.log(response)
+      setClassesChange(response)
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  };
 
   return (
     <div className='container p-5'>
@@ -38,6 +61,8 @@ export default function Classes() {
           <th>WIFI Availability</th>
           <th>Power Outlet</th>
           <th>Stream Entertainment</th>  
+          <th>Edit</th>  
+          <th>Delete</th>  
         </tr>
       </thead>
       <tbody>
@@ -51,7 +76,9 @@ export default function Classes() {
             <td>{classData.drinkCategory}</td>
             <td>{classData.wifiAvailability ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</td>
             <td>{classData.powerOutlet ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</td>
-            <td>{classData.streamEntertainment ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</td>  
+            <td>{classData.streamEntertainment ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</td> 
+            <td><a className="text-decoration-none" style={{color: "var(--main-color)"}}><FontAwesomeIcon icon={faPenToSquare} onClick={() => {handleEditClick(classData.id)}} /></a></td> 
+            <td><a className="text-decoration-none text-danger" onClick={() => handleDeleteClick(classData.id, classData.name)}><FontAwesomeIcon icon={faTrash}/></a></td> 
           </tr>
         ))}
         </tbody>

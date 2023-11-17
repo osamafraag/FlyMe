@@ -47,7 +47,7 @@ export default function AddClass() {
           <div class="input-group mb-3">
             <span class="input-group-text">Name</span>
             <div class="form-floating">
-              <input type="text" class="form-control"  name="name" id="name" onChange={(e) => setName(e.target.value)} placeholder="Name" />
+              <input type="text" class="form-control" value={name}  name="name" id="name" onChange={(e) => setName(e.target.value)} placeholder="Name" />
             </div>
           </div>
           
@@ -55,7 +55,7 @@ export default function AddClass() {
           <div class="input-group mb-3">
             <span class="input-group-text">Additional Cost Percentage</span>
             <div class="form-floating">
-              <input type="number" min={1} max={100} class="form-control"  name="AdditionalCostPercentage" id="AdditionalCostPercentage" placeholder="Additional Cost Percentage" onChange={(e) => setAdditionalCostPercentage(e.target.value)}/>
+              <input type="number" value={additionalCostPercentage} min={1} max={70} class="form-control"  name="AdditionalCostPercentage" id="AdditionalCostPercentage" placeholder="Additional Cost Percentage" onChange={(e) => setAdditionalCostPercentage(e.target.value)}/>
             </div>
           </div>
 
@@ -63,11 +63,11 @@ export default function AddClass() {
           <div class="input-group mb-3">
             <span class="input-group-text">Seat Category</span>
             <div class="form-floating">
-              <select class="form-select"  name="SeatCategory" id="SeatCategory " placeholder="Seat Category" onChange={(e) => setSeatCategory(e.target.value)}>
-                <option value="E">Economy Class Seats</option>
-                <option value="P">Premium Economy Class Seats</option>
-                <option value="B">Business Class Seats</option>
-                <option value="F">First-Class Seats</option>
+              <select class="form-select" name="SeatCategory" id="SeatCategory " placeholder="Seat Category" value={seatCategory} onChange={(e) => setSeatCategory(e.target.value)}>
+                <option value="E" selected={seatCategory === 'E'}>Economy Class Seats</option>
+                <option value="P" selected={seatCategory === 'P'}>Premium Economy Class Seats</option>
+                <option value="B" selected={seatCategory === 'B'}>Business Class Seats</option>
+                <option value="F" selected={seatCategory === 'F'}>First-Class Seats</option>
               </select>
             </div>
           </div>
@@ -76,12 +76,12 @@ export default function AddClass() {
           <div class="input-group mb-3">
             <span class="input-group-text">Meal Category</span>
             <div class="form-floating">
-              <select class="form-select"  name="MealCategory" id="MealCategory" placeholder="Meal Category" onChange={(e) => setMealCategory(e.target.value)}>
-                <option value="S">Standard Vegetarian</option>
-                <option value="V">Vegan</option>
-                <option value="F">Fruit Platters</option>
-                <option value="R">Raw Vegetable</option>
-                <option value="M">Muslim Meal</option>
+              <select class="form-select" value={mealCategory}  name="MealCategory" id="MealCategory" placeholder="Meal Category" onChange={(e) => setMealCategory(e.target.value)}>
+                <option value="S" selected={mealCategory === "S"}>Standard Vegetarian</option>
+                <option value="V" selected={mealCategory === "V"}>Vegan</option>
+                <option value="F" selected={mealCategory === "F"}>Fruit Platters</option>
+                <option value="R" selected={mealCategory === "R"}>Raw Vegetable</option>
+                <option value="M" selected={mealCategory === "M"}>Muslim Meal</option>
               </select>
             </div>
           </div>
@@ -90,11 +90,11 @@ export default function AddClass() {
           <div class="input-group mb-3">
             <span class="input-group-text">Drink Category</span>
             <div class="form-floating">
-              <select class="form-select" name="DrinkCategory" id="DrinkCategory" placeholder="Drink Category" onChange={(e) => setDrinkCategory(e.target.value)}>
-                <option value="O">Only Water</option>
-                <option value="W">Warm Drinks Only</option>
-                <option value="C">Cold Drinks Only</option>
-                <option value="B">Both Cold and Warm Drinks</option>
+              <select class="form-select" value={drinkCategory} name="DrinkCategory" id="DrinkCategory" placeholder="Drink Category" onChange={(e) => setDrinkCategory(e.target.value)}>
+                <option value="O" selected={mealCategory === "O"}>Only Water</option>
+                <option value="W" selected={mealCategory === "W"}>Warm Drinks Only</option>
+                <option value="C" selected={mealCategory === "C"}>Cold Drinks Only</option>
+                <option value="B" selected={mealCategory === "B"}>Both Cold and Warm Drinks</option>
               </select>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function AddClass() {
           <div className='d-flex justify-content-between my-3'>
             {/* WifiAvailability */}
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="WifiAvailability" id="WifiAvailability" checked={wifiAvailability} onChange={(e) => setWifiAvailability(e.target.checked)}/>
+              <input class="form-check-input" type="checkbox" value={wifiAvailability} id="WifiAvailability" checked={wifiAvailability} onChange={(e) => setWifiAvailability(e.target.checked)}/>
               <label class="form-check-label" for="WifiAvailability">
                 <FontAwesomeIcon icon={faWifi} style={{color: "var(--main-color)"}} /> Wifi Availability
               </label>
@@ -110,7 +110,8 @@ export default function AddClass() {
 
             {/* PowerOutlet */}
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="PowerOutlet" id="PowerOutlet" checked={powerOutlet} onChange={(e) => setPowerOutlet(e.target.checked)}/>
+              <input class="form-check-input" type="checkbox" value=
+              {powerOutlet} id="PowerOutlet" checked={powerOutlet} onChange={(e) => setPowerOutlet(e.target.checked)}/>
               <label class="form-check-label" for="PowerOutlet">
                 <FontAwesomeIcon icon={faPlug} style={{color: "var(--main-color)"}} /> Power Outlet
               </label>
@@ -118,7 +119,7 @@ export default function AddClass() {
 
             {/* Stream Entertainment */}
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="StreamEntertainment" id="StreamEntertainment" checked={streamEntertainment} onChange={(e) => setStreamEntertainment(e.target.checked)}/>
+              <input class="form-check-input" type="checkbox" value={streamEntertainment} id="StreamEntertainment" checked={streamEntertainment} onChange={(e) => setStreamEntertainment(e.target.checked)}/>
               <label class="form-check-label" for="StreamEntertainment">
                <FontAwesomeIcon icon={faTv} style={{color: "var(--main-color)"}} /> Stream Entertainment
               </label>

@@ -14,6 +14,7 @@ const Aircrafts = React.lazy(() => import('../Pages/Aircrafts'));
 const Classes = React.lazy(() => import('../Pages/Classes'));
 const Login = React.lazy(() => import('../Pages/Login'));
 const AircraftForm = React.lazy(() => import('../forms/aircraftForm'));
+const ClassForm = React.lazy(() => import('../forms/classesForm'));
 const Error = React.lazy(() => import('../Pages/404'));
 
 
@@ -33,6 +34,7 @@ export default function Router() {
         <Route path="/Classes" element={<Classes />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/AircraftForm" element={<AircraftForm />} />
+        <Route path="/ClassForm" element={<ClassForm />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Suspense>
