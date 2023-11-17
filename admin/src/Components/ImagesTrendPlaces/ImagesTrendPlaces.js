@@ -148,7 +148,7 @@ export default function ImagesTrendPlaces() {
       <h2 className="text-danger">{editingImageTrendingPlaceId ? 'Edit Image' : 'Add New Image'}</h2>
       <form onSubmit={handleSubmit}>
         <label className="my-2">
-          Trending Place:
+          Trending PlaceID:
           <input
             type="number"
             name="trendingPlace"
