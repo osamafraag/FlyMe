@@ -1,7 +1,7 @@
-import React, {useState} from 'react'
-import { PostClasses } from "./../APIs/Classes"
+import React, {useState, useEffect} from 'react'
+import { useNavigate, useLocation } from "react-router-dom";
+import { PostClasses, GetSpecificClass, EditClass } from "./../APIs/Classes"
 import "./classForm.css"
-import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWifi, faPlug, faTv } from '@fortawesome/free-solid-svg-icons';
 
@@ -15,6 +15,23 @@ export default function AddClass() {
   const [powerOutlet, setPowerOutlet] = useState(false)
   const [streamEntertainment, setStreamEntertainment] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    GetSpecificClass(location.state?.id)
+    .then((result) => {
+      console.log(result.data.data)
+      setName(result.data.data.name)
+      setAdditionalCostPercentage(result.data.data.additionalCostPercentage)
+      setSeatCategory(result.data.data.seatCategory)
+      setMealCategory(result.data.data.mealCategory)
+      setDrinkCategory(result.data.data.drinkCategory)
+      setWifiAvailability(result.data.data.wifiAvailability)
+      setPowerOutlet(result.data.data.powerOutlet)
+      setStreamEntertainment(result.data.data.streamEntertainment)
+    })
+    .catch((error) => console.log(error));
+  },[])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,14 +45,23 @@ export default function AddClass() {
       powerOutlet: powerOutlet,
       streamEntertainment: streamEntertainment,
     }
-
-    try {
-      const response = await PostClasses(JSON.stringify(formData));
-      console.log(formData)
-      console.log('Post Response:', response.data);
-    } catch (error) {
-      console.error('Error:', error); 
-    }
+    if(location.state){
+        try {
+          const response = await EditClass(location.state.id, JSON.stringify(formData));
+          console.log(formData)
+          console.log('Post Response:', response.data);
+        } catch (error) {
+          console.error('Error:', error); 
+        }
+      } else {
+        try {
+          const response = await PostClasses(JSON.stringify(formData));
+          console.log(formData)
+          console.log('Post Response:', response.data);
+        } catch (error) {
+          console.error('Error:', error); 
+        }
+      }
     navigate('/Classes')
   };
   return (

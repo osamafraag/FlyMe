@@ -13,9 +13,9 @@ export const GetSpecificClass = (id) => {
 }
 
 export const EditClass = (id, data) => {
-  return axiosInstance.put(`flights/api/classes/${id}/`, data);
+  return axiosInstance.put(`flights/api/classes/${id}`, data);
 };
 
 export const DeleteClass = (id) => {
-  return axiosInstance.delete(`flights/api/classes/${id}/`);
+  return axiosInstance.delete(`flights/api/classes/${id}`);
 };
