@@ -1,7 +1,10 @@
 import { React, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './register.css'
+import { Register as RegisterAPI } from '../../APIs/Register'
+import { useContext } from "react";
+import { Token } from "../../Context/Token";
+import { getCountries } from '../../APIs/Countries';
 
 var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 
@@ -12,22 +15,29 @@ export default function Register() {
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     useEffect(() => {
-        fetch('https://osamafraag.pythonanywhere.com/countries/api/')
-            .then(response => response.json())
-            .then(data => {
+        const fetchCountries = async () => {
+            try {
+                const data = await getCountries();
                 const countryNames = data.map(country => country.name);
                 setCountries(countryNames);
-            });
+            } catch (error) {
+                console.error('Error fetching countries:', error);
+                // Handle the error, e.g., show a friendly message to the user
+            }
+        };
+
+        fetchCountries();
     }, []);
 
     // Form State
     const [form, setForm] = useState({
         email: '',
         password: '',
-        confirmPassword: '',
+        password2: '',
+        username: '',
         phoneNumber: '',
-        firstName: '',
-        lastName: '',
+        first_name: '',
+        last_name: '',
         male: '',
         female: '',
         dateOfBirth: '',
@@ -38,16 +48,18 @@ export default function Register() {
     const [formError, setFormError] = useState({
         email: null,
         password: null,
-        confirmPassword: null,
+        password2: null,
+        username: null,
         phoneNumber: null,
-        firstName: null,
-        lastName: null,
+        first_name: null,
+        last_name: null,
         male: null,
         female: null,
         dateOfBirth: null,
         nationality: null,
         passportNumber: null,
         expirtyDate: null,
+
     });
 
     // Regex Validations
@@ -93,19 +105,35 @@ export default function Register() {
             })
         }
         // Confirm Password Validations
-        else if (name === 'confirmPassword') {
+        else if (name === 'password2') {
             setForm({
                 ...form,
-                confirmPassword: value
+                password2: value
             });
             setFormError({
                 ...formError,
-                confirmPassword:
+                password2:
                     value.trim(" ").length === 0
                         ? "You Should Enter Your Password"
                         : value !== form.password
                             ? "Password Don't Match"
                             : null
+            })
+        }
+        // Username Validations
+        else if (name === 'username') {
+            setForm({
+                ...form,
+                username: value
+            });
+            setFormError({
+                ...formError,
+                username:
+                    value.trim(" ").length === 0
+                        ? "You Should Enter Your Username"
+                        : value.length < 3 || value.length > 20
+                        ? "Invalid Name, Username can't Be Less Than 3 Nor Greater Than 20 Character."
+                        : null
             })
         }
         // Phone Number Validations
@@ -125,14 +153,14 @@ export default function Register() {
             })
         }
         // Name Validations
-        else if (name === 'firstName') {
+        else if (name === 'first_name') {
             setForm({
                 ...form,
-                firstName: value
+                first_name: value
             });
             setFormError({
                 ...formError,
-                firstName:
+                first_name:
                     value.trim(" ").length === 0
                         ? "You Should Enter Your First Name"
                         : value.length < 3 || value.length > 20
@@ -141,14 +169,14 @@ export default function Register() {
             })
         }
         // Name Validations
-        else if (name === 'lastName') {
+        else if (name === 'last_name') {
             setForm({
                 ...form,
-                lastName: value
+                last_name: value
             });
             setFormError({
                 ...formError,
-                lastName:
+                last_name:
                     value.trim(" ").length === 0
                         ? "You Should Enter Your Last Name"
                         : value.length < 3 || value.length > 20
@@ -218,35 +246,31 @@ export default function Register() {
     const handleSelectChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedCountry(selectedValue);
-    
+
         setForm((prevForm) => ({
             ...prevForm,
             nationality: selectedValue
         }))
     };
 
-    const isFormValid = !formError.email && !formError.password && !formError.confirmPassword && !formError.phoneNumber && !formError.firstName && !formError.lastName && !formError.male && !formError.female && !formError.dateOfBirth && !formError.nationality && !formError.passportNumber && !formError.expirtyDate && form.email && form.password && form.confirmPassword && form.phoneNumber && form.firstName && form.lastName && (form.male || form.female) && form.dateOfBirth && form.nationality && form.passportNumber && form.expirtyDate
+    const isFormValid = !formError.email && !formError.password && !formError.password2 && !formError.phoneNumber && !formError.first_name && !formError.last_name && !formError.male && !formError.female && !formError.dateOfBirth && !formError.nationality && !formError.passportNumber && !formError.expirtyDate && form.email && form.password && form.password2 && form.phoneNumber && form.first_name && form.last_name && (form.male || form.female) && form.dateOfBirth && form.nationality && form.passportNumber && form.expirtyDate
 
     // handle click on Register button
+    let { token, setToken } = useContext(Token)
     const handleOnClickRegister = (e) => {
         e.preventDefault();
         if (isFormValid) {
             console.log("Form Submitted Successfully");
-            axios
-                .post('https://osamafraag.pythonanywhere.com/accounts/api/register/', {
-                    email: form.email,
-                    password: form.password,
-                })
+            RegisterAPI(form)
                 .then((res) => {
                     console.log('Register successful');
                     console.log(res.data);
-                    navigate('/')
-                    // handle the successful Register
+                    setToken(res.data.token)
+                    navigate('/');
                 })
                 .catch((err) => {
                     console.log('Register failed');
                     console.log(err.response.data);
-                    // handle the failed Register
                 });
         } else {
             console.log("Form Has Errors");
@@ -272,6 +296,12 @@ export default function Register() {
                                 <input type="email" className="form-control" id="floatingInput" value={form.email} onChange={handleOnChangeForm} placeholder='Enter your email' name="email" required />
                                 {formError.email && <div className="form-text text-danger text-start ">{formError.email}</div>}
                             </div>
+                            {/* Username */}
+                            <div className="mb-3">
+                                <label htmlFor="username" className="form-label">Username</label>
+                                <input type="text" className="form-control" name='username' value={form.username} id="username" placeholder='Enter your Username' onChange={handleOnChangeForm} required />
+                                {formError.username && <div className="form-text text-danger text-start ">{formError.username}</div>}
+                            </div>
                             {/* Password */}
                             <div className=" mb-3">
                                 <label htmlFor="floatingPassword">Password</label>
@@ -280,74 +310,74 @@ export default function Register() {
                             </div>
                             {/* Confirm Password */}
                             <div className=" mb-3">
-                                <label htmlFor="confirmPassword">Confirm Password</label>
-                                <input type="password" className="form-control" id="confirmPassword" value={form.confirmPassword} onChange={handleOnChangeForm} name='confirmPassword' placeholder='Enter your password' required />
-                                {formError.confirmPassword && <div className="form-text text-danger text-start ">{formError.confirmPassword}</div>}
+                                <label htmlFor="password2">Confirm Password</label>
+                                <input type="password" className="form-control" id="password2" value={form.password2} onChange={handleOnChangeForm} name='password2' placeholder='Enter your password' required />
+                                {formError.password2 && <div className="form-text text-danger text-start ">{formError.password2}</div>}
                             </div>
-                             {/* Phone Number */}
-                             <div className="mb-3">
-                                    <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
-                                    <input type="number" className="form-control" name='phoneNumber' value={form.phoneNumber} id="phoneNumber" placeholder='Enter your phone number' onChange={handleOnChangeForm} required />
-                                    {formError.phoneNumber && <div className="form-text text-danger text-start ">{formError.phoneNumber}</div>}
+                            {/* First Name */}
+                            <div className="mb-3">
+                                <label htmlFor="first_name" className="form-label">First Name</label>
+                                <input type="text" className="form-control" name='first_name' value={form.first_name} id="first_name" placeholder='Enter your first name' onChange={handleOnChangeForm} required />
+                                {formError.first_name && <div className="form-text text-danger text-start ">{formError.first_name}</div>}
+                            </div>
+                            {/* Last Name */}
+                            <div className="mb-3">
+                                <label htmlFor="last_name" className="form-label">Last Name</label>
+                                <input type="text" className="form-control" name='last_name' value={form.last_name} id="last_name" placeholder='Enter your last name' onChange={handleOnChangeForm} required />
+                                {formError.last_name && <div className="form-text text-danger text-start ">{formError.last_name}</div>}
+                            </div>
+                            {/* Gender */}
+                            <div className="mb-3 d-flex">
+                                <div className="mr-5">
+                                    <input type="radio" checked={form.male} id="male" name="male" value={form.male} onChange={handleOnChangeForm} required />
+                                    <label htmlFor="male" className="form-label px-2">Male</label>
                                 </div>
-                                {/* First Name */}
-                                <div className="mb-3">
-                                    <label htmlFor="firstName" className="form-label">First Name</label>
-                                    <input type="text" className="form-control" name='firstName' value={form.firstName} id="firstName" placeholder='Enter your first name' onChange={handleOnChangeForm} required />
-                                    {formError.firstName && <div className="form-text text-danger text-start ">{formError.firstName}</div>}
+                                <div>
+                                    <input type="radio" checked={form.female} id="female" name="female" value={form.female} onChange={handleOnChangeForm} required />
+                                    <label htmlFor="female" className="form-label px-2">Female</label>
                                 </div>
-                                {/* Last Name */}
-                                <div className="mb-3">
-                                    <label htmlFor="lastName" className="form-label">Last Name</label>
-                                    <input type="text" className="form-control" name='lastName' value={form.lastName} id="lastName" placeholder='Enter your last name' onChange={handleOnChangeForm} required />
-                                    {formError.lastName && <div className="form-text text-danger text-start ">{formError.lastName}</div>}
-                                </div>
-                                {/* Gender */}
-                                <div className="mb-3 d-flex">
-                                    <div className="mr-5">
-                                        <input type="radio" checked={form.male} id="male" name="male" value={form.male} onChange={handleOnChangeForm} required />
-                                        <label htmlFor="male" className="form-label px-2">Male</label>
-                                    </div>
-                                    <div>
-                                        <input type="radio" checked={form.female} id="female" name="female" value={form.female} onChange={handleOnChangeForm} required />
-                                        <label htmlFor="female" className="form-label px-2">Female</label>
-                                    </div>
-                                </div>
-                                {/* Date Of Birth */}
-                                <div className="mb-3">
-                                    <label htmlFor="dateOfBirth" className="form-label">Date Of Birth</label>
-                                    <input type="date" className="form-control" name='dateOfBirth' value={form.dateOfBirth} id="dateOfBirth" onChange={handleOnChangeForm} required />
-                                    {formError.dateOfBirth && <div className="form-text text-danger text-start ">{formError.dateOfBirth}</div>}
-                                </div>
-                                {/* Nationality */}
-                                <div className="mb-3">
-                                    <label htmlFor="nationality" className="form-label">Nationality</label>
-                                    <select
-                                        className="form-select"
-                                        name="nationality"
-                                        id="nationality"
-                                        value={selectedCountry}
-                                        onChange={handleSelectChange}
-                                    >
-                                        <option value="" disabled>Select your nationality</option>
-                                        {countries.map((country, index) => (
-                                            <option key={index} value={country}>{country}</option>
-                                        ))}
-                                    </select>
-                                    {formError.nationality && <div className="form-text text-danger text-start ">{formError.nationality}</div>}
-                                </div>              
-                                {/* Passport Number */}
-                                <div className="mb-3">
-                                    <label htmlFor="passportNumber" className="form-label">Passport Number</label>
-                                    <input type="text" className="form-control" name='passportNumber' value={form.passportNumber} id="passportNumber" placeholder='Enter your Passport Number' onChange={handleOnChangeForm} required />
-                                    {formError.passportNumber && <div className="form-text text-danger text-start ">{formError.passportNumber}</div>}
-                                </div>
-                                {/* Passport Expirty Date */}
-                                <div className="mb-3">
-                                    <label htmlFor="expirtyDate" className="form-label">Passport Expirty Date</label>
-                                    <input type="date" className="form-control" name='expirtyDate' value={form.expirtyDate} id="expirtyDate" onChange={handleOnChangeForm} required />
-                                    {formError.expirtyDate && <div className="form-text text-danger text-start ">{formError.expirtyDate}</div>}
-                                </div>
+                            </div>
+                            {/* Phone Number */}
+                            <div className="mb-3">
+                                <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
+                                <input type="number" className="form-control" name='phoneNumber' value={form.phoneNumber} id="phoneNumber" placeholder='Enter your phone number' onChange={handleOnChangeForm} required />
+                                {formError.phoneNumber && <div className="form-text text-danger text-start ">{formError.phoneNumber}</div>}
+                            </div>
+                            {/* Date Of Birth */}
+                            <div className="mb-3">
+                                <label htmlFor="dateOfBirth" className="form-label">Date Of Birth</label>
+                                <input type="date" className="form-control" name='dateOfBirth' value={form.dateOfBirth} id="dateOfBirth" onChange={handleOnChangeForm} required />
+                                {formError.dateOfBirth && <div className="form-text text-danger text-start ">{formError.dateOfBirth}</div>}
+                            </div>
+                            {/* Nationality */}
+                            <div className="mb-3">
+                                <label htmlFor="nationality" className="form-label">Nationality</label>
+                                <select
+                                    className="form-select"
+                                    name="nationality"
+                                    id="nationality"
+                                    value={selectedCountry}
+                                    onChange={handleSelectChange}
+                                >
+                                    <option value="" disabled>Select your nationality</option>
+                                    {countries.map((country, index) => (
+                                        <option key={index} value={country}>{country}</option>
+                                    ))}
+                                </select>
+                                {formError.nationality && <div className="form-text text-danger text-start ">{formError.nationality}</div>}
+                            </div>
+                            {/* Passport Number */}
+                            <div className="mb-3">
+                                <label htmlFor="passportNumber" className="form-label">Passport Number</label>
+                                <input type="text" className="form-control" name='passportNumber' value={form.passportNumber} id="passportNumber" placeholder='Enter your Passport Number' onChange={handleOnChangeForm} required />
+                                {formError.passportNumber && <div className="form-text text-danger text-start ">{formError.passportNumber}</div>}
+                            </div>
+                            {/* Passport Expirty Date */}
+                            <div className="mb-3">
+                                <label htmlFor="expirtyDate" className="form-label">Passport Expirty Date</label>
+                                <input type="date" className="form-control" name='expirtyDate' value={form.expirtyDate} id="expirtyDate" onChange={handleOnChangeForm} required />
+                                {formError.expirtyDate && <div className="form-text text-danger text-start ">{formError.expirtyDate}</div>}
+                            </div>
                             <center><button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickRegister}>Register</button></center>
                             <div>
                                 <div className="d-flex justify-content-center ">
