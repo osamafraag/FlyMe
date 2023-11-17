@@ -1,7 +1,7 @@
 import { axiosInstance } from "./Config";
 
 
-export default function AirPorts() {
+export default function TrendingPlace() {
     return axiosInstance.get('countries/api/trendingPlaces/')
 }
 

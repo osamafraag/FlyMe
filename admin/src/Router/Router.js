@@ -14,6 +14,8 @@ const Aircrafts = React.lazy(() => import('../Pages/Aircrafts'));
 const Classes = React.lazy(() => import('../Pages/Classes'));
 const Login = React.lazy(() => import('../Pages/Login'));
 const Error = React.lazy(() => import('../Pages/404'));
+const ImagesTrendPlaces = React.lazy(() => import('../Pages/ImagesTrendPlaces'));
+
 
 export default function Router() {
   return (
@@ -29,6 +31,7 @@ export default function Router() {
         <Route path="/Airports" element={<Airports />} />
         <Route path="/Aircrafts" element={<Aircrafts />} />
         <Route path="/Classes" element={<Classes />} />
+        <Route path="/ImagesTrendPlaces" element={<ImagesTrendPlaces />} />
         <Route path="/Login" element={<Login />} />
         <Route path="*" element={<Error />} />
       </Routes>
