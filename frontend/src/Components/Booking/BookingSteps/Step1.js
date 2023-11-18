@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import Header from './Header'
 import Step2 from './Step2';
+import { useSelector } from 'react-redux';
 
 export default function Step1() {
+    let userData = useSelector(state => state.loggedInUserSlice.data);
+    console.log(userData)
     // handle click on the header to show or not the content of the step
     const [isContentVisible, setIsContentVisible] = useState(false);
     const handleToggle = () => {
