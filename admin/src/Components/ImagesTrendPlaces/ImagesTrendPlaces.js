@@ -146,6 +146,9 @@ export default function ImagesTrendPlaces() {
               <Card.Img variant="top" src={image.photo} alt={`Trending Place: ${image.trendingPlace}`} style={{ height: "250px" }} />
               <Card.Body>
                 <Card.Title>{image.place_name}</Card.Title>
+                <Card.Text>
+                  {image.place_name} has ID &rarr; {image.trendingPlace}
+                </Card.Text>
                 <div className="d-flex justify-content-between align-items-center">
                   <Button className="btn border-0 bg-white p-0" onClick={() => handleEditClick(image)}><FontAwesomeIcon icon={faPencilAlt} style={{color: "var(--main-color)"}} /></Button>
                   <Button className="btn border-0 bg-white p-0" onClick={() => handleDelete(image.id)}><FontAwesomeIcon icon={faTrash} className="text-danger" /></Button>

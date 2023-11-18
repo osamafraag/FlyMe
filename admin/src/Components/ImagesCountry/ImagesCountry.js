@@ -141,6 +141,7 @@ export default function ImagesCountry() {
                 <Card.Img variant="top" src={image.photo} alt={`Country: ${image.country_name}`} style={{ height: "250px" }} />
                 <Card.Body>
                   <Card.Title>{image.country_name}</Card.Title>
+                  {/* countries/api/images/add/ */}
                   <div className="d-flex justify-content-between align-items-center">
                     <Button className="btn border-0 bg-white p-0" onClick={() => handleEditClick(image)}><FontAwesomeIcon icon={faPencilAlt} style={{color: "var(--main-color)"}} /></Button>
                     <Button className="btn border-0 bg-white p-0" onClick={() => handleDelete(image.id)}><FontAwesomeIcon icon={faTrash} className="text-danger" /></Button>

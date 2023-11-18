@@ -144,6 +144,9 @@ export default function ImagesCity() {
               <Card.Img variant="top"src={image.photo} alt={`City: ${image.cityName}`} style={{ height: "250px" }} />
               <Card.Body>
                 <Card.Title>{image.cityName}</Card.Title>
+                <Card.Text>
+                  {image.cityName} has ID &rarr; {image.city}
+                </Card.Text>
                 <div className="d-flex justify-content-between align-items-center">
                   <Button className="btn border-0 bg-white p-0" onClick={() => handleEditClick(image)}><FontAwesomeIcon icon={faPencilAlt} style={{color: "var(--main-color)"}} /></Button>
                   <Button className="btn border-0 bg-white p-0" onClick={() => handleDelete(image.id)}><FontAwesomeIcon icon={faTrash} className="text-danger" /></Button>
