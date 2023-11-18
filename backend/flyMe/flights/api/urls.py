@@ -7,6 +7,7 @@ urlpatterns = [
     path('', flightList, name='flights.index'),
     path('all/', allFlights, name='flights.all'),
     path('user/<int:id>', userFlights, name='flights.user'),
+    path('offer', offerFlights, name='flights.offer'),
     path('<int:id>', flightDetail, name='flight.index'),
     path('user/<int:id>/history/', userBooks, name='user.history'),
     path('<int:id>/history/', flightBooks, name='flight.history'),

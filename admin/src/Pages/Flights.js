@@ -11,8 +11,6 @@ export default function Flights() {
 
   const navigate = useNavigate()
   const [flights, setFlights] = useState({})
-  const [flight,setFlight]=useState({aircraft:null,departureTime:null,arrivalTime:null,
-    startAirport:null,endAirport:null,distance:0,avalableSeats:0,baseCost:null,status:'A'})
 
   useEffect(() => {fetchData()},[]);
 
@@ -29,24 +27,26 @@ export default function Flights() {
   function handlePostponeClick(id){navigate(`/PostponeForm`,{state:{id:id}})}
 
   function handleCancelClick(id){
+    const confirmDelete = window.confirm("Are you sure you want to Cancel this flight?");
+    if (!confirmDelete) {
+      return;
+    }
     axiosInstance
         .get(`flights/api/${id}`)
         .then((result) => {
-          setFlight(result.data.data)
+          result.data.data.status = 'C'
+          axiosInstance
+            .put(`/flights/api/${id}`, result.data.data)  
+            .then((response) => {
+              fetchData()
+            })
+            .catch((error) => {
+            console.error(error.response);
+          })
         })
         .catch((error) => console.log(error));
-        var cancelled = flight
-        cancelled.status='C'
-    axiosInstance
-        .put(`/flights/api/${id}`, cancelled)  
-        .then((response) => {
-          fetchData()
-        })
-        .catch((error) => {
-          console.error(error.response);
-        })
   }
-
+ 
   function handleAddClick() {navigate(`/FlightForm`)}
 
   function handleDeleteClick(flightId) {
