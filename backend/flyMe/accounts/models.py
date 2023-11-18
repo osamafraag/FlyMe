@@ -121,6 +121,16 @@ class Complaint(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        if self.answer != '':
+            notification = Notification()
+            notification.user = self.user_id
+            notification.title = "Your Complaint Answer!"
+            notification.description = f"{self.answer} is the answer for your complaints"
+            notification.save()
+    
+        super().save(*args, **kwargs)
+
 
 class Notification(models.Model):
     statuses = [
