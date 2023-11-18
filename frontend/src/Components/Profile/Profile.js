@@ -17,6 +17,12 @@ const Profile = () => {
   if (!userData || Object.keys(userData).length === 0) {
     return null;
   }
+
+  console.log(userData.is_superuser)
+  const handleDashboardButtonClick = () => {
+    // Open a new tab or window with the dashboard URL
+    window.open('http://localhost:3001/', '_blank');
+  };
   // const userData = {
   //   'username': 'JohnDoe',
   //   'email': 'john.doe@example.com',
@@ -61,6 +67,14 @@ const Profile = () => {
                 <div className="d-flex justify-content-center mb-2">
                   <button type="button" className="btn btn-primary">Edit</button>
                   <button type="button" className="btn btn-danger ms-1">Delete</button>
+                  {
+                    userData.is_superuser == true
+                    ?
+                    <button type="button" className="btn btn-danger ms-1" onClick={handleDashboardButtonClick}>Dashboard</button>
+                    :
+                    ''
+                  }
+                  
                 </div>
               </div>
             </div>
