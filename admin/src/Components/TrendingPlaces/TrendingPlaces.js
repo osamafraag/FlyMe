@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from "../../APIs/Config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt,faTrash } from '@fortawesome/free-solid-svg-icons';
-
+import { faPencilAlt, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { Modal, Button } from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+import Carousel from 'react-bootstrap/Carousel';
+import NoImage from "./../../Assets/Images/NoImage.jpg"
 
 export default function TrendingPlaces() {
   const [trendingPlaces, setTrendingPlaces] = useState([]);
@@ -12,6 +15,7 @@ export default function TrendingPlaces() {
     description: ""
   });
   const [editingTrendingPlaceId, setEditingTrendingPlaceId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -31,6 +35,20 @@ export default function TrendingPlaces() {
       ...newTrendingPlace,
       [name]: value,
     });
+  };
+
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setNewTrendingPlace({
+      city: "",
+      name: "",
+      description: ""
+    });
+    setEditingTrendingPlaceId(null);
   };
 
   const handleSubmit = (e) => {
@@ -59,12 +77,7 @@ export default function TrendingPlaces() {
         });
     }
 
-    setNewTrendingPlace({
-      city: "",
-      name: "",
-      description: ""
-    });
-    setEditingTrendingPlaceId(null);
+    handleCloseModal();
   };
 
   const handleEdit = (placeId, updatedPlace) => {
@@ -104,75 +117,102 @@ export default function TrendingPlaces() {
       description: place.description
     });
     setEditingTrendingPlaceId(place.id);
+    handleShowModal();
   };
 
   return (
-    <div className="text-start">
-      <h2 className="text-danger">Trending Places</h2>
+    <div className="container">
+      <div className="mb-4 text-end">
+        <Button onClick={handleShowModal} style={{backgroundColor: "var(--main-color)", borderColor: "var(--main-color)"}}>
+         <FontAwesomeIcon icon={faPlus} /> Add New Trending Places
+        </Button>
+      </div>
       {trendingPlaces && trendingPlaces.length > 0 ? (
-        <ul>
+       <div className="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-4 justify-content-center align-items-center ">
           {trendingPlaces.map((place) => (
-            <li key={place.id}>
-              &rarr; <strong>{place.name}</strong> - {place.cityName},{" "}
-              {place.countryName}
-              <button
-                className="btn ms-2"
-                onClick={() => handleEditClick(place)}
-              >
-                <FontAwesomeIcon icon={faPencilAlt} />
-              </button>
-              <button
-                className="btn  ms-2"
-                style={{ color: 'brown' }}
-
-                onClick={() => handleDelete(place.id)}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </button>
-            </li>
+            <div className="col d-flex justify-content-center align-items-center" key={place.id}>
+              <Card style={{ width: '18rem' }} className="border border-0 text-start shadow w-100">
+                {place.multi_images.length != 0 
+                ?
+                <Carousel controls={false} indicators={false} data-bs-theme="dark">
+                  {place.multi_images.map((image, index) => (
+                  <Carousel.Item variant="top" key={index}>
+                    <img
+                      className="d-block w-100 rounded-top-2"
+                      src={image.photo}
+                      alt={image.place_name}
+                      style={{height: "250px"}}
+                    />
+                  </Carousel.Item>
+                  ))}
+                </Carousel>
+                :
+                <Card.Img variant="top" src={NoImage} style={{height: '250px'}} />
+                }
+                <Card.Body>
+                  <Card.Title>{place.name}</Card.Title>
+                  <Card.Text>
+                    {place.name} - {place.cityName},{" "}
+                    {place.countryName}
+                  </Card.Text>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <Button className="btn border-0 bg-white p-0" onClick={() => handleEditClick(place)}><FontAwesomeIcon icon={faPencilAlt} style={{color: "var(--main-color)"}} /></Button>
+                    <Button className="btn border-0 bg-white p-0" onClick={() => handleDelete(place.id)}><FontAwesomeIcon icon={faTrash} className="text-danger" /></Button>
+                  </div>
+                </Card.Body>
+              </Card>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>Loading...</p>
       )}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {editingTrendingPlaceId ? "Edit Place" : "Add New Place"}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={handleSubmit}>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">Name</span>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="name"
+                value={newTrendingPlace.name}
+                onChange={handleInputChange} 
+              />
+            </div>
 
-      <h2 className="text-danger">
-        {editingTrendingPlaceId ? "Edit Place" : "Add New Place"}
-      </h2>
-      <form onSubmit={handleSubmit}>
-        <label className="my-2">
-          Name:
-          <input
-            type="text"
-            name="name"
-            value={newTrendingPlace.name}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <label className="my-2">
-          CityID:
-          <input
-            type="text"
-            name="city"
-            value={newTrendingPlace.city}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <label className="my-2">
-          Description:
-          <textarea
-            name="description"
-            value={newTrendingPlace.description}
-            onChange={handleInputChange}
-          ></textarea>
-        </label>
-        <br />
-        <button className="btn btn-primary my-3" type="submit">
-          {editingTrendingPlaceId ? "Update Place" : "Add Place"}
-        </button>
-      </form>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">City ID</span>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="city"
+                value={newTrendingPlace.city}
+                onChange={handleInputChange} 
+              />
+            </div>
+
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">Description</span>
+              <textarea 
+                rows="3" 
+                class="form-control" 
+                name="description"
+                value={newTrendingPlace.description}
+                onChange={handleInputChange}
+              ></textarea>
+            </div>
+            <button className="btn my-3 text-white" type="submit" style={{backgroundColor: "var(--main-color)"}}>
+              {editingTrendingPlaceId ? "Update Place" : "Add Place"}
+            </button>
+          </form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

@@ -201,7 +201,7 @@ export default function Complaints() {
           </Modal.Body>
         <Modal.Footer>
           <Button variant='secondary' onClick={()=>{handleSubmit(selectedComplaint.id)}}>
-            replay
+            Replay
           </Button>
         </Modal.Footer>
       </Modal>

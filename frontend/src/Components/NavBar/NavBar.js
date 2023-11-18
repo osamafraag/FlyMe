@@ -29,7 +29,7 @@ export default function NavBar() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Book">Book</NavLink>
+            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Book">Book & Offers</NavLink>
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/AboutUs">About</NavLink>
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Help">Help</NavLink>
           </Nav>
