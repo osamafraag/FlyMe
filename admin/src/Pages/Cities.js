@@ -1,14 +1,23 @@
 import React , { useState, useEffect }from 'react'
-import { GetCities, GetSpecificCity, EditCity } from "./../APIs/Cities"
+import { GetCities } from "./../APIs/Cities"
 import { NavLink } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPlus, faCheck, faXmark} from '@fortawesome/free-solid-svg-icons'
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function Cities() {
   const [cities, SetCities] = useState([])
-  const [specificCity, setSpecificCity] = useState()
+  let userData = useSelector(state => state.loggedInUserSlice.data);
+  const navigate = useNavigate() 
 
+  // If !user navigate to login page 
   useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+    else
     GetCities()
     .then((result) => {
       SetCities(result.data)
@@ -16,39 +25,16 @@ export default function Cities() {
     .catch((error) => {
       console.log(error)
     })
-  }, [specificCity])
-
-  const handleFeautered = (id) => {
-    GetSpecificCity(id)
-      .then((result) => {
-        const specificCityData = result.data[0];
-        console.log(result) 
-        if (specificCityData) {
-          const updatedCity = { ...specificCityData, isFeatured: !specificCityData.isFeatured };
-          setSpecificCity(updatedCity);
-          
-          try {
-            const response = EditCity(id, JSON.stringify(updatedCity));
-            console.log(updatedCity);
-            console.log('Post Response:', response.data);
-          } catch (error) {
-            console.error('Error:', error);
-          }
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  }, [userData, navigate])
 
   return (
     <div className='container p-5'>
       <h3 className='text-start text-secondary my-4'>Cities</h3>
-      {/* <div className='text-end'>
+      <div className='text-end'>
         <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}}to="/ClassForm" >
           <FontAwesomeIcon icon={faPlus} /> Add New City 
         </NavLink>
-      </div> */}
+      </div>
       <table className="table table-hover shadow-sm">
       <thead className="table-light">
         <tr>
@@ -69,7 +55,7 @@ export default function Cities() {
             <td>{city.slug}</td>
             <td>{city.population}</td>
             <td>{city.timezone}</td>
-            <td><a className='text-decoration-none' onClick={() => handleFeautered(city.id)}>{city.isFeatured ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</a></td>  
+            <td>{city.isFeatured ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</td>  
             <td>{city.popularity}</td>
           </tr>
         ))}

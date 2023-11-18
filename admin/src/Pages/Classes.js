@@ -3,14 +3,21 @@ import { GetClasses, DeleteClass } from "./../APIs/Classes"
 import { NavLink } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faPlus, faCheck, faXmark, faPenToSquare, faTrash} from '@fortawesome/free-solid-svg-icons'
+import {faPlus, faCheck, faXmark} from '@fortawesome/free-solid-svg-icons'
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function Classes() {
   const [classes, setClasses] = useState([])
-  const [classesChange, setClassesChange] = useState('')
-  const navigate = useNavigate()
+  let userData = useSelector(state => state.loggedInUserSlice.data);
+  const navigate = useNavigate() 
 
   useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+    else
     GetClasses()
     .then((result) => {
       console.log(result.data);
@@ -19,27 +26,7 @@ export default function Classes() {
     .catch((error) => {
       console.log(error)
     })
-  }, [classesChange])
-
-  const handleEditClick = (id) => {
-    navigate(`/ClassForm`,{state:{id:id}})
-  }
-
-  function handleDeleteClick(id, name) {
-    const confirmDelete = window.confirm(`Are You Sure You Want To Delete ${name} Class?`);
-    if (!confirmDelete) {
-      return;
-    }
-
-    DeleteClass(id)
-    .then((response) => {
-      console.log(response)
-      setClassesChange(response)
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-  };
+  }, [userData, navigate])
 
   return (
     <div className='container p-5'>

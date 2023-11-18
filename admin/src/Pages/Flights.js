@@ -6,13 +6,22 @@ import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus,faPenToSquare, faTrash,faBan, faCircle } from '@fortawesome/free-solid-svg-icons';
 import FlightCard from '../Components/Flights/FlightCard'
-    
+import { useSelector } from 'react-redux';
+
 export default function Flights() {
 
   const navigate = useNavigate()
   const [flights, setFlights] = useState({})
+  let userData = useSelector(state => state.loggedInUserSlice.data);
 
-  useEffect(() => {fetchData()},[]);
+  useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+    else
+    fetchData()
+  },[userData, navigate]);
 
   function fetchData(){
     FlightsAPI()
