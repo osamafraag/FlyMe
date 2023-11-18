@@ -39,13 +39,13 @@ export default function Users() {
   return (
     <div className='container py-5 px-4'>
       {/* Super Users */}
-      <div className='super-users pb-5'>
-        <h3 className='text-start py-3' style={{color: "var(--main-color)"}}>Super Users</h3>
         <div className='text-end'>
           <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}} to="/SuperUserForm" >
-            <FontAwesomeIcon icon={faPlus} /> Add New Super User 
+            <FontAwesomeIcon icon={faPlus} /> Add New User 
           </NavLink>
         </div>
+      <div className='super-users pb-5'>
+        <h3 className='text-start py-3' style={{color: "var(--main-color)"}}>Super Users</h3>
         <table className="table table-hover shadow-sm">
           <thead className="table-light">
             <tr>
@@ -67,6 +67,7 @@ export default function Users() {
               <td>{user.username}</td>
               <td>{user.email}</td>
               <td>{user.gender == "F" ? "Female" : "Male"}</td>
+              <td>{user.birth_date}</td>
             </tr>
           ))}
           </tbody>
