@@ -1,0 +1,47 @@
+ .active-amber-textarea.md-form label.active {
+    color: var(--main-color);
+  }
+  .amber-textarea textarea.md-textarea:focus:not([readonly]) {
+    border-bottom: 1px solid var(--main-color);
+    box-shadow: 0 1px 0 0 var(--main-color);
+  }
+  .amber-textarea.md-form .prefix.active {
+    color: var(--main-color);
+  }
+  .active-amber-textarea.md-form textarea.md-textarea:focus:not([readonly])+label {
+    color: var(--main-color);
+  }
+  
+  .active-pink-textarea-2 textarea.md-textarea {
+    border-bottom: 1px solid var(--main-color);
+    box-shadow: 0 1px 0 0 var(--main-color);
+  }
+  .active-pink-textarea-2.md-form label.active {
+    color: var(--main-color);
+  }
+  .active-pink-textarea-2.md-form label {
+    color: var(--main-color);
+  }
+  .active-pink-textarea-2.md-form .prefix {
+    color: var(--main-color);
+  }
+  .active-pink-textarea-2.md-form textarea.md-textarea:focus:not([readonly])+label {
+    color: var(--main-color);
+  }
+  
+  .active-amber-textarea-2 textarea.md-textarea {
+    border-bottom: 1px solid var(--main-color);
+    box-shadow: 0 1px 0 0 var(--main-color);
+  }
+  .active-amber-textarea-2.md-form label.active {
+    color: var(--main-color);
+  }
+  .active-amber-textarea-2.md-form label {
+    color: var(--main-color);
+  }
+  .active-amber-textarea-2.md-form .prefix {
+    color: var(--main-color);
+  }
+  .active-amber-textarea-2.md-form textarea.md-textarea:focus:not([readonly])+label {
+    color: var(--main-color);
+  }

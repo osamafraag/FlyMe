@@ -30,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name', 'passport_number',
             'passport_expire_date', 'phone', 'image', 'is_email_verified',
-            'activation_link_created_at', 'birth_date', 'address',
+            'activation_link_created_at', 'birth_date',
             'gender', 'post_code', 'created_at', 'updated_at', 'is_superuser', 'country', 'city', 'region'
         )
     def update(self, instance, validated_data):
@@ -52,7 +52,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MyUser
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name','birth_date','gender','passport_expire_date','passport_number','phone')
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True}
@@ -69,7 +69,13 @@ class RegisterSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             email=validated_data['email'],
             first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
+            last_name=validated_data['last_name'],
+            birth_date=validated_data['birth_date'],
+            gender=validated_data['gender'],
+            passport_expire_date=validated_data['passport_expire_date'],
+            passport_number=validated_data['passport_number'],
+            phone=validated_data['phone'],
+            # country=validated_data['country'],
         )
         user.set_password(validated_data['password'])
         user.save()

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from accounts.api.views import  *
 from . import views
 
@@ -18,10 +18,10 @@ urlpatterns = [
     path('notifications/<int:id>', notificationDetail, name='notification.detail'),
     path('user/<int:id>/notifications', userNotifications, name='user.notifications'),
     path('paymentCards/', paymentCardList, name='paymentCards.list'),
-    path('paymentCards/<int:id>/',paymentCardDetail,name='paymentCard.detail'),
+    path('paymentCards/<int:id>',paymentCardDetail,name='paymentCard.detail'),
     path('user/<int:id>/paymentCards',userPaymentCards,name='user.paymentCards'),
     path('complaints/', complaintsList, name='complaint.list'),
-    path('complaints/<int:id>/',complaintDetail,name='complaint.detail'),
+    path('complaints/<int:id>',complaintDetail,name='complaint.detail'),
     path('user/<int:id>/complaints',userComplaints,name='user.complaints'),
     path('register/tst/', views.UserRegister.as_view(), name='register'),
 	path('login/tst/', views.UserLogin.as_view(), name='login'),

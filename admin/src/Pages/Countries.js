@@ -3,11 +3,20 @@ import { GetCountries } from "./../APIs/Countries"
 import { NavLink } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPlus, faCheck, faXmark} from '@fortawesome/free-solid-svg-icons'
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function Countries() {
   const [countries, SetCountries] = useState([])
+  let userData = useSelector(state => state.loggedInUserSlice.data);
+  const navigate = useNavigate() 
 
   useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+    else
     GetCountries()
     .then((result) => {
       SetCountries(result.data)
@@ -15,16 +24,16 @@ export default function Countries() {
     .catch((error) => {
       console.log(error)
     })
-  }, [])
+  }, [userData, navigate])
 
   return (
-    <div className='container p-5'>
+    <div className='container py-5 px-4'>
       <h3 className='text-start text-secondary my-4'>Countries</h3>
-      <div className='text-end'>
-        <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}}to="/ClassForm" >
+      {/* <div className='text-end'>
+        <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}}to="/" >
           <FontAwesomeIcon icon={faPlus} /> Add New Country 
         </NavLink>
-      </div>
+      </div> */}
       <table className="table table-hover shadow-sm">
       <thead className="table-light">
         <tr>

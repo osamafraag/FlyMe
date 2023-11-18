@@ -101,7 +101,7 @@ function AircraftForm() {
         </div>
       </div>
 
-      <button type="submit" className='btn btn-primary ms-auto w-25'>
+      <button type="submit" className='btn ms-auto w-25 text-white' style={{backgroundColor: "var(--main-color)"}}>
         {location.state? <span>Edit Aircraft</span> :<span>Add Aircraft</span> } </button>
       </div>
     </form>
