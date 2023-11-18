@@ -2,14 +2,25 @@ import { React, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import './register.css'
 import { Register as RegisterAPI } from '../../APIs/Register'
-import { useContext } from "react";
-import { Token } from "../../Context/Token";
 import { getCountries } from '../../APIs/Countries';
+import { AllUsers } from '../../APIs/AllUsers'
 
 var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 
 export default function Register() {
     let navigate = useNavigate()
+    const [errorMessage, seterrorMessage] = useState(null)
+    const [usersArray, setusersArray] = useState()
+    const [userEmailExist, setuserEmailExist] = useState(false)
+
+    // Call All users for validations:
+    useEffect(() => {
+        const fetchUsers = async () => {
+            const result = await AllUsers();
+            setusersArray(result.data.data);
+        };
+        fetchUsers();
+    }, []);
 
     // Call api countries
     const [countries, setCountries] = useState([]);
@@ -22,12 +33,12 @@ export default function Register() {
                 setCountries(countryNames);
             } catch (error) {
                 console.error('Error fetching countries:', error);
-                // Handle the error, e.g., show a friendly message to the user
             }
         };
 
         fetchCountries();
     }, []);
+    
 
     // Form State
     const [form, setForm] = useState({
@@ -35,38 +46,42 @@ export default function Register() {
         password: '',
         password2: '',
         username: '',
-        phoneNumber: '',
+        phone: '',
         first_name: '',
         last_name: '',
+        gender:'',
         male: '',
         female: '',
-        dateOfBirth: '',
-        nationality: '',
-        passportNumber: '',
-        expirtyDate: '',
+        birth_date: '',
+        country: '',
+        passport_number: '',
+        passport_expire_date: '',
     })
     const [formError, setFormError] = useState({
         email: null,
         password: null,
         password2: null,
         username: null,
-        phoneNumber: null,
+        phone: null,
         first_name: null,
         last_name: null,
         male: null,
         female: null,
-        dateOfBirth: null,
-        nationality: null,
-        passportNumber: null,
-        expirtyDate: null,
+        birth_date: null,
+        country: null,
+        passport_number: null,
+        passport_expire_date: null,
 
     });
 
     // Regex Validations
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/; // 4 Digits: At Least 1 Character / At Least 1 Number
-    const phoneNumberRegex = /^01[0125][0-9]{8}$/;      // 010, 011, 012 or 015 + other 8 digits
-    const passportNumberRegex = /(^A)[0-9]{8}$/;         // A + 8 numbers
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/; // Minimum eight characters, at least 1 letter and 1 number
+    const weakPassword = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/
+    const phoneRegex = /^01[0125][0-9]{8}$/;      // 010, 011, 012 or 015 + other 8 digits
+    const passport_numberRegex = /(^A)[0-9]{8}$/;         // A + 8 numbers
+    
+    
 
     const handleOnChangeForm = (event) => {
         let name = event.target.name
@@ -78,6 +93,7 @@ export default function Register() {
                 ...form,
                 email: value
             });
+            const emailExists = usersArray ? usersArray.some(user => user.email === value) : false;
             setFormError({
                 ...formError,
                 email:
@@ -85,6 +101,8 @@ export default function Register() {
                         ? "You Should Enter Your Email"
                         : !value.match(emailRegex)
                             ? "Invalid Email, Email Should Be Like This name@example.com"
+                            : emailExists == true
+                            ? "This email already exist"
                             : null
             })
         }
@@ -100,7 +118,9 @@ export default function Register() {
                     value.trim(" ").length === 0
                         ? "You Should Enter Your Password"
                         : !value.match(passwordRegex)
-                            ? "Invalid Password, Password Should Contains at least 4 Digits: At Least 1 Character / At Least 1 Number"
+                            ? "Invalid Password, Password Should be Minimum eight characters, at least 1 letter and 1 number"
+                            : !value.match(weakPassword)
+                            ? "This password is too common."
                             : null
             })
         }
@@ -126,28 +146,31 @@ export default function Register() {
                 ...form,
                 username: value
             });
+            const usernameExists = usersArray ? usersArray.some(user => user.username === value) : false;
             setFormError({
                 ...formError,
                 username:
                     value.trim(" ").length === 0
                         ? "You Should Enter Your Username"
                         : value.length < 3 || value.length > 20
-                        ? "Invalid Name, Username can't Be Less Than 3 Nor Greater Than 20 Character."
-                        : null
+                            ? "Invalid Name, Username can't Be Less Than 3 Nor Greater Than 20 Character."
+                            : usernameExists == true
+                            ? "This username already exist"
+                                : null
             })
         }
         // Phone Number Validations
-        else if (name === 'phoneNumber') {
+        else if (name === 'phone') {
             setForm({
                 ...form,
-                phoneNumber: value
+                phone: value
             });
             setFormError({
                 ...formError,
-                phoneNumber:
+                phone:
                     value.trim(" ").length === 0
                         ? "You Should Enter Your Phone Number"
-                        : !value.match(phoneNumberRegex)
+                        : !value.match(phoneRegex)
                             ? "Invalid Phone Number, Phone Number Should Start with 010, 011, 012 or 015 and othe 8 digits"
                             : null
             })
@@ -189,91 +212,105 @@ export default function Register() {
             setForm({
                 ...form,
                 male: name === 'male',
-                female: name === 'female'
+                female: name === 'female',
+                gender: name === 'male' ? 'M' : 'F'
             });
         }
         // Date of birth validations
-        else if (name === 'dateOfBirth') {
+        else if (name === 'birth_date') {
             const enteredDate = new Date(value);
             const today = new Date();
             setForm({
                 ...form,
-                dateOfBirth: value
+                birth_date: value
             });
             setFormError({
                 ...formError,
-                dateOfBirth:
+                birth_date:
                     enteredDate > today
                         ? 'Date of Birth cannot be after today'
                         : null
             })
         }
         // Passport Number
-        else if (name === 'passportNumber') {
+        else if (name === 'passport_number') {
             setForm({
                 ...form,
-                passportNumber: value
+                passport_number: value
             });
             setFormError({
                 ...formError,
-                passportNumber:
+                passport_number:
                     value.trim(" ").length === 0
                         ? "You Should Enter Your Passport Number"
-                        : !value.match(passportNumberRegex)
+                        : !value.match(passport_numberRegex)
                             ? "Invalid Passport Number, Egyption Passport Number start with {A} then 8 numbers"
                             : null
             })
         }
         // Expirty Date
-        else if (name === 'expirtyDate') {
+        else if (name === 'passport_expire_date') {
             const enteredDate = new Date(value);
             const today = new Date();
             setForm({
                 ...form,
-                expirtyDate: value
+                passport_expire_date: value
             });
             setFormError({
                 ...formError,
-                expirtyDate:
-                    enteredDate >= today
-                        ? 'Expirty Date cannot be after today'
+                passport_expire_date:
+                    enteredDate <= today
+                        ? 'Expirty Date cannot be before today'
                         : null
             })
         }
     }
 
-    // Nationality
+    // country
     const handleSelectChange = (event) => {
         const selectedValue = event.target.value;
-        setSelectedCountry(selectedValue);
+        console.log('selectedValue', selectedValue)
 
+
+
+        setSelectedCountry(selectedValue);
         setForm((prevForm) => ({
             ...prevForm,
-            nationality: selectedValue
+            country: selectedValue
         }))
     };
 
-    const isFormValid = !formError.email && !formError.password && !formError.password2 && !formError.phoneNumber && !formError.first_name && !formError.last_name && !formError.male && !formError.female && !formError.dateOfBirth && !formError.nationality && !formError.passportNumber && !formError.expirtyDate && form.email && form.password && form.password2 && form.phoneNumber && form.first_name && form.last_name && (form.male || form.female) && form.dateOfBirth && form.nationality && form.passportNumber && form.expirtyDate
+    const isFormValid = !formError.email && !formError.password && !formError.password2 && !formError.phone && !formError.first_name && !formError.last_name && !formError.male && !formError.female && !formError.birth_date && !formError.country && !formError.passport_number && !formError.passport_expire_date && form.email && form.password && form.password2 && form.phone && form.first_name && form.last_name && (form.male || form.female) && form.birth_date && form.country && form.passport_number && form.passport_expire_date
+    
+    
 
     // handle click on Register button
-    let { token, setToken } = useContext(Token)
     const handleOnClickRegister = (e) => {
         e.preventDefault();
         if (isFormValid) {
+            console.log('form',form)
             console.log("Form Submitted Successfully");
             RegisterAPI(form)
                 .then((res) => {
                     console.log('Register successful');
-                    console.log(res.data);
-                    setToken(res.data.token)
-                    navigate('/');
+                    console.log('res.data',res.data);
+                    navigate('/Login');
                 })
                 .catch((err) => {
                     console.log('Register failed');
                     console.log(err.response.data);
+                    if (err.response.data.password) {
+                        setFormError({
+                            ...formError,
+                            password: "This password is too common.",
+                        });
+                    } else {
+                        seterrorMessage('An error occurred. Please try again.');
+                    }
                 });
         } else {
             console.log("Form Has Errors");
+            seterrorMessage('Please enter all data.')
             console.log(formError);
             console.log(form);
         }
@@ -289,6 +326,11 @@ export default function Register() {
                         width="300"
                     />
                     <div className="col-6 pb-5">
+                        {(errorMessage) && (
+                            <p className="text-danger" style={{ fontSize: '14px' }}>
+                                {errorMessage}
+                            </p>
+                        )}
                         <form method="post" encType="multipart/form-data">
                             {/* Email */}
                             <div className=" mb-3">
@@ -339,44 +381,44 @@ export default function Register() {
                             </div>
                             {/* Phone Number */}
                             <div className="mb-3">
-                                <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
-                                <input type="number" className="form-control" name='phoneNumber' value={form.phoneNumber} id="phoneNumber" placeholder='Enter your phone number' onChange={handleOnChangeForm} required />
-                                {formError.phoneNumber && <div className="form-text text-danger text-start ">{formError.phoneNumber}</div>}
+                                <label htmlFor="phone" className="form-label">Phone Number</label>
+                                <input type="number" className="form-control" name='phone' value={form.phone} id="phone" placeholder='Enter your phone number' onChange={handleOnChangeForm} required />
+                                {formError.phone && <div className="form-text text-danger text-start ">{formError.phone}</div>}
                             </div>
                             {/* Date Of Birth */}
                             <div className="mb-3">
-                                <label htmlFor="dateOfBirth" className="form-label">Date Of Birth</label>
-                                <input type="date" className="form-control" name='dateOfBirth' value={form.dateOfBirth} id="dateOfBirth" onChange={handleOnChangeForm} required />
-                                {formError.dateOfBirth && <div className="form-text text-danger text-start ">{formError.dateOfBirth}</div>}
+                                <label htmlFor="birth_date" className="form-label">Date Of Birth</label>
+                                <input type="date" className="form-control" name='birth_date' value={form.birth_date} id="birth_date" onChange={handleOnChangeForm} required />
+                                {formError.birth_date && <div className="form-text text-danger text-start ">{formError.birth_date}</div>}
                             </div>
-                            {/* Nationality */}
+                            {/* country */}
                             <div className="mb-3">
-                                <label htmlFor="nationality" className="form-label">Nationality</label>
+                                <label htmlFor="country" className="form-label">country</label>
                                 <select
                                     className="form-select"
-                                    name="nationality"
-                                    id="nationality"
+                                    name="country"
+                                    id="country"
                                     value={selectedCountry}
                                     onChange={handleSelectChange}
                                 >
-                                    <option value="" disabled>Select your nationality</option>
+                                    <option value="" disabled>Select your country</option>
                                     {countries.map((country, index) => (
                                         <option key={index} value={country}>{country}</option>
                                     ))}
                                 </select>
-                                {formError.nationality && <div className="form-text text-danger text-start ">{formError.nationality}</div>}
+                                {formError.country && <div className="form-text text-danger text-start ">{formError.country}</div>}
                             </div>
                             {/* Passport Number */}
                             <div className="mb-3">
-                                <label htmlFor="passportNumber" className="form-label">Passport Number</label>
-                                <input type="text" className="form-control" name='passportNumber' value={form.passportNumber} id="passportNumber" placeholder='Enter your Passport Number' onChange={handleOnChangeForm} required />
-                                {formError.passportNumber && <div className="form-text text-danger text-start ">{formError.passportNumber}</div>}
+                                <label htmlFor="passport_number" className="form-label">Passport Number</label>
+                                <input type="text" className="form-control" name='passport_number' value={form.passport_number} id="passport_number" placeholder='Enter your Passport Number' onChange={handleOnChangeForm} required />
+                                {formError.passport_number && <div className="form-text text-danger text-start ">{formError.passport_number}</div>}
                             </div>
                             {/* Passport Expirty Date */}
                             <div className="mb-3">
-                                <label htmlFor="expirtyDate" className="form-label">Passport Expirty Date</label>
-                                <input type="date" className="form-control" name='expirtyDate' value={form.expirtyDate} id="expirtyDate" onChange={handleOnChangeForm} required />
-                                {formError.expirtyDate && <div className="form-text text-danger text-start ">{formError.expirtyDate}</div>}
+                                <label htmlFor="passport_expire_date" className="form-label">Passport Expirty Date</label>
+                                <input type="date" className="form-control" name='passport_expire_date' value={form.passport_expire_date} id="passport_expire_date" onChange={handleOnChangeForm} required />
+                                {formError.passport_expire_date && <div className="form-text text-danger text-start ">{formError.passport_expire_date}</div>}
                             </div>
                             <center><button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickRegister}>Register</button></center>
                             <div>
