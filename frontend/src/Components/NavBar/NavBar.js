@@ -9,6 +9,7 @@ import { faPlaneDeparture, faBell } from '@fortawesome/free-solid-svg-icons'
 import { logout, logData } from '../../Store/Slice/LoggedInUser';
 import { useDispatch  } from 'react-redux';
 import { useSelector } from 'react-redux';
+import Profile from "./../../Assets/Images/Profile1.svg"
 
 
 export default function NavBar() {
@@ -29,7 +30,7 @@ export default function NavBar() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Book">Book</NavLink>
+            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Book">Book & Offers</NavLink>
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/AboutUs">About</NavLink>
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Help">Help</NavLink>
           </Nav>
@@ -40,9 +41,9 @@ export default function NavBar() {
                 <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Login"><FontAwesomeIcon icon={faArrowRightToBracket} /> Login</NavLink>
                 :
                 <div>
-                  <NavLink onClick={handleLogout} className='me-3 fw-semibold text-dark text-decoration-none'><FontAwesomeIcon icon={faArrowRightFromBracket}/> Logout</NavLink>
-                  <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Notifications"><FontAwesomeIcon icon={faBell} /> Notifications</NavLink>
-                  <NavLink className='me-3 fw-semibold text-dark text-decoration-none ' to="/Profile">{userData.username}</NavLink>
+                  <NavLink onClick={handleLogout} className='me-3 fw-semibold text-dark text-decoration-none me-3'><FontAwesomeIcon icon={faArrowRightFromBracket}/> Logout</NavLink>
+                  <NavLink className='me-3 fw-semibold text-decoration-none' to="/Notifications me-3" style={{color: "var(--main-color)"}}><FontAwesomeIcon icon={faBell} /></NavLink>
+                  <NavLink className='me-3 fw-semibold text-dark text-decoration-none ' to="/Profile">{userData.username} <img className="profile rounded-3" src={Profile} alt='' style={{width: "2rem"}} /></NavLink>
                 </div>
             }
           </Nav>

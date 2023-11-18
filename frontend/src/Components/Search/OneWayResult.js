@@ -28,8 +28,8 @@ const OneWayResult = ({ flightData }) => {
   }
 
   return (
-    <div>
-      {flightData.length != 0 
+    <>
+      {flightData.length !== 0 
       ?
       flightData.map((flight, index) => (
         <div className='flight border border-1 rounded-2 p-5 pe-0 mb-3 row align-items-center bg-white' key={index}>
@@ -88,7 +88,7 @@ const OneWayResult = ({ flightData }) => {
           flights={selectedFlight} 
         />
       )}
-    </div>
+    </>
   );
 };
 

@@ -54,10 +54,10 @@ export default function Aircrafts() {
   };
 
  return (
-    <div className='container p-5'>
+    <div className='container py-5 px-4'>
       <div className='d-flex mb-5'>
         <h3 className='text-start text-secondary'>Aircrafts</h3>
-        <a className='btn btn-info ms-auto' onClick={handleAddClick}>Add new aircraft <FontAwesomeIcon icon={faPlus} /></a>
+        <a className='btn ms-auto text-white' style={{backgroundColor: "var(--main-color)"}} onClick={handleAddClick}>Add New Aircraft <FontAwesomeIcon icon={faPlus} /></a>
       </div>
       <div className="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-4 justify-content-center align-items-center ">
         {aircrafts?.map((aircraft, index) => {
@@ -85,7 +85,7 @@ export default function Aircrafts() {
                   </div>
                   <small className="text-muted mt-4"><FontAwesomeIcon icon={faPlaneDeparture} style={{color: "var(--main-color)"}}/> Fly Me</small>
                   <a className='btn btn-danger  ms-4' onClick={() => {handleDeleteClick(aircraft.id)}}>Delete <FontAwesomeIcon icon={faTrash} /></a>
-                  <a className='btn btn-primary ms-2' onClick={() => {handleEditClick(aircraft.id)}}>Edit <FontAwesomeIcon icon={faPenToSquare} /></a>
+                  <a className='btn border-0 ms-2 text-white' style={{backgroundColor: "var(--main-color)"}} onClick={() => {handleEditClick(aircraft.id)}}>Edit <FontAwesomeIcon icon={faPenToSquare} /></a>
                 </Card.Body>
                 
               </Card>

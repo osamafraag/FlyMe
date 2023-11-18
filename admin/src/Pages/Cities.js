@@ -1,5 +1,5 @@
 import React , { useState, useEffect }from 'react'
-import { GetCities } from "./../APIs/Cities"
+import { GetCities, GetSpecificCity, EditCity } from "./../APIs/Cities"
 import { NavLink } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPlus, faCheck, faXmark} from '@fortawesome/free-solid-svg-icons'
@@ -10,6 +10,7 @@ export default function Cities() {
   const [cities, SetCities] = useState([])
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate() 
+  const [specificCity, setSpecificCity] = useState()
 
   // If !user navigate to login page 
   useEffect(() => {
@@ -25,10 +26,33 @@ export default function Cities() {
     .catch((error) => {
       console.log(error)
     })
-  }, [userData, navigate])
+  }, [userData, navigate, specificCity])
+
+  const handleFeautered = (id) => {
+    GetSpecificCity(id)
+      .then((result) => {
+        const specificCityData = result.data[0];
+        console.log(result) 
+        if (specificCityData) {
+          const updatedCity = { ...specificCityData, isFeatured: !specificCityData.isFeatured };
+          setSpecificCity(updatedCity);
+          
+          try {
+            const response = EditCity(id, JSON.stringify(updatedCity));
+            console.log(updatedCity);
+            console.log('Post Response:', response.data);
+          } catch (error) {
+            console.error('Error:', error);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
-    <div className='container p-5'>
+    <div className='container py-5 px-4'>
       <h3 className='text-start text-secondary my-4'>Cities</h3>
       <div className='text-end'>
         <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}}to="/ClassForm" >
@@ -55,7 +79,7 @@ export default function Cities() {
             <td>{city.slug}</td>
             <td>{city.population}</td>
             <td>{city.timezone}</td>
-            <td>{city.isFeatured ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</td>  
+            <td><a className='text-decoration-none' onClick={() => handleFeautered(city.id)}>{city.isFeatured ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</a></td>
             <td>{city.popularity}</td>
           </tr>
         ))}

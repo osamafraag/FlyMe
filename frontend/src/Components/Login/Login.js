@@ -98,7 +98,7 @@ export default function LoginForm() {
 
     return (
         <div>
-            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start">
+            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start" style={{width: "1000px"}}>
                 <div className="row align-items-center">
                     <img
                         src={loginImage}

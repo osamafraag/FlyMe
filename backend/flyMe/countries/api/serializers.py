@@ -68,17 +68,21 @@ class TrendingPlaceSerializer(serializers.ModelSerializer):
         return TrendingPlace.objects.create(**validated_data)
 
     def get_cityName(self, instance):
-        return instance.city.name
+        if instance.city:
+            return instance.city.name
+        return None
     
     def get_countryName(self, instance):
-        return instance.city.country.name
+        if instance.city and instance.city.country:
+            return instance.city.country.name
+        return None
     
 class MultiImagesSerializerCountry(serializers.ModelSerializer):
     country_name = serializers.CharField(source='country.name', read_only=True)
 
     class Meta:
         model = MultiImagesCountry
-        fields = ('id', 'photo', 'country_name')
+        fields = ('id', 'photo', 'country_name','country')
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -90,7 +94,7 @@ class MultiImagesSerializerCity(serializers.ModelSerializer):
 
     class Meta:
         model = MultiImagesCity
-        fields = ('id', 'photo','cityName')
+        fields = ('id', 'photo','cityName','city')
 
 
 class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
@@ -98,4 +102,4 @@ class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
 
     class Meta:
         model = MultiImagesTrendingPlace
-        fields = ('id', 'photo','place_name')
+        fields = ('id', 'photo','place_name','trendingPlace')

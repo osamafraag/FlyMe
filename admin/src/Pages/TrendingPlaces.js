@@ -15,7 +15,7 @@ export default function TrendingPlace() {
   }, [userData, navigate]);
 
   return (
-    <div className='container p-5'>
+    <div className='container py-5 px-4'>
       <h3 className='text-start text-secondary'>Trending Places</h3>
       <TrendingPlaces/>
     </div>

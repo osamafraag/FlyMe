@@ -16,8 +16,8 @@ export default function Airports() {
   }, [userData, navigate]);
   
   return (
-    <div className='container p-5'>
-      <h3 className='text-start text-secondary'>Airports</h3>
+    <div className='container py-5 px-4'>
+      <h3 className='text-start text-secondary my-3'>Airports</h3>
       <Airport/>
     </div>
   )

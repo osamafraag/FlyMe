@@ -1,9 +1,11 @@
 import React from 'react'
 import "./../Home/Landing.css"
 import FlightSearchForm from "./FlightSearchForm"
+import Offers from './Offers'
 
 export default function BookSearch() {
   return (
+    <div style={{backgroundColor: "var(--alternative-white-color)"}}>
     <div style={{height: "750px"}}>
       <div className="landing py-5 position-relative" style={{height: "500px"}}>
 
@@ -16,6 +18,15 @@ export default function BookSearch() {
           <FlightSearchForm />
         </div>
       </div>
+    </div>
+
+    {/* Offers */}
+    <div className='mx-auto pb-5' style={{width: "80%"}}>
+      <h2 className='text-secondary text-start mb-5 px-1'>Offers</h2>
+      <div className='px-3'>
+        <Offers />
+      </div>
+    </div>
     </div>
   )
 }

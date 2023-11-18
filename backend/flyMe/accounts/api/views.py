@@ -305,7 +305,7 @@ def complaintDetail(request, id):
     complaint = Complaint.objects.get(id=id)
     if request.method=='GET':
         serializedComplaint = ComplaintSerializer(complaint)
-        return Response({'data':serializedComplaint.data}, status=200)
+        return Response({'data':serializedComplaint.data,'Access-Control-Allow-Origin':'http://localhost:3000'}, status=200)
 
     elif request.method=='DELETE':
         complaint.delete()
