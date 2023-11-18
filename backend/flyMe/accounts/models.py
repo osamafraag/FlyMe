@@ -37,6 +37,39 @@ class MyUser(AbstractUser):
     def get_all_users(cls):
         return cls.objects.all()
     
+# class Dependent():
+#     GENDER_CHOICES = [
+#         ('M', 'Male'),
+#         ('F', 'Female'),
+#         ('N', 'Prefer not to say'),
+#     ]
+#     relations = [
+#         ('me', 'me'),
+#         ('1st', 'fist'),
+#         ('2nd', 'second'),
+#         ('fr', 'frind'),
+#         ('other', 'other'),
+#     ]
+#     ageClasses = [
+#         ('adult', 'adult'),
+#         ('child', 'child'),
+#         ('infant', 'infant'),
+#     ]
+#     firstName = models.CharField(max_length=50)
+#     lastName = models.CharField(max_length=50)
+#     email = models.EmailField(blank=True,null=True)
+#     passportNumber = models.CharField(max_length=20)
+#     passportExpireDate = models.DateField(null=True, blank=True)
+#     relation = models.CharField(max_length=10, choices=relations, null=True, blank=True)
+#     type = models.CharField(max_length=10, choices=ageClasses, null=True, blank=True)
+#     phone = models.CharField(max_length=20)
+#     birthDate = models.DateField(null=True, blank=True)
+#     country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True,related_name='dependents')
+#     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+
+    
 
 class PaymentCard(models.Model):
     TYPES = [
