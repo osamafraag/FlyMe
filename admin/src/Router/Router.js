@@ -18,8 +18,8 @@ const ClassForm = React.lazy(() => import('../forms/classesForm'));
 const Error = React.lazy(() => import('../Pages/404'));
 const ImagesTrendPlaces = React.lazy(() => import('../Pages/ImagesTrendPlaces'));
 const ImagesCountry = React.lazy(() => import('../Pages/ImagesCountry'));
-
-
+const PostponeForm = React.lazy(() => import('../forms/flightPostponeForm'));
+const FlightForm = React.lazy(() => import('../forms/flightForm'))
 
 export default function Router() {
   return (
@@ -40,6 +40,8 @@ export default function Router() {
         <Route path="/AircraftForm" element={<AircraftForm />} />
         <Route path="/ClassForm" element={<ClassForm />} />
         <Route path="/ImagesCountry" element={<ImagesCountry />} />
+        <Route path="/PostponeForm" element={<PostponeForm />} />
+        <Route path="/flightForm" element={<FlightForm />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Suspense>

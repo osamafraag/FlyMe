@@ -113,8 +113,11 @@ function FlightForm() {
         onChange={handleInputChange}/>
         <span class="input-group-text"><FontAwesomeIcon icon={faDollarSign} /></span>
       </div>
-      <button type="submit" className='btn btn-primary mx-auto w-25'>
-        {location.state? <span>Edit Flight</span> :<span>Add Flight</span> } </button>
+      <div className='input-group mx-auto'>
+        <button type="submit" className='btn mx-auto text-white border-0 ' style={{backgroundColor: "var(--main-color)"}}>
+          {location.state? <span>Edit Flight</span> :<span>Add Flight</span> } 
+        </button>
+      </div>
       </div>
     </form>
     </div>

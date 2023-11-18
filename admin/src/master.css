@@ -1,6 +1,7 @@
 :root {
   --main-color: #426a9d;
   --secondary-color: #8db3da;
+  --alternative-main-color: #2a3c54;
   --alternative-white-color: #f6f6f6; 
   --gray-color: #dfdfdf;
   --text-color: #767676;
@@ -23,4 +24,18 @@ body {
 ::-moz-selection {
   background: var(--main-color);
   color: white;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #fff; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);  
 }

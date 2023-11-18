@@ -20,11 +20,11 @@ export default function Countries() {
   return (
     <div className='container p-5'>
       <h3 className='text-start text-secondary my-4'>Countries</h3>
-      <div className='text-end'>
-        <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}}to="/ClassForm" >
+      {/* <div className='text-end'>
+        <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}}to="/" >
           <FontAwesomeIcon icon={faPlus} /> Add New Country 
         </NavLink>
-      </div>
+      </div> */}
       <table className="table table-hover shadow-sm">
       <thead className="table-light">
         <tr>

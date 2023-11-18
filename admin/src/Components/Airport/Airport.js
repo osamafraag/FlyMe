@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../APIs/Config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt,faTrash } from '@fortawesome/free-solid-svg-icons';
-
+import { faPencilAlt, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { Modal, Button } from 'react-bootstrap';
 
 export default function Airports() {
   const [airports, setAirports] = useState([]);
@@ -11,6 +11,7 @@ export default function Airports() {
     name: "",
   });
   const [editingAirportId, setEditingAirportId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -30,6 +31,19 @@ export default function Airports() {
       ...newAirport,
       [name]: value,
     });
+  };
+
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setNewAirport({
+      city: "",
+      name: "",
+    });
+    setEditingAirportId(null);
   };
 
   const handleSubmit = (e) => {
@@ -58,16 +72,12 @@ export default function Airports() {
         });
     }
 
-    setNewAirport({
-      city: "",
-      name: "",
-    });
-    setEditingAirportId(null);
+    handleCloseModal();
   };
 
   const handleEdit = (airportId, updatedAirport) => {
     axiosInstance
-      .put(`/countries/api/airports/${airportId}/`, updatedAirport)  
+      .put(`/countries/api/airports/${airportId}/`, updatedAirport)
       .then((response) => {
         console.log(response.data);
         fetchData();
@@ -79,20 +89,20 @@ export default function Airports() {
 
   const handleDelete = (airportId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this airport?");
-  
+
     if (!confirmDelete) {
       return;
     }
-  
+
     axiosInstance
-    .delete(`/countries/api/airports/${airportId}/`)  
-    .then((response) => {
-      console.log(response.data);
-      fetchData(); 
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+      .delete(`/countries/api/airports/${airportId}/`)
+      .then((response) => {
+        console.log(response.data);
+        fetchData();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const handleEditClick = (airport) => {
@@ -101,68 +111,98 @@ export default function Airports() {
       name: airport.name,
     });
     setEditingAirportId(airport.id);
+    handleShowModal();
   };
 
   return (
-    <div className="text-start">
-      <h2 className="text-danger">Available Airports</h2>
-      {airports && airports.length > 0 ? (
-        <ul>
-          {airports.map((airport) => (
-            <li key={airport.id}>
-              &rarr; <strong>{airport.name}</strong> - {airport.cityName},{" "}
-              {airport.countryName}
+    <>
+    <div className="mb-4 text-end">
+      <Button style={{backgroundColor: "var(--main-color)", borderColor: "var(--main-color)"}} onClick={handleShowModal}>
+        <FontAwesomeIcon icon={faPlus} /> Add New Airport
+      </Button>
+    </div>
+    {airports && airports.length > 0 
+    ?
+    <table className="table table-hover shadow-sm">
+      <thead className="table-light">
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>City Name</th>
+          <th>Country Name</th> 
+          <th>Edit</th>  
+          <th>Delete</th>  
+        </tr>
+      </thead>
+      <tbody> 
+        {airports.map((airport, index) => (
+          <tr>
+            <td>{index}</td>
+            <td>{airport.name}</td>
+            <td>{airport.cityName}</td>
+            <td>{airport.countryName}</td>
+            <td>
               <button
                 className="btn ms-2"
                 onClick={() => handleEditClick(airport)}
+                style={{color: "var(--main-color)"}}
               >
-                {/* Edit */}
                 <FontAwesomeIcon icon={faPencilAlt} />
-
               </button>
+            </td>
+            <td>
               <button
-                className="btn ms-2"
-                style={{ color: 'brown' }}
+                className="btn ms-2 text-danger"
                 onClick={() => handleDelete(airport.id)}
               >
-                {/* Delete */}
                 <FontAwesomeIcon icon={faTrash} />
               </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    :
+      (
         <p>Loading...</p>
-      )}
+      )
+    }
+     
+    <Modal show={showModal} onHide={handleCloseModal}>
+      <Modal.Header closeButton>
+        <Modal.Title>
+          {editingAirportId ? "Edit Airport" : "Add New Airport"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <form onSubmit={handleSubmit}>
+          <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Name</span>
+            <input 
+              type="text"
+              class="form-control" 
+              name="name"
+              value={newAirport.name}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">City ID</span>
+            <input 
+              type="text"
+              class="form-control" 
+              name="city"
+              value={newAirport.city}
+              onChange={handleInputChange}
+            />
+          </div>
 
-      <h2 className="text-danger">
-        {editingAirportId ? "Edit Airport" : "Add New Airport"}
-      </h2>
-      <form onSubmit={handleSubmit}>
-        <label className="my-2">
-          Name:
-          <input
-            type="text"
-            name="name"
-            value={newAirport.name}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <label className="my-2">
-          CityID:
-          <input
-            type="text"
-            name="city"
-            value={newAirport.city}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <button className="btn btn-primary my-3" type="submit">
-          {editingAirportId ? "Update Airport" : "Add Airport"}
-        </button>
-      </form>
-    </div>
+          <button className="btn my-3 text-white" type="submit" style={{backgroundColor: "var(--main-color)"}}>
+            {editingAirportId ? "Update Airport" : "Add Airport"}
+          </button>
+        </form>
+      </Modal.Body>
+    </Modal>
+    </>
   );
 }
