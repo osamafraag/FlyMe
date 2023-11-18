@@ -78,7 +78,7 @@ class MultiImagesSerializerCountry(serializers.ModelSerializer):
 
     class Meta:
         model = MultiImagesCountry
-        fields = ('id', 'photo', 'country_name')
+        fields = ('id', 'photo', 'country_name','country')
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -90,7 +90,7 @@ class MultiImagesSerializerCity(serializers.ModelSerializer):
 
     class Meta:
         model = MultiImagesCity
-        fields = ('id', 'photo','cityName')
+        fields = ('id', 'photo','cityName','city')
 
 
 class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
@@ -98,4 +98,4 @@ class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
 
     class Meta:
         model = MultiImagesTrendingPlace
-        fields = ('id', 'photo','place_name')
+        fields = ('id', 'photo','place_name','trendingPlace')

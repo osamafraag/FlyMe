@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { axiosInstance } from '../../APIs/Config';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState } from "react";
+import { axiosInstance } from "../../APIs/Config";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPencilAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-export default function ImagesCountry() {
-  const [imagesCountry, setImageCountry] = useState([]);
-  const [newImageCountry, setNewImageCountry] = useState({
+export default function ImagesCity() {
+  const [imagesCity, setImageCity] = useState([]);
+  const [newImageCity, setNewImageCity] = useState({
     photo: null,
-    country: '',
+    city: "",
   });
-  const [editingImageCountryId, setEditingImageCountryId] = useState(null);
+  const [editingImageCityId, setEditingImageCityId] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -17,42 +17,43 @@ export default function ImagesCountry() {
 
   const fetchData = () => {
     axiosInstance
-      .get('/countries/api/images/add/')
-      .then((res) => setImageCountry(res.data))
+      .get("/countries/api/cities/images/add/")
+      .then((res) => setImageCity(res.data))
       .catch((err) => console.log(err));
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const { name, type } = e.target;
     let value;
-
-    if (type === 'file') {
+  
+    if (type === "file") {
       const file = e.target.files[0];
       value = file;
     } else {
       value = e.target.value;
+  
     }
-
-    setNewImageCountry({
-      ...newImageCountry,
+  
+    setNewImageCity({
+      ...newImageCity,
       [name]: value,
     });
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('country_name', newImageCountry.country);
-    formData.append('photo', newImageCountry.photo);
+    formData.append("city", newImageCity.city);
+    formData.append("photo", newImageCity.photo);
 
-    if (editingImageCountryId) {
-      handleEdit(editingImageCountryId, formData);
+    if (editingImageCityId) {
+      handleEdit(editingImageCityId, formData);
     } else {
       axiosInstance
-        .post('/countries/api/images/add/', formData, {
+        .post("/countries/api/cities/images/add/", formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         })
         .then((response) => {
@@ -64,18 +65,18 @@ export default function ImagesCountry() {
         });
     }
 
-    setNewImageCountry({
+    setNewImageCity({
       photo: null,
-      country: '',
+      city: "",
     });
-    setEditingImageCountryId(null);
+    setEditingImageCityId(null);
   };
 
   const handleEdit = (imageId, updatedImage) => {
     axiosInstance
-      .put(`/countries/api/images/${imageId}/`, updatedImage, {
+      .put(`/countries/api/cities/images/${imageId}/`, updatedImage, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       })
       .then((response) => {
@@ -88,14 +89,16 @@ export default function ImagesCountry() {
   };
 
   const handleDelete = (imageId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this image?');
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this image?"
+    );
 
     if (!confirmDelete) {
       return;
     }
 
     axiosInstance
-      .delete(`/countries/api/images/${imageId}/`)
+      .delete(`/countries/api/cities/images/${imageId}/`)
       .then((response) => {
         console.log(response.data);
         fetchData();
@@ -106,28 +109,32 @@ export default function ImagesCountry() {
   };
 
   const handleEditClick = (image) => {
-    setNewImageCountry({
+    setNewImageCity({
       photo: null,
-      country: image.country,
+      city: image.city,
     });
-    setEditingImageCountryId(image.id);
+    setEditingImageCityId(image.id);
   };
 
   return (
     <div className="text-start">
-      <h2 className="text-danger">Country Images</h2>
-      {imagesCountry && imagesCountry.length > 0 ? (
+      <h2 className="text-danger">City Images</h2>
+      {imagesCity && imagesCity.length > 0 ? (
         <ul>
-          {imagesCountry.map((image) => (
+          {imagesCity.map((image) => (
             <li key={image.id}>
-              <img src={image.photo} alt={`Country: ${image.country_name}`} />
-              <strong>{image.country_name}</strong>
-              <button className="btn ms-2" onClick={() => handleEditClick(image)}>
+              <img src={image.photo} alt={`City: ${image.cityName}`} />
+              <span>Name of City :<strong>{image.cityName}</strong></span>,
+              <span>ID of City :<strong>{image.city}</strong></span>
+              <button
+                className="btn ms-2"
+                onClick={() => handleEditClick(image)}
+              >
                 <FontAwesomeIcon icon={faPencilAlt} />
               </button>
               <button
                 className="btn ms-2"
-                style={{ color: 'brown' }}
+                style={{ color: "brown" }}
                 onClick={() => handleDelete(image.id)}
               >
                 <FontAwesomeIcon icon={faTrash} />
@@ -139,14 +146,16 @@ export default function ImagesCountry() {
         <p>Loading...</p>
       )}
 
-      <h2 className="text-danger">{editingImageCountryId ? 'Edit Image' : 'Add New Country Image'}</h2>
+      <h2 className="text-danger">
+        {editingImageCityId ? "Edit Image" : "Add New City Image"}
+      </h2>
       <form onSubmit={handleSubmit}>
         <label className="my-2">
-          CountryID:
+          City ID:
           <input
             type="number"
-            name="country"
-            value={newImageCountry.country}
+            name="city"
+            value={newImageCity.city}
             onChange={handleInputChange}
           />
         </label>
@@ -161,7 +170,7 @@ export default function ImagesCountry() {
         </label>
         <br />
         <button className="btn btn-primary my-3" type="submit">
-          {editingImageCountryId ? 'Update Image' : 'Add Image'}
+          {editingImageCityId ? "Update Image" : "Add Image"}
         </button>
       </form>
     </div>

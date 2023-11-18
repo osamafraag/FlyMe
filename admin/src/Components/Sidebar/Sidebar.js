@@ -109,6 +109,11 @@ export default function Sidebar() {
         <FontAwesomeIcon icon={faImages} /> ImagesCountry
         </NavLink>
       </li>
+      <li className="nav-item active my-3 text-start ps-3">
+        <NavLink className='me-3 fw-semibold text-white text-decoration-none'to="/ImagesCity" >
+        <FontAwesomeIcon icon={faImages} /> ImagesCity
+        </NavLink>
+      </li>
 
     </ul>
   )

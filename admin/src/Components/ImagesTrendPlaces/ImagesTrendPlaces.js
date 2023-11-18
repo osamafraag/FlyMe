@@ -127,7 +127,8 @@ export default function ImagesTrendPlaces() {
           {imagesTrendPlace.map((image) => (
             <li key={image.id}>
               <img src={image.photo} alt={`Trending Place: ${image.trendingPlace}`} />
-              <strong>{image.trendingPlace}</strong>
+              <strong>Name of Trend Place :{image.place_name}</strong>
+              <strong>ID of Trend Place :{image.trendingPlace}</strong>
               <button className="btn ms-2" onClick={() => handleEditClick(image)}>
                 <FontAwesomeIcon icon={faPencilAlt} />
               </button>
