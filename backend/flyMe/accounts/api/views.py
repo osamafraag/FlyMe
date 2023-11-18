@@ -9,6 +9,58 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics
 from django.utils.decorators import method_decorator
+from django.contrib.auth import get_user_model, login, logout
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer
+from rest_framework import permissions, status
+from  accounts.validations import custom_validation, validate_email, validate_password
+from rest_framework.authentication import TokenAuthentication
+
+
+
+
+
+class UserRegister(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = UserRegisterSerializer
+    def perform_create(self, serializer):
+        serializer.save()
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class UserLogin(APIView):
+	permission_classes = (permissions.AllowAny,)
+	authentication_classes = (SessionAuthentication,)
+	##
+	def post(self, request):
+		data = request.data
+		assert validate_email(data)
+		assert validate_password(data)
+		serializer = UserLoginSerializer(data=data)
+		if serializer.is_valid(raise_exception=True):
+			user = serializer.check_user(data)
+			login(request, user)
+			return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserLogout(APIView):
+	permission_classes = (permissions.AllowAny,)
+	authentication_classes = ()
+	def post(self, request):
+		logout(request)
+		return Response(status=status.HTTP_200_OK)
+
+
+class UserView(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = (SessionAuthentication,)
+	def get(self, request):
+		serializer = UserSerializer_test(request.user)
+		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+
 
 
 

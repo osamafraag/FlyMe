@@ -1,5 +1,6 @@
 from django.urls import path
 from accounts.api.views import  *
+from . import views
 
 urlpatterns = [
     path('users/',getAllUsers,name='users.list'),
@@ -22,5 +23,9 @@ urlpatterns = [
     path('complaints/', complaintsList, name='complaint.list'),
     path('complaints/<int:id>/',complaintDetail,name='complaint.detail'),
     path('user/<int:id>/complaints',userComplaints,name='user.complaints'),
+    path('register/tst/', views.UserRegister.as_view(), name='register'),
+	path('login/tst/', views.UserLogin.as_view(), name='login'),
+	path('logout/tst/', views.UserLogout.as_view(), name='logout'),
+	path('user/tst', views.UserView.as_view(), name='user'),
 ]
 

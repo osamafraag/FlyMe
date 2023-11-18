@@ -1,4 +1,4 @@
-import {React, useState} from 'react'
+import {React, useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './login.css'
@@ -10,14 +10,30 @@ import { Token } from "../../Context/Token";
 var loginImage = require('../../Assets/Images/Accounts/login.jpg')
 
 export default function LoginForm() {
+
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+    axios.defaults.withCredentials = true;
+
+    const client = axios.create({
+    baseURL: "http://127.0.0.1:8000"
+    });
+
+    const [currentUser, setCurrentUser] = useState();
+    const [registrationToggle, setRegistrationToggle] = useState(false);
+    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+
     let navigate = useNavigate()
     // Form State
     const [form, setForm] = useState({
-        username: '',
+        email: '',
         password: '',
     })
     const [formError, setFormError] = useState({
-        username: null,
+        email: null,
         password: null,
     });
 
@@ -26,16 +42,16 @@ export default function LoginForm() {
         let value = event.target.value
 
         // Username Validations
-        if (name === 'username') {
+        if (name === 'email') {
             setForm({
                 ...form,
-                username: value
+                email: value
             });
             setFormError({
                 ...formError,
-                username:
+                email:
                     value.trim(" ").length === 0
-                        ? "You Should Enter Your username"
+                        ? "You Should Enter Your email"
                         : null
             })
         }
@@ -55,9 +71,9 @@ export default function LoginForm() {
         }
     }
 
-    const isFormValid = !formError.username && !formError.password && form.username && form.password
+    const isFormValid = !formError.email && !formError.password && form.email && form.password
 
-    let {token, setToken} = useContext(Token)
+    let {setToken} = useContext(Token)
     // handle click on Login button
     const handleOnClickLogin = (e) => {
         e.preventDefault();
@@ -81,6 +97,17 @@ export default function LoginForm() {
             console.log(form);
         }
     };
+    useEffect(() => {
+        client.get("accounts/api/user/tst")
+        .then(function(res) {
+            console.log(res)
+          setCurrentUser(true);
+        })
+        .catch(function(error) {
+            console.log(error)
+          setCurrentUser(false);
+        });
+      }, []);
 
     return (
         <div>
@@ -95,9 +122,9 @@ export default function LoginForm() {
                         <form method="post" encType="multipart/form-data">
                             {/* Username */}
                             <div className=" mb-3">
-                                <label htmlFor="floatingInput" className='form-label'>Username</label>
-                                <input type="username" className="form-control" id="floatingInput" value={form.username} onChange={handleOnChangeForm} placeholder='Enter your username' name="username" required/>
-                                {formError.username && <div className="form-text text-danger text-start ">{formError.username}</div>}
+                                <label htmlFor="floatingInput" className='form-label'>Email</label>
+                                <input type="username" className="form-control" id="floatingInput" value={form.email} onChange={handleOnChangeForm} placeholder='Enter your email' name="email" required/>
+                                {formError.username && <div className="form-text text-danger text-start ">{formError.email}</div>}
                             </div>
                             {/* Password */}
                             <div className=" mb-3">

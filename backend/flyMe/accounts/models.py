@@ -1,19 +1,40 @@
-from collections.abc import Iterable
-from django.db import models
-
-# Create your models here.
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
+class AppUserManager(BaseUserManager):
+    def create_user(self, email, username, password=None, **extra_fields):
+        if not email:
+            raise ValueError('An email is required.')
+        if not username:
+            raise ValueError('A username is required.')
+        email = self.normalize_email(email)
+        user = self.model(email=email, username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-class MyUser(AbstractUser):
+    def create_superuser(self, email, username, password=None, **extra_fields):
+        # Ensure the username field is set to None to avoid the 'unexpected keyword argument' error
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(email, username, password, **extra_fields)
+
+class MyUser(AbstractBaseUser, PermissionsMixin):
     GENDER_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),
         ('N', 'Prefer not to say'),
     ]
+    
     passport_number = models.CharField(max_length=20)
     passport_expire_date = models.DateField(null=True, blank=True)
     phone = models.CharField(max_length=20)
@@ -21,14 +42,32 @@ class MyUser(AbstractUser):
     is_email_verified = models.BooleanField(default=False)
     activation_link_created_at = models.DateTimeField(null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-    country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True,related_name='users')
-    city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True,related_name='users')
-    region = models.ForeignKey('cities_light.Region', on_delete=models.SET_NULL, null=True, blank=True,related_name='users')
+    country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
+    city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
+    region = models.ForeignKey('cities_light.Region', on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
     post_code = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    username = models.CharField(max_length=50)
+    email = models.EmailField(max_length=50, unique=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
+    objects = AppUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def __str__(self):
+        return self.email
+
+
+
+    def __str__(self):
+        return self.username
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -36,8 +75,6 @@ class MyUser(AbstractUser):
     @classmethod
     def get_all_users(cls):
         return cls.objects.all()
-    
-
 class PaymentCard(models.Model):
     TYPES = [
         ('VISA', 'Visa'),

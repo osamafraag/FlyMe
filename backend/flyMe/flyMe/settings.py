@@ -85,11 +85,11 @@ WSGI_APPLICATION = 'flyMe.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "reemreham",
+        "NAME": "flyme",
+        "USER": "flyme",
+        "PASSWORD": "password",
         "HOST": "localhost",
-        "PORT": "5433",
+        "PORT": "5432",
     }
 }
 
@@ -181,8 +181,13 @@ CORS_ALLOWED_ORIGINS = [
 # CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
 # CELERY_TIMEZONE = 'UTC'
 # CELERY_TASK_ALWAYS_EAGER = True
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.TokenAuthentication',
-#     ],
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    # 'rest_framework.permissions.IsAuthenticated',
+    # ),
+}
+
+CORS_ALLOW_CREDENTIALS = True
