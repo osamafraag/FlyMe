@@ -14,7 +14,7 @@ export default function Booking() {
   }, [userData, navigate]);
 
   return (
-    <div className='container p-5'>
+    <div className='container py-5 px-4'>
       <h3 className='text-start text-secondary'>Bookings</h3>
       <Bookings/>
     </div>

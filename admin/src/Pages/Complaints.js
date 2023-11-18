@@ -108,7 +108,7 @@ export default function Complaints() {
   }
 
   return (
-    <div className='container p-5'>
+    <div className='container py-5 px-4'>
       <h3 className='text-start text-secondary my-4'>Complaints</h3>
       <table className='table table-hover shadow-sm'>
         <thead className='table-light'>
