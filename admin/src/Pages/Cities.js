@@ -52,7 +52,7 @@ export default function Cities() {
   };
 
   return (
-    <div className='container p-5'>
+    <div className='container py-5 px-4'>
       <h3 className='text-start text-secondary my-4'>Cities</h3>
       <div className='text-end'>
         <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}}to="/ClassForm" >
