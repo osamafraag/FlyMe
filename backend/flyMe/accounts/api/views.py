@@ -15,7 +15,7 @@ from django.utils.decorators import method_decorator
 
 ####################################---------  admin panel / view all user data  -------------###################################
 @api_view(['GET'])
-@permission_classes([IsAuthenticated,IsAdminUser])
+# @permission_classes([IsAuthenticated,IsAdminUser])
 def getAllUsers(request):
     users = MyUser.get_all_users()
     serlized_users = []
@@ -130,7 +130,7 @@ def user_data_view(request):
             'is_email_verified': request.user.is_email_verified,
             'activation_link_created_at': request.user.activation_link_created_at,
             'birth_date': request.user.birth_date,
-            'address': request.user.address,
+            # 'address': request.user.address,
             'gender': request.user.gender,
             'post_code': request.user.post_code,
             'created_at': request.user.created_at,

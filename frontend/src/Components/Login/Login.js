@@ -1,16 +1,17 @@
 import {React, useState} from 'react'
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './login.css'
 import { Login } from '../../APIs/Login';
-import { useContext } from "react";
-import { Token } from "../../Context/Token";
-
+import { AllUsers } from '../../APIs/AllUsers'
+import { useDispatch  } from 'react-redux';
+import { loginSuccess } from '../../Store/Slice/LoggedInUser';
 
 var loginImage = require('../../Assets/Images/Accounts/login.jpg')
 
 export default function LoginForm() {
     let navigate = useNavigate()
+    const dispatch = useDispatch();
+    const [ errorMessage, seterrorMessage ] = useState(null)
     // Form State
     const [form, setForm] = useState({
         username: '',
@@ -57,7 +58,6 @@ export default function LoginForm() {
 
     const isFormValid = !formError.username && !formError.password && form.username && form.password
 
-    let {token, setToken} = useContext(Token)
     // handle click on Login button
     const handleOnClickLogin = (e) => {
         e.preventDefault();
@@ -65,18 +65,25 @@ export default function LoginForm() {
             console.log("Form Submitted Successfully");
             Login(form)
                 .then((res) => {
-                    console.log('Login successful');
-                    console.log(res.data);
-                    setToken(res.data.token)
+                    console.log(res && res.data);
+                    // Sava User Data in the Reducer
+                    AllUsers()
+                    .then((result) => {
+                        const usersArray = result.data.data;
+                        const logedinUser = usersArray.filter(user => user.username === form.username);
+                        dispatch(loginSuccess(logedinUser[0]))
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
                     navigate('/');
                 })
                 .catch((err) => {
-                    console.log('Login failed');
-                    console.log(err.response.data);
-                    // handle the failed login
+                    console.log(err.response && err.response.data);
+                    seterrorMessage('Please enter your username and password correctly.')
                 });
         } else {
-            console.log("Form Has Errors");
+            seterrorMessage('Please enter your username and password.')
             console.log(formError);
             console.log(form);
         }
@@ -92,6 +99,11 @@ export default function LoginForm() {
                         width="300"
                     />
                     <div className="col-6 pb-5">
+                    {(errorMessage) && (
+                        <p className="text-danger" style={{fontSize:'14px'}}>
+                            {errorMessage}
+                        </p>
+                        )}
                         <form method="post" encType="multipart/form-data">
                             {/* Username */}
                             <div className=" mb-3">
