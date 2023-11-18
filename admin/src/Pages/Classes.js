@@ -3,11 +3,20 @@ import { GetClasses } from "./../APIs/Classes"
 import { NavLink } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPlus, faCheck, faXmark} from '@fortawesome/free-solid-svg-icons'
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function Classes() {
   const [classes, setClasses] = useState([])
+  let userData = useSelector(state => state.loggedInUserSlice.data);
+  const navigate = useNavigate() 
 
   useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+    else
     GetClasses()
     .then((result) => {
       console.log(result.data);
@@ -16,7 +25,7 @@ export default function Classes() {
     .catch((error) => {
       console.log(error)
     })
-  }, [])
+  }, [userData, navigate])
 
   return (
     <div className='container p-5'>

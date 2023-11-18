@@ -6,6 +6,8 @@ import './complaints.css'
 import { axiosInstance } from "../APIs/Config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faReply ,faPencil,faTrash} from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function Complaints() {
   const [complaints, setComplaints] = useState([]);
@@ -13,6 +15,8 @@ export default function Complaints() {
   const [showReply, setShowReply] = useState(false);
   const [reply, setReply] = useState('');
   const [selectedComplaint, setSelectedComplaint] = useState(null);
+  let userData = useSelector(state => state.loggedInUserSlice.data);
+  const navigate = useNavigate() 
 
   const handleClose = () => setShow(false);
 
@@ -55,9 +59,14 @@ export default function Complaints() {
   
   useEffect(() => {
     fetchData()
-  }, []);
+  }, [userData, navigate]);
   
   function fetchData() {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+    else
     GetComplaints()
       .then((result) => {
         setComplaints(result.data);

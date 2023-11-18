@@ -4,6 +4,7 @@ import PopularDestination from './PopularDestination';
 import TripIdeas from './TripIdeas';
 import { PopularCities } from './../../APIs/PopularDestination'
 import { TripsCities } from './../../APIs/TripIdes'
+import { axiosInstance } from '../../APIs/Config';
 
 export default function HomeComponent() {
   const [popularDestination, setPopularDestination] = useState([])
@@ -23,7 +24,6 @@ export default function HomeComponent() {
       .catch((error) => console.log(error));
   
     }, []);
-  
   return (
     <div>
       <Landing />
