@@ -22,7 +22,6 @@ const PostponeForm = React.lazy(() => import('../forms/flightPostponeForm'));
 const FlightForm = React.lazy(() => import('../forms/flightForm'))
 const ImagesCity = React.lazy(() => import('../Pages/ImagesCity'));
 
-
 export default function Router() {
   return (
     <Suspense fallback={<Loader />}>
