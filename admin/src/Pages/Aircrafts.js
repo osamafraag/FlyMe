@@ -54,7 +54,7 @@ export default function Aircrafts() {
   };
 
  return (
-    <div className='container p-5'>
+    <div className='container py-5 px-4'>
       <div className='d-flex mb-5'>
         <h3 className='text-start text-secondary'>Aircrafts</h3>
         <a className='btn ms-auto text-white' style={{backgroundColor: "var(--main-color)"}} onClick={handleAddClick}>Add New Aircraft <FontAwesomeIcon icon={faPlus} /></a>

@@ -74,7 +74,7 @@ export default function Flights() {
   };
 
  return (
-    <div className='container p-5'>
+    <div className='container py-5 px-4'>
       <div className='d-flex mb-5'>
         <h3 className='text-start text-secondary'>Flights</h3>
         <a className='btn ms-auto text-white' style={{backgroundColor: "var(--main-color)"}} onClick={()=>{handleAddClick()}}><FontAwesomeIcon icon={faPlus} /> Add New Flight</a>
