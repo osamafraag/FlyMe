@@ -15,11 +15,12 @@ const Classes = React.lazy(() => import('../Pages/Classes'));
 const Login = React.lazy(() => import('../Pages/Login'));
 const AircraftForm = React.lazy(() => import('../forms/aircraftForm'));
 const ClassForm = React.lazy(() => import('../forms/classesForm'));
+const FlightForm = React.lazy(() => import('../forms/flightForm'));
+const FlightPostponeForm = React.lazy(() => import('../forms/flightPostponeForm'));
 const Error = React.lazy(() => import('../Pages/404'));
 const ImagesTrendPlaces = React.lazy(() => import('../Pages/ImagesTrendPlaces'));
 const ImagesCountry = React.lazy(() => import('../Pages/ImagesCountry'));
 const PostponeForm = React.lazy(() => import('../forms/flightPostponeForm'));
-const FlightForm = React.lazy(() => import('../forms/flightForm'))
 const ImagesCity = React.lazy(() => import('../Pages/ImagesCity'));
 
 export default function Router() {
@@ -44,6 +45,8 @@ export default function Router() {
         <Route path="/ImagesCountry" element={<ImagesCountry />} />
         <Route path="/PostponeForm" element={<PostponeForm />} />
         <Route path="/flightForm" element={<FlightForm />} />
+        <Route path="/FlightForm" element={<FlightForm />} />
+        <Route path="/FlightPostponeForm" element={<FlightPostponeForm />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Suspense>

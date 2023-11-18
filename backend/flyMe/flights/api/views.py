@@ -160,6 +160,20 @@ def allFlights(request):
         flight['from']=flght.startAirport.city.name
         flight['to']=flght.endAirport.city.name
     return Response({'passed':passedSerializer,'live':liveSerializer,'comming':commingSerializer,'cancled':cancledSerializer})
+@api_view(['GET'])
+def offerFlights(request):
+    flights = Flight.objects.all()
+    offerFlights = [] 
+    for flight in flights:
+        if flight.departureTime.timestamp() > datetime.now().timestamp() and flight.offerPercentage > 0:
+            offerFlights.append(flight)
+    offerFlightsSerializer = FlightSerializer(offerFlights, many=True).data
+    for flight in offerFlightsSerializer:
+        flightId = flight['id']
+        flght = Flight.objects.get(id=flightId)
+        flight['from']=flght.startAirport.city.name
+        flight['to']=flght.endAirport.city.name
+    return Response({'data':offerFlightsSerializer}, status=200)
 
 @api_view(['GET'])
 def userFlights(request,id):
