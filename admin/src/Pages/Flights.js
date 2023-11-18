@@ -27,7 +27,6 @@ export default function Flights() {
     FlightsAPI()
         .then((result) => {
           setFlights(result.data)
-          console.log(result.data)
         })
         .catch((error) => console.log(error));
   }
