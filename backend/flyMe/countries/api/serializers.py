@@ -94,7 +94,7 @@ class MultiImagesSerializerCity(serializers.ModelSerializer):
 
     class Meta:
         model = MultiImagesCity
-        fields = ('id', 'photo','cityName')
+        fields = ('id', 'photo','cityName','city')
 
 
 class MultiImagesSerializerTrendingPlace(serializers.ModelSerializer):
