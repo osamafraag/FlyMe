@@ -57,12 +57,7 @@ const OneWayResult = ({ flightData }) => {
                 <Flight flight={flight} />
               </div>
               <div className='flight-more col-4 h-100 '>
-                {flight.offerPercentage !== 0 
-                ? 
-                  <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost - (flight.baseCost * (flight.offerPercentage / 100))} <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight.baseCost}</smal></h4>
-                :
-                  <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost - (flight.baseCost * (flight.offerPercentage / 100))} <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight.baseCost}</smal></h4>
-                }
+                <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost}</h4>
                 <p className='text-secondary'><small>Per Person</small></p>
                 <button 
                   type="button" 

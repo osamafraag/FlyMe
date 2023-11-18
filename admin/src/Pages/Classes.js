@@ -1,7 +1,6 @@
 import React , { useState, useEffect }from 'react'
-import { GetClasses, DeleteClass } from "./../APIs/Classes"
+import { GetClasses } from "./../APIs/Classes"
 import { NavLink } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPlus, faCheck, faXmark} from '@fortawesome/free-solid-svg-icons'
 import { useSelector } from 'react-redux';
@@ -48,8 +47,6 @@ export default function Classes() {
           <th>WIFI Availability</th>
           <th>Power Outlet</th>
           <th>Stream Entertainment</th>  
-          <th>Edit</th>  
-          <th>Delete</th>  
         </tr>
       </thead>
       <tbody>
@@ -63,9 +60,7 @@ export default function Classes() {
             <td>{classData.drinkCategory}</td>
             <td>{classData.wifiAvailability ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</td>
             <td>{classData.powerOutlet ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</td>
-            <td>{classData.streamEntertainment ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</td> 
-            <td><a className="text-decoration-none" style={{color: "var(--main-color)"}}><FontAwesomeIcon icon={faPenToSquare} onClick={() => {handleEditClick(classData.id)}} /></a></td> 
-            <td><a className="text-decoration-none text-danger" onClick={() => handleDeleteClick(classData.id, classData.name)}><FontAwesomeIcon icon={faTrash}/></a></td> 
+            <td>{classData.streamEntertainment ? <FontAwesomeIcon icon={faCheck} style={{color: "var(--main-color)"}} /> : <FontAwesomeIcon icon={faXmark} className='text-danger'/>}</td>  
           </tr>
         ))}
         </tbody>

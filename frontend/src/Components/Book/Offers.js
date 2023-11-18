@@ -45,43 +45,21 @@ export default function Offers() {
       ?
       flightOffers.map((flight, index) => (
         <div className='flight border border-1 rounded-2 p-5 pe-0 mb-3 row align-items-center bg-white' key={index}>
-          {Array.isArray(flight) ? (
-            <>
-              <div className='flight-info col-8'>
-                <Transit flights={flight} />
-              </div>
-              <div className='flight-more col-4 h-100 '>
-                <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight[0].baseCost + flight[1].baseCost}</h4>
-                <p className='text-secondary'><small>Per Person</small></p>
-                <button 
-                  type="button" 
-                  className="btn rounded-5 text-white px-3 py-2" 
-                  style={{backgroundColor: "var(--main-color)"}} 
-                  onClick={() => handleShowModal([flight])}
-                >
-                  View Deals
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className='flight-info col-8'>
-                <Flight flight={flight} />
-              </div>
-              <div className='flight-more col-4 h-100 '>
-                <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost - (flight.baseCost * (flight.offerPercentage / 100))} <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight.baseCost}</smal></h4>
-                <p className='text-secondary'><small>Per Person</small></p>
-                <button 
-                  type="button" 
-                  className="btn rounded-5 text-white px-3 py-2" 
-                  style={{backgroundColor: "var(--main-color)"}} 
-                  onClick={() => handleShowModal([flight])}
-                >
-                  View Deals
-                </button>
-              </div>
-            </>
-          )}
+          <div className='flight-info col-8'>
+            <Flight flight={flight} />
+          </div>
+          <div className='flight-more col-4 h-100 '>
+            <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost - (flight.baseCost * (flight.offerPercentage / 100))} <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight.baseCost}</smal></h4>
+            <p className='text-secondary'><small>Per Person</small></p>
+            <button 
+              type="button" 
+              className="btn rounded-5 text-white px-3 py-2" 
+              style={{backgroundColor: "var(--main-color)"}} 
+              onClick={() => handleShowModal([flight])}
+            >
+              View Deals
+            </button>
+          </div>
         </div>
         ))
       :
