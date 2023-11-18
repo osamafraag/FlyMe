@@ -10,14 +10,12 @@ import raytheon from "./../Assets/Images/aircrafts/raytheon.png";
 import lockheed from "./../Assets/Images/aircrafts/lockheedMartin.png";
 import {faWeightHanging, faPlane,faPersonWalkingLuggage,faTrash,faPenToSquare,faPlus,
         faPeopleGroup,faPlaneDeparture} from '@fortawesome/free-solid-svg-icons';
-
+import { useSelector } from 'react-redux';
 
 export default function Aircrafts() {
-  
+  let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate()
   const [aircrafts, setAircrafts] = useState([])
-  useEffect(() => {fetchData();},[]);
-
   function fetchData(){
     AircraftsAPI()
         .then((result) => {
@@ -25,8 +23,15 @@ export default function Aircrafts() {
         })
         .catch((error) => console.log(error));
   }
-
-  
+  // If !user navigate to login page 
+  useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+    else fetchData();
+  }, [userData, navigate]);
+ 
 
   function handleAddClick() {navigate(`/AircraftForm`)}
 

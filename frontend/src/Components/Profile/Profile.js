@@ -18,7 +18,6 @@ const Profile = () => {
     return null;
   }
 
-  console.log(userData.is_superuser)
   const handleDashboardButtonClick = () => {
     // Open a new tab or window with the dashboard URL
     window.open('http://localhost:3001/', '_blank');
