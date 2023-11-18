@@ -4,11 +4,15 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function Complaints() {
   const [complaints, setComplaints] = useState([]);
   const [show, setShow] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState(null);
+  let userData = useSelector(state => state.loggedInUserSlice.data);
+  const navigate = useNavigate() 
 
   const handleClose = () => setShow(false);
 
@@ -18,6 +22,11 @@ export default function Complaints() {
   };
 
   useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+    else
     GetComplaints()
       .then((result) => {
         console.log(result.data);
@@ -26,7 +35,7 @@ export default function Complaints() {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [userData, navigate]);
 
   function formatDate(dateString) {
     const options = {
