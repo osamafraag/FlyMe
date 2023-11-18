@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import Flight from "./Flight";
-import Transit from "./Transit";
+import React, { useState, useEffect } from 'react';
+import { FlightOffers } from './../../APIs/Offers';
+import Flight from "./../Search/Flight";
+import Transit from "./../Search/Transit";
 import { useNavigate } from "react-router-dom";
-import Modal from "./Modal";
+import Modal from "./../Search/Modal";
 import NoResult from "./../../Assets/Images/NoResult.png"
 
-const OneWayResult = ({ flightData }) => {
+export default function Offers() {
+  const [flightOffers, setFlightOffers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const navigate = useNavigate();
@@ -27,11 +29,21 @@ const OneWayResult = ({ flightData }) => {
     navigate(`/Booking/${flightIds}`);
   }
 
+  useEffect(() => {
+    FlightOffers()
+    .then((result) => {
+      console.log(result.data.data);
+      setFlightOffers(result.data.data);
+    })
+    .catch((error) => {
+      console.error('Error fetching flight offers:', error);
+    });
+  }, []);
   return (
-    <>
-      {flightData.length !== 0 
+    <div>
+      {flightOffers.length !== 0 
       ?
-      flightData.map((flight, index) => (
+      flightOffers.map((flight, index) => (
         <div className='flight border border-1 rounded-2 p-5 pe-0 mb-3 row align-items-center bg-white' key={index}>
           {Array.isArray(flight) ? (
             <>
@@ -57,12 +69,7 @@ const OneWayResult = ({ flightData }) => {
                 <Flight flight={flight} />
               </div>
               <div className='flight-more col-4 h-100 '>
-                {flight.offerPercentage !== 0 
-                ? 
-                  <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost - (flight.baseCost * (flight.offerPercentage / 100))} <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight.baseCost}</smal></h4>
-                :
-                  <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost - (flight.baseCost * (flight.offerPercentage / 100))} <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight.baseCost}</smal></h4>
-                }
+                <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost - (flight.baseCost * (flight.offerPercentage / 100))} <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight.baseCost}</smal></h4>
                 <p className='text-secondary'><small>Per Person</small></p>
                 <button 
                   type="button" 
@@ -79,8 +86,7 @@ const OneWayResult = ({ flightData }) => {
         ))
       :
       <div className='d-flex flex-column  justify-content-center align-items-center text-secondary '>
-        <h3>Sorry We Couldn't Found Any Result</h3>
-        <img src={NoResult} width={400}/>
+        <h3>Sorry There Is No Offers Now</h3>
       </div>
       }
 
@@ -93,8 +99,6 @@ const OneWayResult = ({ flightData }) => {
           flights={selectedFlight} 
         />
       )}
-    </>
-  );
-};
-
-export default OneWayResult;
+    </div>
+  )
+}
