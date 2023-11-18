@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './register.css'
 import { Register as RegisterAPI } from '../../APIs/Register'
 import { getCountries } from '../../APIs/Countries';
-import { AllUsers } from '../../APIs/AllUsers'
+import { userData } from '../../APIs/AllUsers'
 
 var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 
@@ -16,7 +16,7 @@ export default function Register() {
     // Call All users for validations:
     useEffect(() => {
         const fetchUsers = async () => {
-            const result = await AllUsers();
+            const result = await userData();
             setusersArray(result.data.data);
         };
         fetchUsers();

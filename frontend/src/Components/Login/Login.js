@@ -1,14 +1,16 @@
-import {React, useState} from 'react'
+import {React, useContext, useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import './login.css'
 import { Login } from '../../APIs/Login';
-import { AllUsers } from '../../APIs/AllUsers'
+import { userData } from '../../APIs/AllUsers'
 import { useDispatch  } from 'react-redux';
 import { loginSuccess } from '../../Store/Slice/LoggedInUser';
+import { Token} from '../../Context/Token';
 
 var loginImage = require('../../Assets/Images/Accounts/login.jpg')
 
 export default function LoginForm() {
+    const {token,setToken} = useContext(Token)
     let navigate = useNavigate()
     const dispatch = useDispatch();
     const [ errorMessage, seterrorMessage ] = useState(null)
@@ -65,13 +67,18 @@ export default function LoginForm() {
             console.log("Form Submitted Successfully");
             Login(form)
                 .then((res) => {
-                    console.log(res && res.data);
+                    console.log(res.data.token)
+                    const token_data = res.data.token
+                    console.log( "token",token_data)
+                    setToken(token_data)
+
                     // Sava User Data in the Reducer
-                    AllUsers()
+                    userData({
+                        Authorization: `Token ${token_data}`,
+                      })
                     .then((result) => {
-                        const usersArray = result.data.data;
-                        const logedinUser = usersArray.filter(user => user.username === form.username);
-                        dispatch(loginSuccess(logedinUser[0]))
+                        dispatch(loginSuccess(result.data.user))
+                        console.log(result)
                     })
                     .catch((error) => {
                         console.log(error);
