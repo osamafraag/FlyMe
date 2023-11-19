@@ -1,11 +1,12 @@
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from countries.models import *
 from countries.api.serializers import *
 from cities_light.models import Country, City
+from rest_framework.permissions import IsAuthenticated , IsAdminUser
 
-
+@permission_classes([IsAuthenticated,IsAdminUser])
 class CountryListCreateView(generics.ListCreateAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
@@ -52,6 +53,8 @@ class CountryFeaturedListCreateView(generics.ListCreateAPIView):
                 many=True,context=self.get_serializer_context()).data
 
         return Response(serializer.data)
+    
+@permission_classes([IsAuthenticated,IsAdminUser])
 class CountryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
@@ -62,6 +65,7 @@ class CountryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return Response([serializer.data,MultiImagesSerializerCountry(
             MultiImagesCountry.objects.filter(country=instance.id), many=True).data])
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class CityListCreateView(generics.ListCreateAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
@@ -108,6 +112,7 @@ class CityFeaturedListCreateView(generics.ListCreateAPIView):
                 many=True,context=self.get_serializer_context()).data
         return Response(serializer.data)
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class CityRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
@@ -122,27 +127,34 @@ def countryCities(request,pk):
     cities = City.objects.filter(country=pk)
     serializer = CitySerializer(cities, many=True)
     return Response(serializer.data)
+
+@permission_classes([IsAuthenticated,IsAdminUser])
 class AirPortListCreateView(generics.ListCreateAPIView):
     queryset = AirPort.objects.all()
     serializer_class = AirPortSerializer
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class AirPortRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = AirPort.objects.all()
     serializer_class = AirPortSerializer
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def countryAirports(request,pk):
     airports = AirPort.objects.filter(id__in=City.objects.filter(country=pk).values('airport'))
     serializer = AirPortSerializer(airports, many=True)
     return Response(serializer.data)
+
 class EventListCreateView(generics.ListCreateAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+
 
 class EventFeaturedListCreateView(generics.ListCreateAPIView):
     queryset = Event.objects.filter(isFeatured=True)
     serializer_class = EventSerializer
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class EventRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
@@ -178,6 +190,7 @@ class TrendingPlaceListCreateView(generics.ListCreateAPIView):
         return Response(serializer.data)
     
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class TrendingPlaceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TrendingPlace.objects.all()
     serializer_class = TrendingPlaceSerializer
@@ -205,10 +218,12 @@ def cityTrendingPlaces(request, pk):
             many=True).data
     return Response(serializer.data)
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class MultiImagesCountryListCreateView(generics.ListCreateAPIView):
     queryset = MultiImagesCountry.objects.all()
     serializer_class = MultiImagesSerializerCountry
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class MultiImagesCountryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MultiImagesCountry.objects.all()
     serializer_class = MultiImagesSerializerCountry
@@ -219,10 +234,12 @@ def countryImages(request, pk):
     serializer = MultiImagesSerializerCountry(images, many=True)
     return Response(serializer.data)
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class MultiImagesCityListCreateView(generics.ListCreateAPIView):
     queryset = MultiImagesCity.objects.all()
     serializer_class = MultiImagesSerializerCity
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class MultiImagesCityRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MultiImagesCity.objects.all()
     serializer_class = MultiImagesSerializerCity
@@ -233,10 +250,12 @@ def cityImages(request, pk):
     serializer = MultiImagesSerializerCity(images, many=True)
     return Response(serializer.data)
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class MultiImagesTrendingPlaceListCreateView(generics.ListCreateAPIView):
     queryset = MultiImagesTrendingPlace.objects.all()
     serializer_class = MultiImagesSerializerTrendingPlace
 
+@permission_classes([IsAuthenticated,IsAdminUser])
 class MultiImagesTrendingPlaceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MultiImagesTrendingPlace.objects.all()
     serializer_class = MultiImagesSerializerTrendingPlace

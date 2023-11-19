@@ -124,6 +124,7 @@ def user_data_view(request):
     
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def paymentCardList(request):
     if request.method == 'POST':
         paymentCard = PaymentCard(data=request.data)
@@ -138,12 +139,14 @@ def paymentCardList(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def userPaymentCards(request,id):
     paymentCards = PaymentCard.objects.filter(user=id)
     serializer = PaymentCardSerializer(paymentCards, many=True)
     return Response(serializer.data)
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated])
 def paymentCardDetail(request, id):
     paymentCard = PaymentCard.objects.get(id=id)
     if request.method=='GET':
@@ -162,6 +165,7 @@ def paymentCardDetail(request, id):
         return Response({"errors":serializedPaymentCard.errors}, status=400)
     
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def transactionsList(request):
     if request.method == 'POST':
         transaction = TransactionSerializer(data=request.data)
@@ -176,12 +180,14 @@ def transactionsList(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def userTransactions(request,id):
     transactions = Transaction.objects.filter(user=id)
     serializer = TransactionSerializer(transactions, many=True)
     return Response(serializer.data)
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated])
 def transactionDetail(request, id):
     transaction = Transaction.objects.get(id=id)
     if request.method=='GET':
@@ -200,6 +206,7 @@ def transactionDetail(request, id):
         return Response({"errors":serializedTransaction.errors}, status=400)
     
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def notificationsList(request):
     if request.method == 'POST':
         notification = NotificationSerializer(data=request.data)
@@ -213,12 +220,14 @@ def notificationsList(request):
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data)
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def userNotifications(request,id):
     notifications = Notification.objects.filter(user=id)
     serializer = NotificationSerializer(notifications, many=True)
     return Response(serializer.data)
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated])
 def notificationDetail(request, id):
     notification = Notification.objects.get(id=id)
     if request.method=='GET':
@@ -237,6 +246,7 @@ def notificationDetail(request, id):
         return Response({"errors":serializedNotification.errors}, status=400)
     
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def walletsList(request):
     if request.method == 'POST':
         auth_header = request.headers.get('Authorization')
@@ -253,8 +263,6 @@ def walletsList(request):
                 return Response({"error":"error"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'errors':"error"}, status=400)
-    
-
 
     elif request.method=='GET':
         wallets = Wallet.objects.all()
@@ -262,6 +270,7 @@ def walletsList(request):
         return Response(serializer.data)
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated])
 def walletDetail(request, id):
     wallet = Wallet.objects.get(id=id)
     if request.method=='GET':
@@ -280,7 +289,6 @@ def walletDetail(request, id):
         return Response({"errors":serializedWallet.errors}, status=400)
     
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
 def complaintsList(request):
     if request.method == 'POST':
         complaint = ComplaintSerializer(data=request.data)
@@ -294,12 +302,16 @@ def complaintsList(request):
         complaints = Complaint.objects.all()
         serializer = ComplaintSerializer(complaints, many=True)
         return Response(serializer.data)
+    
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def userComplaints(request,id):
     complaints = Complaint.objects.filter(user_id=id)
     serializer = ComplaintSerializer(complaints, many=True)
     return Response(serializer.data)
+
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def complaintDetail(request, id):
     complaint = Complaint.objects.get(id=id)
     if request.method=='GET':
