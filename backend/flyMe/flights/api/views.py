@@ -5,7 +5,7 @@ from flights.api.serializers import *
 from accounts.models import *
 from datetime import datetime
 from cities_light.models import City
-from rest_framework.permissions import IsAuthenticated , IsAdmin
+from rest_framework.permissions import IsAuthenticated , IsAdminUser
 
 
 @api_view(['GET', 'POST'])

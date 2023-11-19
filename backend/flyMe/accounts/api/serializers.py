@@ -23,18 +23,21 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
-            required=True,
-            validators=[UniqueValidator(queryset=MyUser.objects.all())]
-            )
+        required=True,
+        validators=[UniqueValidator(queryset=MyUser.objects.all())]
+    )
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
+    is_superuser = serializers.BooleanField(default=False)  # Default value set to False
 
     class Meta:
         model = MyUser
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name','birth_date','gender','passport_expire_date','passport_number','phone')
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name',
+                  'birth_date', 'gender', 'passport_expire_date', 'passport_number', 'phone', 'is_superuser')
         extra_kwargs = {
             'first_name': {'required': True},
-            'last_name': {'required': True}
+            'last_name': {'required': True},
+            'is_superuser': {'default': False}  # Set the default value for is_superuser
         }
 
     def validate(self, attrs):
@@ -44,6 +47,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        is_superuser = validated_data.pop('is_superuser', False)  # Pop is_superuser from validated_data with a default value of False
+
         user = MyUser.objects.create(
             username=validated_data['username'],
             email=validated_data['email'],
@@ -54,11 +59,13 @@ class RegisterSerializer(serializers.ModelSerializer):
             passport_expire_date=validated_data['passport_expire_date'],
             passport_number=validated_data['passport_number'],
             phone=validated_data['phone'],
-            # country=validated_data['country'],
         )
+
         user.set_password(validated_data['password'])
+        user.is_superuser = is_superuser  # Set is_superuser based on the provided value
         user.save()
         return user
+
     
 class WalletSerializer(serializers.ModelSerializer):
     class Meta:
