@@ -13,16 +13,6 @@ export default function Register() {
     const [usernameExists, setUsernameExists] = useState(false)
     const [emailExists, setEmailExists] = useState(false)
 
-    // Call All users for validations:
-    // useEffect(() => {
-    //     const fetchUsers = async () => {
-    //         const result = await userData();
-    //         setusersArray(result.data.data);
-    //     };
-    //     fetchUsers();
-    // }, []);
-
-    // Call api countries
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     useEffect(() => {
@@ -101,7 +91,7 @@ export default function Register() {
                         ? "You Should Enter Your Email"
                         : !value.match(emailRegex)
                             ? "Invalid Email, Email Should Be Like This name@example.com"
-                            : emailExists == true
+                            : emailExists
                             ? "This email already exist"
                             : null
             })
@@ -270,9 +260,6 @@ export default function Register() {
     const handleSelectChange = (event) => {
         const selectedValue = event.target.value;
         console.log('selectedValue', selectedValue)
-
-
-
         setSelectedCountry(selectedValue);
         setForm((prevForm) => ({
             ...prevForm,
@@ -306,7 +293,7 @@ export default function Register() {
                             password: "This password is too common.",
                         });
                     } else {
-                        err.response.data.email && setEmailExists(err.response.data.email);
+                        err.response.data.email && setEmailExists('Email must be unique.');
                         err.response.data.username && setUsernameExists(err.response.data.username);
                     }
                 });
@@ -328,9 +315,11 @@ export default function Register() {
                         width="300"
                     />
                     <div className="col-6 pb-5">
-                        {(errorMessage) && (
+                        {(errorMessage || emailExists || usernameExists) && (
                             <p className="text-danger" style={{ fontSize: '14px' }}>
-                                {errorMessage}
+                                <div>{errorMessage}</div>
+                                <div>{emailExists}</div>
+                                <div>{usernameExists}</div>
                             </p>
                         )}
                         <form method="post" encType="multipart/form-data">

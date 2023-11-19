@@ -126,7 +126,7 @@ export default function LoginForm() {
                             </div>
                             {/* Forgot Password */}
                             <div className="d-flex flex-column">
-                                <a href="" className="text-decoration-none text-end mt-3" style={{color: '#426a9d'}}>Forgot Password?</a>
+                                <a href="" className="text-decoration-none text-end mt-3" style={{color: '#426a9d'}} onClick={()=>{navigate('/ForgetPassword')}} >Forgot Password?</a>
                                 <button type="submit" className="btn custom-btn my-4 py-2" style={{borderRadius: '7px'}} onClick={handleOnClickLogin}>Login</button>
                             </div>
                             <div>
