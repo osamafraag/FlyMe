@@ -1,6 +1,8 @@
 import { axiosInstance } from "./Config";
 
-export const AllUsers = () => {
+export const AllUsers = (headers) => {
   
-  return axiosInstance.get('accounts/api/users/')
+  return axiosInstance.get('accounts/api/users/', {
+    headers: headers
+})
 }

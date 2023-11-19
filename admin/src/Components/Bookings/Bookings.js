@@ -275,8 +275,10 @@ import { axiosInstance } from "../../APIs/Config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Modal, Button } from "react-bootstrap";
+import { Token } from "../../Context/Token";
 
 export default function Bookings() {
+  const { token, setToken } = useState(Token)
   const [bookings, setBookings] = useState([]);
   const [newBooking, setNewBooking] = useState({
     status: "",
@@ -297,7 +299,9 @@ export default function Bookings() {
 
   const fetchData = () => {
     axiosInstance
-      .get("/flights/api/history/")
+      .get("/flights/api/history/", {
+        headers: token
+      })
       .then((res) => setBookings(res.data))
       .catch((err) => console.error("Error fetching data:", err));
   };
@@ -333,7 +337,9 @@ export default function Bookings() {
     e.preventDefault();
 
     axiosInstance
-      .post("/flights/api/history/", newBooking)
+      .post("/flights/api/history/", newBooking, {
+        headers: token
+      })
       .then((response) => {
         console.log(response.data);
         fetchData();

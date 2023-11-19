@@ -1,5 +1,7 @@
 import { axiosInstance } from "./Config";
 
-export const FlightsAPI = () => {
-  return axiosInstance.get('flights/api/all/')
+export const FlightsAPI = (headers) => {
+  return axiosInstance.get('flights/api/all/', {
+    headers: headers
+})
 }

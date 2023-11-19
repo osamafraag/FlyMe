@@ -3,8 +3,10 @@
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
   import { faPencilAlt, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
   import { Modal, Button } from 'react-bootstrap';
+  import { Token } from "../../Context/Token";
 
   export default function Airports() {
+    const { token, setToken } = useState(Token)
     const [airports, setAirports] = useState([]);
     const [newAirport, setNewAirport] = useState({
       city: "",
@@ -19,7 +21,9 @@
 
     const fetchData = () => {
       axiosInstance
-        .get("countries/api/airports/")
+        .get("countries/api/airports/", {
+          headers: token
+        })
         .then((res) => setAirports(res.data))
         .catch((err) => console.error("Error fetching data:", err));
     };
@@ -62,7 +66,9 @@
         }
 
         axiosInstance
-          .post("/countries/api/airports/", newAirport)
+          .post("/countries/api/airports/", newAirport, {
+            headers: token
+          })
           .then((response) => {
             console.log(response.data);
             fetchData();
@@ -77,7 +83,9 @@
 
     const handleEdit = (airportId, updatedAirport) => {
       axiosInstance
-        .put(`/countries/api/airports/${airportId}/`, updatedAirport)
+        .put(`/countries/api/airports/${airportId}/`, updatedAirport, {
+          headers: token
+        })
         .then((response) => {
           console.log(response.data);
           fetchData();
@@ -95,7 +103,9 @@
       }
 
       axiosInstance
-        .delete(`/countries/api/airports/${airportId}/`)
+        .delete(`/countries/api/airports/${airportId}/`, {
+          headers: token
+        })
         .then((response) => {
           console.log(response.data);
           fetchData();
