@@ -2,7 +2,5 @@ import { axiosInstance } from "./Config";
 
 export const FlightBooking = (formData) => {
 
-  return axiosInstance.post(`flights/api/history`, formData, { 
-    'Content-Type': 'application/json',
-   });
+  return axiosInstance.put(`flights/api/history/`, formData);
 };
