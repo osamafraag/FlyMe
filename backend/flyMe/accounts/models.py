@@ -29,6 +29,7 @@ class MyUser(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     email_verification_code = models.CharField(max_length=6, blank=True, null=True)
+    activation_code = models.CharField(max_length=6, blank=True, null=True)
 
 
     def save(self, *args, **kwargs):
@@ -156,7 +157,7 @@ class Complaint(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        if self.answer != '':
+        if self.answer != '' and self.user_id:
             notification = Notification()
             notification.user = self.user_id
             notification.title = "Your Complaint Answer!"

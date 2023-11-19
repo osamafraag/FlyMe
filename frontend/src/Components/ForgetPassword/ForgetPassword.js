@@ -30,7 +30,7 @@ const ForgetPassword = () => {
   };
 
   return (
-    <Container className="py-5">
+    <Container className="py-5 fade-in">
       <Row className="justify-content-center align-items-center">
         <Col md={6}>
           <img

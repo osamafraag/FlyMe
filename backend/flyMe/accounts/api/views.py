@@ -19,8 +19,20 @@ from django.urls import reverse
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import random
+from django.utils import timezone
 
 
+def send_random_code(user, emailHeader):
+    verification_code = str(random.randint(100000, 999999))
+    user.save()
+    send_mail(
+        f'{emailHeader}',
+        f'Your verification code is: {verification_code}',
+        '{email}',
+        [user.email],
+        fail_silently=False,
+    )
+    return verification_code
 
 
 
@@ -33,7 +45,7 @@ def getAllUsers(request):
     for user in users:
         serlized_users.append(UserSerializer(user).data)
     print(serlized_users)
-    return Response({"data":serlized_users,"massage":"data receved"},status=200)
+    return Response({"data":serlized_users, "massage":"data receved"},status=200)
 
 
 
@@ -46,9 +58,6 @@ class RegisterView(generics.CreateAPIView):
     queryset = MyUser.objects.all()
     permission_classes = [AllowAny]
     serializer_class = RegisterSerializer
-    
-
-
 
 ####################################---------  login  -------------###################################
 @permission_classes([AllowAny])
@@ -57,14 +66,13 @@ def user_login(request):
     if request.method == 'POST':
         username = request.data.get('username')
         password = request.data.get('password')
-
         user = authenticate(request, username=username, password=password)
-
         if user:
-            login(request, user)
-            token, _ = Token.objects.get_or_create(user=user)
-            return Response({"sucess":"welcome to flyme page",'token': token.key}, status=status.HTTP_200_OK)
-        
+            if user.is_email_verified or user.is_superuser:
+                login(request, user)
+                token, _ = Token.objects.get_or_create(user=user)
+                return Response({"sucess":"welcome to flyme page",'token': token.key}, status=status.HTTP_200_OK)
+            return Response({'error': 'Email is not activated',"email":user.email}, status=status.HTTP_401_UNAUTHORIZED)
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
             
 
@@ -272,6 +280,7 @@ def walletDetail(request, id):
         return Response({"errors":serializedWallet.errors}, status=400)
     
 @api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
 def complaintsList(request):
     if request.method == 'POST':
         complaint = ComplaintSerializer(data=request.data)
@@ -281,6 +290,7 @@ def complaintsList(request):
         return Response({'errors':complaint.errors}, status=400)
 
     elif request.method=='GET':
+        print('test')
         complaints = Complaint.objects.all()
         serializer = ComplaintSerializer(complaints, many=True)
         return Response(serializer.data)
@@ -294,7 +304,8 @@ def complaintDetail(request, id):
     complaint = Complaint.objects.get(id=id)
     if request.method=='GET':
         serializedComplaint = ComplaintSerializer(complaint)
-        return Response({'data':serializedComplaint.data,'Access-Control-Allow-Origin':'http://localhost:3000'}, status=200)
+        return Response({'data':serializedComplaint.data}, status=200)
+    # 'Access-Control-Allow-Origin':'http://localhost:3000'},
 
     elif request.method=='DELETE':
         complaint.delete()
@@ -357,24 +368,12 @@ class RequestPasswordReset(APIView):
     def post(self, request):
         email = request.data.get('email')
         user = get_object_or_404(MyUser, email=email)
-
         if user:
-            verification_code = str(random.randint(100000, 999999))
-            user.email_verification_code = verification_code
+            emailHeader = 'Password Reset Verification Code'
+            user.email_verification_code = send_random_code(user,emailHeader)
             user.save()
-
-            # Use Django's send_mail to send the verification code to the user's email
-            send_mail(
-                'Password Reset Verification Code',
-                f'Your verification code is: {verification_code}',
-                'from@example.com',
-                [user.email],
-                fail_silently=False,
-            )
-
             return Response({'message': 'Verification code sent successfully.'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         
         
 class CompletePasswordReset(UpdateAPIView):
@@ -400,4 +399,34 @@ class CheckVerificationCode(APIView):
         verification_code = serializer.validated_data['verification_code']
         user = get_object_or_404(MyUser, email=email, email_verification_code=verification_code)
         return Response({'message': 'true'}, status=status.HTTP_200_OK)
+    
 
+
+class SendActivateEmail(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        user = get_object_or_404(MyUser, email=email)
+        if user:
+            emailHeader = 'Activate Email Verification Code'
+            user.activation_code = send_random_code(user,emailHeader)
+            user.activation_link_created_at = timezone.now()
+            user.save()
+            return Response({'message': 'Activation code sent successfully.'}, status=status.HTTP_200_OK)
+        return Response({'message': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+
+class ActivateAccount(UpdateAPIView):
+    serializer_class = CheckVerificationCodeSerializer
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data['email']
+        verification_code = serializer.validated_data['verification_code']
+        print(email)
+        print(verification_code)
+        user = get_object_or_404(MyUser, email=email, activation_code=verification_code)
+        user.activation_code = None
+        user.is_email_verified = True
+        user.save()
+        return Response({'message': 'Account activated.'}, status=status.HTTP_200_OK)

@@ -6,10 +6,13 @@ import { userData } from '../../APIs/AllUsers'
 import { useDispatch  } from 'react-redux';
 import { loginSuccess } from '../../Store/Slice/LoggedInUser';
 import { Token} from '../../Context/Token';
+import { EmailAddress} from '../../Context/EmailAddress';
+import { SendActivateEmail } from '../../APIs/Register';
 
 var loginImage = require('../../Assets/Images/Accounts/login.jpg')
 
 export default function LoginForm() {
+    const{setEmailAddress}= useContext(EmailAddress)
     const {token,setToken} = useContext(Token)
     let navigate = useNavigate()
     const dispatch = useDispatch();
@@ -86,8 +89,20 @@ export default function LoginForm() {
                     navigate('/');
                 })
                 .catch((err) => {
-                    console.log(err.response && err.response.data);
-                    seterrorMessage('Please enter your username and password correctly.')
+                    if (err.response && err.response.data.email) {
+                        seterrorMessage('Email is not activated.');
+                        const email = err.response.data.email
+                        setEmailAddress(email)
+                        SendActivateEmail({email:email}).then((resu)=>{
+                            console.log(resu)
+                            navigate("/CheckActivationCode")
+                        }).catch((errors)=>{
+                            console.log(errors)
+                        })
+                    } else {
+                        console.log(err.response && err.response.data);
+                        seterrorMessage('Please enter your username and password correctly.');
+                    }
                 });
         } else {
             seterrorMessage('Please enter your username and password.')
