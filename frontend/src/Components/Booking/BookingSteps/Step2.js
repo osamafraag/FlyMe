@@ -4,20 +4,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import Step3 from './Step3';
 
-export default function Step2({onInsuranceFareChange}) {
+export default function Step2({onInsuranceFareChange, setIsDataSaved2}) {
     const [insuranceFare, setInsuranceFare] = useState(0)
+    const [dataSaved, setDataSaved] = useState(false);
     // handle click on the header to show or not the content of the step
     const [isContentVisible, setIsContentVisible] = useState(false);
     const handleToggle = () => {
-        // console.log(dataSaved)
-        // if (dataSaved) 
+        if (dataSaved !== true) 
         setIsContentVisible(!isContentVisible)
     }
 
     // handle click on save and submit button
     const handleOnClickSaveButton = (e) => {
         e.preventDefault();
+        handleToggle();
         onInsuranceFareChange(insuranceFare);
+        setDataSaved(true)
+        setIsDataSaved2(true)
     };
     const handleInsuranceFare = (e) =>{
         e.preventDefault();

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FlightData } from '../../APIs/FlightData'
 import { useParams } from 'react-router-dom';
 
-export default function SideBar({insurance}) {
+export default function SideBar({insurance,Total_Fare}) {
   const [flightData, setFlightData] = useState()
   const { flights } = useParams()
   const flightIds = flights.split(',');
@@ -19,7 +19,8 @@ export default function SideBar({insurance}) {
   console.log('flightData',flightData)
 
   const Total_TAX = flightData?.baseCost * 0.1 || 0;
-  const Total_Fare = flightData?.baseCost + Total_TAX + insurance || 0;
+  Total_Fare(flightData?.baseCost + Total_TAX + insurance || 0)
+  const Total_Faree = flightData?.baseCost + Total_TAX + insurance || 0
   
 
   return (
@@ -53,7 +54,7 @@ export default function SideBar({insurance}) {
       <hr/>
       <div className='d-flex align-items-center justify-content-between data'>
         <p>Total Fare</p>
-        <p>EGP {Total_Fare}</p>
+        <p>EGP {Total_Faree}</p>
       </div>
     </div>
   </div>

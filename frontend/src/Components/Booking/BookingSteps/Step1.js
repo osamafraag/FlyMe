@@ -3,21 +3,44 @@ import Header from './Header'
 import Step2 from './Step2';
 import { useSelector } from 'react-redux';
 import { getCountries } from '../../../APIs/Countries';
+import { FlightBooking } from '../../../APIs/FlightBooking';
+import { AllClasses } from '../../../APIs/AllClasses';
+import { useParams } from 'react-router';
 
-export default function Step1() {
+export default function Step1({TotalFare,setIsDataSaved1}) {
+    const { flights } = useParams()
+    const flightIds = flights.split(',');
+    const flightID = flightIds[0]
     let userData = useSelector(state => state.loggedInUserSlice.data);
     const [dataSaved, setDataSaved] = useState(false);
     
     // handle click on the header to show or not the content of the step
     const [isContentVisible, setIsContentVisible] = useState(false);
     const handleToggle = () => {
+        if (dataSaved !== true)
         setIsContentVisible(!isContentVisible)
     }
 
-    // Call api countries
+    // Call api Countries + Classes
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
+    const [classOptions, setClassOptions] = useState([]);
+    const [selectedClass, setSelectedClass] = useState('');
+    const [selectedClassID, setSelectedClassID] = useState('');
+    const [ classesData, setclassesData ] = useState([])
     useEffect(() => {
+        const fetchClassOptions = async () => {
+            try {
+                const data = await AllClasses();
+                const classes = data.data.map(classs => classs.name);
+                setclassesData(data.data)
+                setClassOptions(classes);
+            } catch (error) {
+                console.error('Error fetching class options:', error);
+            }
+        };
+        fetchClassOptions();
+
         const fetchCountries = async () => {
             try {
                 const data = await getCountries();
@@ -27,9 +50,7 @@ export default function Step1() {
                 console.error('Error fetching countries:', error);
             }
         };
-
         fetchCountries();
-
         if (userData.gender == 'F'){
             setForm(prevForm => ({
                 ...prevForm,
@@ -43,12 +64,13 @@ export default function Step1() {
                 female: false,
                 male: true,
             }));
-        }    
+        }  
+        
     }, [userData.gender,dataSaved]);
 
     // Form State
     const [form, setForm] = useState({
-        id: userData.id || '',
+        passenger: userData.id || '',
         email: userData.email || '',
         phone: userData.phone || '',
         first_name: userData.first_name || '',
@@ -59,7 +81,16 @@ export default function Step1() {
         country: userData.country || '',
         passport_number: userData.passport_number || '',
         passport_expire_date: userData.passport_expire_date || '',
-
+        category: '',
+        category_name: '',
+        status: 'A',
+        totalCost: TotalFare,
+        cashBack: 0,
+        paymentMethod: 'C',
+        adults: 1,
+        kids: 0,
+        infants: 0,
+        flight: flightID,
     })
     const [formError, setFormError] = useState({
         email: null,
@@ -72,6 +103,7 @@ export default function Step1() {
         country: null,
         passport_number: null,
         passport_expire_date: null,
+        category: null
     });
 
     
@@ -156,6 +188,11 @@ export default function Step1() {
                 male: name === 'male',
                 female: name === 'female'
             });
+            setFormError({
+                ...formError,
+                male: null,
+                female: null
+            });
         }
         // Date of birth validations
         else if (name === 'birth_date') {
@@ -205,26 +242,60 @@ export default function Step1() {
                         : null
             })
         }
+        // Payment Method
+        else if (name === 'category') {
+            setForm({
+                ...form,
+                category: value
+            });
+            setFormError({
+                ...formError,
+                category:
+                    value == null
+                        ? 'Choose your Payment Method'
+                        : null
+            })
+        }
     }
-    // country
+    // Country
     const handleSelectChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedCountry(selectedValue);
-    
         setForm((prevForm) => ({
             ...prevForm,
             country: selectedValue
         }))
     };
 
-   const isFormValid = !formError.email && !formError.phone && !formError.first_name && !formError.last_name && !formError.male && !formError.female && !formError.birth_date && !formError.country && !formError.passport_number && !formError.passport_expire_date && form.email && form.phone && form.first_name && form.last_name && (form.male || form.female) && form.birth_date && form.country && form.passport_number && form.passport_expire_date
+    // Class
+    const handleSelectClassChange = (event) =>{
+        const selectedValue = event.target.value;
+        setSelectedClass(selectedValue);
+        setSelectedClassID((classesData.find(item => item.name === selectedValue)).id)    
+        setForm((prevForm) => ({
+            ...prevForm,
+            category_name: selectedValue,
+            category: selectedClassID
+        }))
+        console.log(selectedClassID)
+        console.log(form.category)
+    }
+
+   const isFormValid = !formError.category_name && !formError.email && !formError.phone && !formError.first_name && !formError.last_name && (!formError.male || !formError.female) && !formError.birth_date && !formError.country && !formError.passport_number && !formError.passport_expire_date && form.category_name && form.email && form.phone && form.first_name && form.last_name && (form.male || form.female) && form.birth_date && form.country && form.passport_number && form.passport_expire_date
 
     // handle click on save and submit button
     const handleOnClickSaveButton = (e) => {
         e.preventDefault();
         if (isFormValid) {
             console.log("Form Submitted Successfully");
-            setDataSaved(true)
+            console.log(form)
+            FlightBooking(form)
+            .then((res)=>{
+                setDataSaved(true)
+                console.log('res.data',res.data);
+                setIsDataSaved1(true)        
+            })
+            .catch((err)=>{console.log('err.response',err.response);})
             handleToggle();
         } else {
             console.log("Form Has Errors");
@@ -249,7 +320,7 @@ export default function Step1() {
                         </div>
                         <div className='Body'>
                             <p>Passenger 1</p>
-                            <form>
+                            <form onSubmit={handleOnClickSaveButton}>
                                 {/* Email */}
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Email address</label>
@@ -277,14 +348,29 @@ export default function Step1() {
                                 {/* Gender */}
                                 <div className="mb-3 d-flex">
                                     <div className="mr-5">
-                                        <input type="radio" checked={form.male} id="male" name="male" value={form.male} onChange={handleOnChangeForm} required />
+                                        <input
+                                            type="radio"
+                                            checked={form.male}
+                                            id="male"
+                                            name="gender"
+                                            onChange={handleOnChangeForm}
+                                            required
+                                        />
                                         <label htmlFor="male" className="form-label px-2">Male</label>
                                     </div>
                                     <div>
-                                        <input type="radio" checked={form.female} id="female" name="female" value={form.female} onChange={handleOnChangeForm} required />
+                                        <input
+                                            type="radio"
+                                            checked={form.female}
+                                            id="female"
+                                            name="gender"
+                                            onChange={handleOnChangeForm}
+                                            required
+                                        />
                                         <label htmlFor="female" className="form-label px-2">Female</label>
                                     </div>
                                 </div>
+
                                 {/* Date Of Birth */}
                                 <div className="mb-3">
                                     <label htmlFor="birth_date" className="form-label">Date Of Birth</label>
@@ -320,7 +406,19 @@ export default function Step1() {
                                     <input type="date" className="form-control" name='passport_expire_date' value={form.passport_expire_date} id="passport_expire_date" onChange={handleOnChangeForm} required />
                                     {formError.passport_expire_date && <div className="form-text text-danger text-start ">{formError.passport_expire_date}</div>}
                                 </div>
-                                <center><button type="submit" className="btn custom-btn" onClick={handleOnClickSaveButton} disabled={!isFormValid}>Save and continue</button></center>
+                                {/* Class */}
+                                <div className="mb-3">
+                                    <label htmlFor="category_name" className="form-label">Class</label>
+                                    <select className="form-control" name='category_name' value={form.category_name} id="category_name" onChange={handleSelectClassChange} required>
+                                        <option value="" disabled>Select a class</option>
+                                        {classOptions.map((classOption, index) => (
+                                            <option key={index} value={classOption}>{classOption}</option>
+                                        ))}
+
+                                    </select>
+                                    {formError.category && <div className="form-text text-danger text-start ">{formError.category}</div>}
+                                </div>
+                                <center><button type="submit" className="btn custom-btn" disabled={!isFormValid}>Save and continue</button></center>
                             </form>
                         </div>
                     </>
