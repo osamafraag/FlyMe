@@ -1,11 +1,13 @@
 import "./Help.css"
-import React from 'react'
+import React, { useContext } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faEnvelope ,faPhoneVolume,faLocationDot} from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
+import { Token } from "../../Context/Token";
 
 export default function HelpComponent() {
 
+    const {setToken} = useContext(Token)
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');

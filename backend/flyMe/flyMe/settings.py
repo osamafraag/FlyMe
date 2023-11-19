@@ -190,8 +190,11 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 # CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
 # CELERY_TIMEZONE = 'UTC'
 # CELERY_TASK_ALWAYS_EAGER = True
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.TokenAuthentication',
-#     ],
-# }
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+CORS_ALLOW_ALL_ORIGINS = True
