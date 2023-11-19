@@ -27,6 +27,7 @@ def aircraftList(request):
         return Response(serializer.data)
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def aircraftDetail(request, id):
     aircraft = Aircraft.get(id)
     if request.method=='GET':
@@ -121,6 +122,7 @@ def flightList(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def allFlights(request):
     flights = Flight.objects.all()
     cancledFlights = [] 
@@ -178,6 +180,7 @@ def offerFlights(request):
     return Response({'data':offerFlightsSerializer}, status=200)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def userFlights(request,id):
     books = BookHistory.objects.filter(passenger=id)
     commingFlights = []
@@ -213,6 +216,7 @@ def userFlights(request,id):
 
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def flightDetail(request, id):
     flight = Flight.get(id)
     if request.method=='GET':
@@ -247,6 +251,7 @@ def classList(request):
         return Response(serializer.data)
     
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def classDetail(request, id):
     category = Class.get(id)
     if request.method=='GET':
@@ -266,6 +271,7 @@ def classDetail(request, id):
 
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def bookHistoryList(request):
     if request.method == 'POST':
         bookHistory = BookHistorySerializer(data=request.data)
@@ -280,18 +286,22 @@ def bookHistoryList(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def classBooks(request,id):
     return Response(BookHistorySerializer(BookHistory.objects.filter(category=id), many=True).data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def flightBooks(request,id):
     return Response(BookHistorySerializer(BookHistory.objects.filter(flight=id), many=True).data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def userBooks(request,id):
     return Response(BookHistorySerializer(BookHistory.objects.filter(passenger=id), many=True).data)
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated])
 def bookHistoryDetail(request, id):
     bookHistory = BookHistory.get(id)
     if request.method=='GET':
@@ -312,6 +322,7 @@ def bookHistoryDetail(request, id):
 
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def flightReviewList(request):
     if request.method == 'POST':
         flightReview = FlightReviewSerializer(data=request.data)
@@ -332,12 +343,14 @@ def flightReview(request,id):
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def userFlightReview(request,id):
     flightReviews = FlightReview.objects.filter(passenger=id)
     serializer = FlightReviewSerializer(flightReviews, many=True)
     return Response(serializer.data)
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated])
 def flightReviewDetail(request, id):
     flightReview = FlightReview.objects.get(id=id)
     if request.method=='GET':

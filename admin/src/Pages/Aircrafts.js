@@ -47,7 +47,7 @@ export default function Aircrafts() {
     }
 
     axiosInstance
-    .delete(`/flights/api/aircrafts/${aircraftId}`)  
+    .delete(`/flights/api/aircrafts/${aircraftId}`,{headers:{Authorization: `Token ${token}`,}})  
     .then((response) => {
       fetchData()
     })
