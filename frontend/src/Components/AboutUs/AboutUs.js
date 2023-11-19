@@ -19,12 +19,12 @@ import {faPlaneCircleCheck} from '@fortawesome/free-solid-svg-icons';
 import {faThumbsUp} from '@fortawesome/free-solid-svg-icons';
 import {faEarthAmericas} from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from "react-router-dom";
+import { useSelector } from 'react-redux';
 
 
 
 export default function AboutUsComponent() {
   
-
   const slides = [
     {
       image: pic1,
