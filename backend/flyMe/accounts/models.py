@@ -156,7 +156,7 @@ class Complaint(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        if self.answer != '':
+        if self.answer != '' and self.user_id:
             notification = Notification()
             notification.user = self.user_id
             notification.title = "Your Complaint Answer!"

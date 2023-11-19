@@ -272,6 +272,7 @@ def walletDetail(request, id):
         return Response({"errors":serializedWallet.errors}, status=400)
     
 @api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
 def complaintsList(request):
     if request.method == 'POST':
         complaint = ComplaintSerializer(data=request.data)
@@ -281,6 +282,7 @@ def complaintsList(request):
         return Response({'errors':complaint.errors}, status=400)
 
     elif request.method=='GET':
+        print('test')
         complaints = Complaint.objects.all()
         serializer = ComplaintSerializer(complaints, many=True)
         return Response(serializer.data)
@@ -294,7 +296,8 @@ def complaintDetail(request, id):
     complaint = Complaint.objects.get(id=id)
     if request.method=='GET':
         serializedComplaint = ComplaintSerializer(complaint)
-        return Response({'data':serializedComplaint.data,'Access-Control-Allow-Origin':'http://localhost:3000'}, status=200)
+        return Response({'data':serializedComplaint.data}, status=200)
+    # 'Access-Control-Allow-Origin':'http://localhost:3000'},
 
     elif request.method=='DELETE':
         complaint.delete()
