@@ -266,12 +266,16 @@ export default function NotificationsComponent() {
   }
   const markNotificationAsRead = (notificationId) => {
       axiosInstance
-        .get(`accounts/api/notifications/${notificationId}`)
+        .get(`accounts/api/notifications/${notificationId}`, {
+          headers: {Authorization: `Token ${token}`}
+        })
         .then((result) => {
           console.log(result)
           result.data.data.status = 'READ'
           axiosInstance
-            .put(`accounts/api/notifications/${notificationId}`, result.data.data)  
+            .put(`accounts/api/notifications/${notificationId}`, result.data.data, {
+              headers: {Authorization: `Token ${token}`}
+            }) 
             .then((response) => {
               fetchData()
             })
