@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { ActivateEmail } from '../../APIs/Register';
+import { ActivateEmail, SendActivateEmail} from '../../APIs/Register';
 import { EmailAddress } from '../../Context/EmailAddress';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,8 +9,16 @@ const ActivateAcoontCheckCode = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate()
+  const[view,setView] = useState(false)
+
+  const timeoutView = (delay)=>{
+    setTimeout(() => {
+      setView(true);
+    }, delay);
+  } 
 
   useEffect(() => {
+    timeoutView(5000)
     if (code) {
         ActivateEmail(emailAddress, code)
         .then((res) => {
@@ -37,14 +45,30 @@ const ActivateAcoontCheckCode = () => {
     setSuccessMessage(null);
   };
 
-  const obfuscateEmail = (email) => {
-    const atIndex = email.indexOf('@');
-    const obfuscatedUsername = email.substring(0, Math.min(2, atIndex)) + '****';
-    return obfuscatedUsername + email.substring(atIndex);
-  };
+  // const obfuscateEmail = (email) => {
+  //   const atIndex = email.indexOf('@');
+  //   const obfuscatedUsername = email.substring(0, Math.min(2, atIndex)) + '****';
+  //   return obfuscatedUsername + email.substring(atIndex);
+  // };
+  const handelSendActivationToEmail = (e)=>{
+    e.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage("Sending activation code ...");
+    SendActivateEmail({email:emailAddress}).then((res)=>{
+      console.log(res)
+      setSuccessMessage('Verification code sent, cheack mailbox!');
+      setErrorMessage(null);
+    }).catch((err)=>{
+      console.log(err)
+      setErrorMessage('failed to send. try again in 10 sec');
+      setSuccessMessage(null);
+    })
+    setView(false);
+    timeoutView(10000)
+  }
 
   return (
-    <div className="container my-5">
+    <div className="container my-5 fade-in">
       <div className="row align-items-center">
         <div className="col-lg-6">
           <img
@@ -54,7 +78,7 @@ const ActivateAcoontCheckCode = () => {
           />
         </div>
         <div className="col-lg-6 pb-5">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}> 
             <h4>we have send activation code to your email: </h4>
             <h5>{emailAddress}</h5>
             <br/>
@@ -63,7 +87,7 @@ const ActivateAcoontCheckCode = () => {
                 Verification Code
               </label>
               <input
-                type="text"
+                type="number"
                 className="form-control"
                 id="code"
                 name="code"
@@ -73,14 +97,26 @@ const ActivateAcoontCheckCode = () => {
                 required
               />
             </div>
-
-            <div className="d-flex justify-content-between align-items-center mt-4">
             {code && (
+              <>
+            <div className="d-flex justify-content-between align-items-center mt-4">
               <button type="submit" className="btn btn-success">
                 Activate Email
               </button>
-            )}
             </div>
+            
+            </>
+            )}
+            {view && (
+              <div className='fade-in'>
+                <hr className="text-success" />
+                <div className="d-flex justify-content-between align-items-center mt-4">
+                  <button className="btn btn-primary" onClick={handelSendActivationToEmail}>
+                    Send Activation Code Again
+                  </button>
+                </div>
+              </div>
+            )}
             <hr className="text-success" />
 
             {successMessage && (
@@ -98,8 +134,13 @@ const ActivateAcoontCheckCode = () => {
           </form>
 
           <div className="text-center mt-3">
-            <a href="/account/create" className="text-success">
-              Create Now Account!
+            <a href="/Register" className="text-primary">
+              Create Now Account
+            </a>
+          </div>
+          <div className="text-center mt-3">
+            <a href="/Login" className="text-success">
+              Login
             </a>
           </div>
         </div>
