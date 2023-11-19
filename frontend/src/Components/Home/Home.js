@@ -24,6 +24,7 @@ export default function HomeComponent() {
       .catch((error) => console.log(error));
   
     }, []);
+    
   return (
     <div>
       <Landing />
