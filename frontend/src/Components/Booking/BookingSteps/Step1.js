@@ -5,20 +5,24 @@ import { useSelector } from 'react-redux';
 import { getCountries } from '../../../APIs/Countries';
 import { FlightBooking } from '../../../APIs/FlightBooking';
 import { AllClasses } from '../../../APIs/AllClasses';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
-export default function Step1({TotalFare,setIsDataSaved1}) {
+export default function Step1({ TotalFare, setIsDataSaved1 }) {
+    const navigate = useNavigate()
+    const [userDidBookBefore, setUserDidBookBefore] = useState(false)
     const { flights } = useParams()
     const flightIds = flights.split(',');
     const flightID = flightIds[0]
     let userData = useSelector(state => state.loggedInUserSlice.data);
     const [dataSaved, setDataSaved] = useState(false);
-    
+
     // handle click on the header to show or not the content of the step
     const [isContentVisible, setIsContentVisible] = useState(false);
     const handleToggle = () => {
         if (dataSaved !== true)
-        setIsContentVisible(!isContentVisible)
+            setIsContentVisible(!isContentVisible)
     }
 
     // Call api Countries + Classes
@@ -27,7 +31,7 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
     const [classOptions, setClassOptions] = useState([]);
     const [selectedClass, setSelectedClass] = useState('');
     const [selectedClassID, setSelectedClassID] = useState('');
-    const [ classesData, setclassesData ] = useState([])
+    const [classesData, setclassesData] = useState([])
     useEffect(() => {
         const fetchClassOptions = async () => {
             try {
@@ -51,21 +55,21 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
             }
         };
         fetchCountries();
-        if (userData.gender == 'F'){
+        if (userData.gender == 'F') {
             setForm(prevForm => ({
                 ...prevForm,
                 female: true,
                 male: false
             }));
         }
-        else{
+        else {
             setForm(prevForm => ({
                 ...prevForm,
                 female: false,
                 male: true,
             }));
-        }  
-    }, [userData.gender,dataSaved]);
+        }
+    }, [userData.gender, dataSaved]);
 
     // Form State
     const [form, setForm] = useState({
@@ -105,7 +109,7 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
         category: null
     });
 
-    
+
     // Regex Validations
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^01[0125][0-9]{8}$/;      // 010, 011, 012 or 015 + other 8 digits
@@ -270,7 +274,7 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
     const handleSelectClassChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedClass(selectedValue);
-    
+
         // Use the callback function of setState to ensure the latest state is used
         setSelectedClassID(prevClassID => {
             const newClassID = (classesData.find(item => item.name === selectedValue)).id;
@@ -283,7 +287,7 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
         });
     };
 
-   const isFormValid = !formError.category_name && !formError.email && !formError.phone && !formError.first_name && !formError.last_name && (!formError.male || !formError.female) && !formError.birth_date && !formError.country && !formError.passport_number && !formError.passport_expire_date && form.category_name && form.email && form.phone && form.first_name && form.last_name && (form.male || form.female) && form.birth_date && form.country && form.passport_number && form.passport_expire_date
+    const isFormValid = !formError.category_name && !formError.email && !formError.phone && !formError.first_name && !formError.last_name && (!formError.male || !formError.female) && !formError.birth_date && !formError.country && !formError.passport_number && !formError.passport_expire_date && form.category_name && form.email && form.phone && form.first_name && form.last_name && (form.male || form.female) && form.birth_date && form.country && form.passport_number && form.passport_expire_date
 
     // handle click on save and submit button
     const handleOnClickSaveButton = (e) => {
@@ -292,12 +296,26 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
             console.log("Form Submitted Successfully");
             console.log(form)
             FlightBooking(form)
-            .then((res)=>{
-                setDataSaved(true)
-                console.log('res.data',res.data);
-                setIsDataSaved1(true)        
-            })
-            .catch((err)=>{console.log('err.response',err.response);})
+                .then((res) => {
+                    setDataSaved(true)
+                    console.log('res.data', res.data);
+                    setIsDataSaved1(true)
+                })
+                .catch((err) => { 
+                    console.log('err.response', err.response);
+                    const error = err.response.request.response;
+                    const parsedError = JSON.parse(error);
+
+                    if (
+                        parsedError.errors &&
+                        parsedError.errors.non_field_errors &&
+                        parsedError.errors.non_field_errors.includes(
+                            "The fields flight, passenger must make a unique set."
+                        )
+                    ) {
+                        setUserDidBookBefore(true);
+                    }
+                 })
             handleToggle();
         } else {
             console.log("Form Has Errors");
@@ -306,9 +324,33 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
         }
     };
 
+    const handleCloseModal = () => {
+        navigate('/')
+      }
+
     return (
         <>
             <div className='Container'>
+                {/* Confirmation Window/Message */}
+                < Modal show={userDidBookBefore} onHide={handleCloseModal} className='modal-lg modal-dialog-scrollable'>
+                    <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
+                        <Modal.Title>Error Message</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body style={{ backgroundColor: "#fafafa" }}>
+                        <div className='border border-1 rounded-3 p-4 my-3 bg-white' >
+                            <p className='fw-bold'>You do have reserved a ticket on this flight before.</p>
+                        </div>
+                    </Modal.Body>
+                    <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
+                        <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={handleCloseModal}>
+                            Back To Home
+                        </Button>
+                        <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => { navigate('/Profile') }}>
+                            Go to Profile
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
                 {/* Header */}
                 <div onClick={handleToggle}>
                     <Header StepNumber='1' title='Passenger Details' />
@@ -395,7 +437,7 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
                                         ))}
                                     </select>
                                     {formError.country && <div className="form-text text-danger text-start ">{formError.country}</div>}
-                                </div>              
+                                </div>
                                 {/* Passport Number */}
                                 <div className="mb-3">
                                     <label htmlFor="passport_number" className="form-label">Passport Number</label>
@@ -425,7 +467,7 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
                         </div>
                     </>
                 }
-            </div>
+            </div >
         </>
     )
 }
