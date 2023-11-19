@@ -44,6 +44,8 @@ def user_login(request):
     if request.method == 'POST':
         username = request.data.get('username')
         password = request.data.get('password')
+        print(username)
+        print(password)
 
         user = authenticate(request, username=username, password=password)
 
@@ -221,6 +223,7 @@ def transactionDetail(request, id):
         return Response({"errors":serializedTransaction.errors}, status=400)
     
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def notificationsList(request):
     if request.method == 'POST':
         notification = NotificationSerializer(data=request.data)
