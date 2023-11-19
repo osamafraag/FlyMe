@@ -6,10 +6,10 @@ import { AirportsAPI } from './../APIs/AirPorts'
 import { AircraftsAPI } from './../APIs/Aircrafts'
 import {faPlaneArrival, faPlane,faPlaneDeparture,faDollarSign,faClock,
   faTag,faPercent,faMoneyBills} from '@fortawesome/free-solid-svg-icons';
-
+import { useSelector } from 'react-redux/es/hooks/useSelector';
 
 function FlightForm() {
-
+  const token = useSelector(state => state.Token.token);
   const navigate = useNavigate()
   const location = useLocation()
   const [airports,setAirports]=useState([])
@@ -18,14 +18,14 @@ function FlightForm() {
     endAirport:null,distance:0,avalableSeats:0,baseCost:null,status:'A',offerPercentage:null})
 
   useEffect(() => {
-    AirportsAPI()
+    AirportsAPI({Authorization: `Token ${token}`})
     .then((result) => {
       setAirports(result.data)
     })
     .catch((error) => console.log(error));},[]);
 
   useEffect(() => {
-    AircraftsAPI()
+    AircraftsAPI({Authorization: `Token ${token}`})
     .then((result) => {
         setAircrafts(result.data)
     })
@@ -33,7 +33,9 @@ function FlightForm() {
 
   useEffect(() => {
     axiosInstance
-        .get(`flights/api/${location.state?.id}`)
+        .get(`flights/api/${location.state?.id}`, {
+          headers: {Authorization: `Token ${token}`}
+        })
         .then((result) => {
           setFlight(result.data.data)
         })
@@ -53,7 +55,9 @@ function FlightForm() {
     event.preventDefault();
     location.state?
     axiosInstance
-        .put(`/flights/api/${location.state.id}`, flight)  
+        .put(`/flights/api/${location.state.id}`, flight, {
+          headers: {Authorization: `Token ${token}`}
+        })  
         .then((response) => {
           navigate(`/Flights`);
         })
@@ -62,7 +66,9 @@ function FlightForm() {
         })
         :
     axiosInstance
-        .post("flights/api/", flight)
+        .post("flights/api/", flight, {
+          headers: {Authorization: `Token ${token}`}
+        })
         .then((response) => {
           navigate(`/Flights`);
         })

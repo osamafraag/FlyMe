@@ -5,12 +5,13 @@ import { Login } from '../../APIs/Login';
 import { AllUsers } from '../../APIs/AllUsers'
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../../Store/Slice/LoggedInUser';
-import { Token } from '../../Context/Token';
+import { setToken } from '../../Store/Slice/Token';
+// import { Token } from '../../Context/Token';
 
 
 var loginImage = require('../../Assets/Images/Accounts/login.jpg')
 export default function LoginForm() {
-    const { token, setToken } = useContext(Token)
+    // const { token, setToken } = useContext(Token)
     let navigate = useNavigate()
     const dispatch = useDispatch();
     const [errorMessage, seterrorMessage] = useState(null)
@@ -69,7 +70,8 @@ export default function LoginForm() {
                 .then((res) => {
                     console.log(res && res.data);
                     const token_data = res.data.token;
-                    setToken(token_data)
+                    dispatch(setToken(res.data.token))
+                    // setToken(token_data)
                     // Sava User Data in the Reducer
                     AllUsers({
                         Authorization: `Token ${token_data}`,

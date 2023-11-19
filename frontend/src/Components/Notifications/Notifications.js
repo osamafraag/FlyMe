@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import { useNotificationContext } from './NotificationContext';
 
-
 export default function NotificationsComponent() {
+  const token = useSelector(state => state.Token.token);
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
   const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -28,7 +28,9 @@ export default function NotificationsComponent() {
       return;
     }
 
-    fetch(`${API_BASE_URL}/accounts/api/user/${userId}/notifications`)
+    fetch(`${API_BASE_URL}/accounts/api/user/${userId}/notifications`, {
+      headers: {Authorization: `Token ${token}`}
+    })
       .then(response => response.json())
       .then(result => {
         setNotifications(result);
@@ -61,6 +63,7 @@ export default function NotificationsComponent() {
       method: 'PUT', // or 'PATCH'
       headers: {
         'Content-Type': 'application/json',
+        Authorization:  `Token ${token}`
       },
       // Include any necessary request body or headers
     })
@@ -87,6 +90,8 @@ export default function NotificationsComponent() {
   const deleteNotification = (notificationId) => {
     fetch(`${API_BASE_URL}/accounts/api/notifications/${notificationId}`, {
       method: 'DELETE',
+    }, {
+      headers: {Authorization: `Token ${token}`}
     })
       .then((response) => {
         if (response.ok) {

@@ -3,10 +3,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { axiosInstance } from "../APIs/Config";
 import {faClock} from '@fortawesome/free-solid-svg-icons';
-
+import { useSelector } from 'react-redux';
 
 function PostponeForm() {
-
+  const token = useSelector(state => state.Token.token);
   const navigate = useNavigate()
   const location = useLocation()
   const [flight,setFlight]=useState({aircraft:null,departureTime:null,arrivalTime:null,
@@ -14,7 +14,9 @@ function PostponeForm() {
 
   useEffect(() => {
     axiosInstance
-        .get(`flights/api/${location.state?.id}`)
+        .get(`flights/api/${location.state?.id}`, {
+          headers: {Authorization: `Token ${token}`}
+        })
         .then((result) => {
           setFlight(result.data.data)
         })
@@ -33,7 +35,9 @@ function PostponeForm() {
   const onSubmit = (event) => {
     event.preventDefault();
     axiosInstance
-        .put(`/flights/api/${location.state.id}`, flight)  
+        .put(`/flights/api/${location.state.id}`, flight, {
+          headers: {Authorization: `Token ${token}`}
+        })  
         .then((response) => {
           navigate(`/Flights`);
         })

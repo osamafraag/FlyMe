@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function Countries() {
+  const token = useSelector(state => state.Token.token);
   const [countries, SetCountries] = useState([])
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate() 
@@ -17,7 +18,7 @@ export default function Countries() {
       navigate('/Login');
     }
     else
-    GetCountries()
+    GetCountries({Authorization: `Token ${token}`})
     .then((result) => {
       SetCountries(result.data)
     })

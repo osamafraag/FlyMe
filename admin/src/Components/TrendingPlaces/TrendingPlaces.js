@@ -6,10 +6,10 @@ import { Modal, Button } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
 import Carousel from 'react-bootstrap/Carousel';
 import NoImage from "./../../Assets/Images/NoImage.jpg"
-import { Token } from "../../Context/Token";
+import { useSelector } from "react-redux";
 
 export default function TrendingPlaces() {
-  const { token, setToken } = useState(Token)
+  const token = useSelector(state => state.Token.token);
   const [trendingPlaces, setTrendingPlaces] = useState([]);
   const [newTrendingPlace, setNewTrendingPlace] = useState({
     city: "",
@@ -26,7 +26,7 @@ export default function TrendingPlaces() {
   const fetchData = () => {
     axiosInstance
       .get("countries/api/trendingPlaces/", {
-        headers: token
+        headers: {Authorization: `Token ${token}`}
       })
       .then((res) => setTrendingPlaces(res.data))
       .catch((err) => console.error("Error fetching data:", err));
@@ -72,7 +72,7 @@ export default function TrendingPlaces() {
 
       axiosInstance
         .post("/countries/api/trendingPlaces/", newTrendingPlace, {
-          headers: token
+          headers: {Authorization: `Token ${token}`}
         })
         .then((response) => {
           console.log(response.data);
@@ -89,7 +89,7 @@ export default function TrendingPlaces() {
   const handleEdit = (placeId, updatedPlace) => {
     axiosInstance
       .put(`/countries/api/trendingPlaces/${placeId}`, updatedPlace, {
-        headers: token
+        headers: {Authorization: `Token ${token}`}
       })
       .then((response) => {
         console.log(response.data);
@@ -109,7 +109,7 @@ export default function TrendingPlaces() {
 
     axiosInstance
       .delete(`/countries/api/trendingPlaces/${placeId}`, {
-        headers: token
+        headers: {Authorization: `Token ${token}`}
       })
       .then((response) => {
         console.log(response.data);

@@ -9,7 +9,7 @@ import FlightCard from '../Components/Flights/FlightCard'
 import { useSelector } from 'react-redux';
 
 export default function Flights() {
-
+  const token = useSelector(state => state.Token.token);
   const navigate = useNavigate()
   const [flights, setFlights] = useState({})
   let userData = useSelector(state => state.loggedInUserSlice.data);
@@ -24,7 +24,7 @@ export default function Flights() {
   },[userData, navigate]);
 
   function fetchData(){
-    FlightsAPI()
+    FlightsAPI({Authorization: `Token ${token}`})
         .then((result) => {
           setFlights(result.data)
         })
@@ -40,11 +40,15 @@ export default function Flights() {
       return;
     }
     axiosInstance
-        .get(`flights/api/${id}`)
+        .get(`flights/api/${id}`, {
+          headers: {Authorization: `Token ${token}`}
+        })
         .then((result) => {
           result.data.data.status = 'C'
           axiosInstance
-            .put(`/flights/api/${id}`, result.data.data)  
+            .put(`/flights/api/${id}`, result.data.data, {
+              headers: {Authorization: `Token ${token}`}
+            })  
             .then((response) => {
               fetchData()
             })
@@ -64,7 +68,9 @@ export default function Flights() {
     }
 
     axiosInstance
-    .delete(`/flights/api/${flightId}`)  
+    .delete(`/flights/api/${flightId}`, {
+      headers: {Authorization: `Token ${token}`}
+    })  
     .then((response) => {
       fetchData()
     })
