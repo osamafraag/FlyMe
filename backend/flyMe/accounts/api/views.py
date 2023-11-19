@@ -17,12 +17,17 @@ from django.utils.decorators import method_decorator
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated,IsAdminUser])
 def getAllUsers(request):
+
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        token = auth_header.split(' ')[1] if len(auth_header.split(' ')) == 2 else None
+
     users = MyUser.get_all_users()
     serlized_users = []
     for user in users:
         serlized_users.append(UserSerializer(user).data)
     print(serlized_users)
-    return Response({"data":serlized_users,"massage":"data receved"},status=200)
+    return Response({"data":serlized_users, "token":token, "massage":"data receved"},status=200)
 
 
 
@@ -59,10 +64,10 @@ def user_login(request):
 
 ####################################---------  logout  -------------###################################
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def user_logout(request):
 
-    request.user.auth_token.delete()
+    # request.user.auth_token.delete()
 
     logout(request)
 
@@ -74,7 +79,7 @@ def user_logout(request):
 ####################################---------  delete user  (owner and admins) -------------###################################
 @csrf_exempt
 @api_view(['GET','DELETE','PUT'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def delete_user(request, id):
     try:
         user = MyUser.objects.filter(id=id).first()  
@@ -83,18 +88,14 @@ def delete_user(request, id):
     serialized_user = UserSerializer(user)
     
     if request.method == 'DELETE':
-        print(request.user.id)
-        print(id)
-        print(request.user.is_superuser)
-        if request.user.id == id or request.user.is_superuser:
-            user.delete()
-            return Response({'detail': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
-        return Response({'error': 'You don\'t have permission, only for admin'}, status=status.HTTP_403_FORBIDDEN)
+        user.delete()
+        return Response({'detail': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+        # return Response({'error': 'You don\'t have permission, only for admin'}, status=status.HTTP_403_FORBIDDEN)
     
     if request.method == 'GET':
-        if request.user.id == id or request.user.is_superuser:
-            return Response({'detail': serialized_user.data}, status=status.HTTP_204_NO_CONTENT)
-        return Response({'error': 'You don\'t have permission, only for admin'}, status=status.HTTP_403_FORBIDDEN)
+        # if request.user.id == id or request.user.is_superuser:
+        return Response({'detail': serialized_user.data}, status=status.HTTP_204_NO_CONTENT)
+        # return Response({'error': 'You don\'t have permission, only for admin'}, status=status.HTTP_403_FORBIDDEN)
     
     if request.method == 'PUT':
         user_serializer = UserSerializer(instance=user, data=request.data)
@@ -109,37 +110,18 @@ def delete_user(request, id):
 
 ####################################---------   get user data  -------------###################################
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def user_data_view(request):
-    imageURL = None
-    user_data ={'user':'AnonymousUser'}  
-    if not request.user.is_anonymous :
-        if request.user.image:
-            imageURL = request.user.image.url
-        user_data = {
-            'token': request.user.auth_token.key,
-            'id': request.user.id,
-            'username': request.user.username,
-            'email': request.user.email,
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
-            'passport_number': request.user.passport_number,
-            'passport_expire_date': request.user.passport_expire_date,
-            'phone': request.user.phone,
-            'image': imageURL,
-            'is_email_verified': request.user.is_email_verified,
-            'activation_link_created_at': request.user.activation_link_created_at,
-            'birth_date': request.user.birth_date,
-            # 'address': request.user.address,
-            'gender': request.user.gender,
-            'post_code': request.user.post_code,
-            'created_at': request.user.created_at,
-            'updated_at': request.user.updated_at,
-        } 
-        
-    print(request.user)    
-    return Response(user_data,status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        token = auth_header.split(' ')[1] if len(auth_header.split(' ')) == 2 else None
+        print(token)
+        try:
+            user = Token.objects.get(key=token).user
+            user_serializer =  UserSerializer(user).data
+            return Response({"user": user_serializer}, status=status.HTTP_200_OK)
+        except Token.DoesNotExist:
+            return Response({"message": "Unauthorized - Token not found"}, status=status.HTTP_401_UNAUTHORIZED)
+    return Response({"message": "Unauthorized - No token provided"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 
@@ -260,11 +242,22 @@ def notificationDetail(request, id):
 @api_view(['GET', 'POST'])
 def walletsList(request):
     if request.method == 'POST':
-        wallet = WalletSerializer(data=request.data)
-        if wallet.is_valid():
-            wallet.save()
-            return Response({"messsage": 'wallet add Successfully', "wallet":wallet.data}, status=201)
-        return Response({'errors':wallet.errors}, status=400)
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            token = auth_header.split(' ')[1] if len(auth_header.split(' ')) == 2 else None
+            try:
+                user = Token.objects.get(key=token).user
+                wallet = WalletSerializer(data=request.data)
+                if wallet.is_valid():
+                    wallet.save()
+                    return Response({"messsage": 'wallet add Successfully', "wallet":wallet.data}, status=201)
+                return Response({'errors':wallet.errors}, status=400)
+            except Token.DoesNotExist:
+                return Response({"error":"error"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'errors':"error"}, status=400)
+    
+
 
     elif request.method=='GET':
         wallets = Wallet.objects.all()
@@ -312,7 +305,7 @@ def complaintDetail(request, id):
     complaint = Complaint.objects.get(id=id)
     if request.method=='GET':
         serializedComplaint = ComplaintSerializer(complaint)
-        return Response({'data':serializedComplaint.data}, status=200)
+        return Response({'data':serializedComplaint.data,'Access-Control-Allow-Origin':'http://localhost:3000'}, status=200)
 
     elif request.method=='DELETE':
         complaint.delete()

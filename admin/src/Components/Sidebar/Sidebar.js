@@ -13,7 +13,9 @@ import {
   faEnvelope,
   faCartFlatbedSuitcase,
   faPlane,
-  faLayerGroup
+  faLayerGroup,
+  faImages,
+  
 } from '@fortawesome/free-solid-svg-icons'
 
 export default function Sidebar() {
@@ -62,18 +64,31 @@ export default function Sidebar() {
           <FontAwesomeIcon icon={faGlobe} /> Countries
         </NavLink>
       </li>
-
+      <li className="nav-item active my-3 text-start ps-3">
+        <NavLink className='me-3 fw-semibold text-white text-decoration-none'to="/ImagesCountry" >
+        <FontAwesomeIcon icon={faImages} /> ImagesCountry
+        </NavLink>
+      </li>
       {/* Nav Item - Cities  */}
       <li className="nav-item active my-3 text-start ps-3">
         <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/Cities">
           <FontAwesomeIcon icon={faCity} /> Cities
         </NavLink>
       </li>
-
+      <li className="nav-item active my-3 text-start ps-3">
+        <NavLink className='me-3 fw-semibold text-white text-decoration-none'to="/ImagesCity" >
+        <FontAwesomeIcon icon={faImages} /> ImagesCity
+        </NavLink>
+      </li>
       {/* Nav Item - Trending Places  */}
       <li className="nav-item active my-3 text-start ps-3">
         <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/TrendingPlaces">
           <FontAwesomeIcon icon={faRankingStar} /> Trending Places
+        </NavLink>
+      </li>
+      <li className="nav-item active my-3 text-start ps-3">
+        <NavLink className='me-3 fw-semibold text-white text-decoration-none'to="/ImagesTrendPlaces" >
+        <FontAwesomeIcon icon={faImages} /> ImagesTrendPlaces
         </NavLink>
       </li>
 
@@ -97,7 +112,6 @@ export default function Sidebar() {
           <FontAwesomeIcon icon={faPlane} /> Aircrafts
         </NavLink>
       </li>
-
     </ul>
   )
 }

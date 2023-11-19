@@ -17,10 +17,10 @@ urlpatterns = [
     path('notifications/<int:id>', notificationDetail, name='notification.detail'),
     path('user/<int:id>/notifications', userNotifications, name='user.notifications'),
     path('paymentCards/', paymentCardList, name='paymentCards.list'),
-    path('paymentCards/<int:id>/',paymentCardDetail,name='paymentCard.detail'),
+    path('paymentCards/<int:id>',paymentCardDetail,name='paymentCard.detail'),
     path('user/<int:id>/paymentCards',userPaymentCards,name='user.paymentCards'),
     path('complaints/', complaintsList, name='complaint.list'),
-    path('complaints/<int:id>/',complaintDetail,name='complaint.detail'),
+    path('complaints/<int:id>',complaintDetail,name='complaint.detail'),
     path('user/<int:id>/complaints',userComplaints,name='user.complaints'),
 ]
 

@@ -37,9 +37,11 @@ class FlightReviewSerializer(serializers.ModelSerializer):
             return FlightReview.objects.create(**validated_data)
 
 class BookHistorySerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name',read_only=True)
     class Meta:
         model = BookHistory
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ['passenger','flight','category','category_name','status','totalCost','cashBack','paymentMethod','adults','kids','infants']
 
         def create(self, validated_data):
             return BookHistory.objects.create(**validated_data)
