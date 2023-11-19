@@ -10,19 +10,9 @@ var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 export default function Register() {
     let navigate = useNavigate()
     const [errorMessage, seterrorMessage] = useState(null)
-    const [usersArray, setusersArray] = useState()
-    const [userEmailExist, setuserEmailExist] = useState(false)
+    const [usernameExists, setUsernameExists] = useState(false)
+    const [emailExists, setEmailExists] = useState(false)
 
-    // Call All users for validations:
-    useEffect(() => {
-        const fetchUsers = async () => {
-            const result = await userData();
-            setusersArray(result.data.data);
-        };
-        fetchUsers();
-    }, []);
-
-    // Call api countries
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     useEffect(() => {
@@ -93,7 +83,7 @@ export default function Register() {
                 ...form,
                 email: value
             });
-            const emailExists = usersArray ? usersArray.some(user => user.email === value) : false;
+            // const emailExists = usersArray ? usersArray.some(user => user.email === value) : false;
             setFormError({
                 ...formError,
                 email:
@@ -101,7 +91,7 @@ export default function Register() {
                         ? "You Should Enter Your Email"
                         : !value.match(emailRegex)
                             ? "Invalid Email, Email Should Be Like This name@example.com"
-                            : emailExists == true
+                            : emailExists
                             ? "This email already exist"
                             : null
             })
@@ -146,7 +136,7 @@ export default function Register() {
                 ...form,
                 username: value
             });
-            const usernameExists = usersArray ? usersArray.some(user => user.username === value) : false;
+            // const usernameExists = usersArray ? usersArray.some(user => user.username === value) : false;
             setFormError({
                 ...formError,
                 username:
@@ -270,9 +260,6 @@ export default function Register() {
     const handleSelectChange = (event) => {
         const selectedValue = event.target.value;
         console.log('selectedValue', selectedValue)
-
-
-
         setSelectedCountry(selectedValue);
         setForm((prevForm) => ({
             ...prevForm,
@@ -295,6 +282,7 @@ export default function Register() {
                     console.log('Register successful');
                     console.log('res.data',res.data);
                     navigate('/Login');
+                    
                 })
                 .catch((err) => {
                     console.log('Register failed');
@@ -305,7 +293,8 @@ export default function Register() {
                             password: "This password is too common.",
                         });
                     } else {
-                        seterrorMessage('An error occurred. Please try again.');
+                        err.response.data.email && setEmailExists('Email must be unique.');
+                        err.response.data.username && setUsernameExists(err.response.data.username);
                     }
                 });
         } else {
@@ -326,9 +315,11 @@ export default function Register() {
                         width="300"
                     />
                     <div className="col-6 pb-5">
-                        {(errorMessage) && (
+                        {(errorMessage || emailExists || usernameExists) && (
                             <p className="text-danger" style={{ fontSize: '14px' }}>
-                                {errorMessage}
+                                <div>{errorMessage}</div>
+                                <div>{emailExists}</div>
+                                <div>{usernameExists}</div>
                             </p>
                         )}
                         <form method="post" encType="multipart/form-data">

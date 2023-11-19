@@ -8,8 +8,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faReply ,faPencil,faTrash} from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Token } from "../Context/Token";
 
 export default function Complaints() {
+  const { token, setToken } = useState(Token);
+  console.log(Token)
   const [complaints, setComplaints] = useState([]);
   const [show, setShow] = useState(false);
   const [showReply, setShowReply] = useState(false);
@@ -37,7 +40,9 @@ export default function Complaints() {
 
   const handleSubmit = (id) => {
     axiosInstance
-        .get(`accounts/api/complaints/${id}`)
+        .get(`accounts/api/complaints/${id}`, {
+          headers: {Authorization: `Token ${token}`}
+        })
         .then((result) => {
             console.log(result.data.data)
             putData(result.data.data)
@@ -48,7 +53,9 @@ export default function Complaints() {
   function putData(data) {
     data.answer = reply
     axiosInstance
-        .put(`/accounts/api/complaints/${data.id}`, data)  
+        .put(`/accounts/api/complaints/${data.id}`, data, {
+          headers: {Authorization: `Token ${token}`}
+        })  
         .then((response) => {
           fetchData()
         })
@@ -67,11 +74,14 @@ export default function Complaints() {
       navigate('/Login');
     }
     else
-    GetComplaints()
+    GetComplaints({
+      Authorization: `Token ${token}`,
+    })
       .then((result) => {
         setComplaints(result.data);
       })
       .catch((error) => {
+        console.log(token)
         console.log(error);
       });
   }
@@ -83,7 +93,9 @@ export default function Complaints() {
     }
 
     axiosInstance
-    .delete(`accounts/api/complaints/${id}`)  
+    .delete(`accounts/api/complaints/${id}`, {
+      headers: {Authorization: `Token ${token}`}
+    })  
     .then((response) => {
       fetchData()
     })

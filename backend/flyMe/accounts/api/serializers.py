@@ -107,3 +107,24 @@ class PaymentCardSerializer(serializers.ModelSerializer):
         def create(self, validated_data):
             return PaymentCard.objects.create(**validated_data)
     
+
+class PasswordResetTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PasswordResetToken
+        fields = ('token',)  
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    verification_code = serializers.CharField(max_length=6)
+    new_password = serializers.CharField(write_only=True)
+
+    def validate_verification_code(self, value):
+        return value
+
+class CheckVerificationCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    verification_code = serializers.CharField(max_length=6)
+
+    def validate_verification_code(self, value):
+        return value    

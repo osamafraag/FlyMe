@@ -9,31 +9,43 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics
 from django.utils.decorators import method_decorator
+from rest_framework.views import APIView
+from django.core.mail import send_mail
+import secrets
+from django.conf import settings
+from django.shortcuts import get_object_or_404
+from rest_framework.generics import UpdateAPIView
+from django.urls import reverse
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import random
+
 
 
 
 
 ####################################---------  admin panel / view all user data  -------------###################################
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated,IsAdminUser])
+@permission_classes([IsAdminUser])
 def getAllUsers(request):
-
-    auth_header = request.headers.get('Authorization')
-    if auth_header:
-        token = auth_header.split(' ')[1] if len(auth_header.split(' ')) == 2 else None
-
     users = MyUser.get_all_users()
     serlized_users = []
     for user in users:
         serlized_users.append(UserSerializer(user).data)
     print(serlized_users)
+<<<<<<< HEAD
     return Response({"data":serlized_users, "massage":"data receved"},status=200)
+=======
+    return Response({"data":serlized_users,"massage":"data receved"},status=200)
+>>>>>>> e1e2449bc2c6d7554ec126406ed3b6bc04b43c0c
 
 
 
 
 ####################################---------  register  -------------###################################
+
 @method_decorator(csrf_exempt, name='dispatch')
+@permission_classes([AllowAny])
 class RegisterView(generics.CreateAPIView):
     queryset = MyUser.objects.all()
     permission_classes = [AllowAny]
@@ -63,69 +75,50 @@ def user_login(request):
 
 
 ####################################---------  logout  -------------###################################
-@api_view(["GET"])
-# @permission_classes([IsAuthenticated])
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def user_logout(request):
-
-    # request.user.auth_token.delete()
-
-    logout(request)
-
-    return Response('User Logged out successfully')    
+    if request.method == 'POST':
+        request.user.auth_token.delete()
+        logout(request)
+        return Response('User Logged out successfully')    
 
 
 
 
-####################################---------  delete user  (owner and admins) -------------###################################
+####################################---------  delete and edit user  (owner and admins) -------------###################################
 @csrf_exempt
 @api_view(['GET','DELETE','PUT'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def delete_user(request, id):
-    try:
-        user = MyUser.objects.filter(id=id).first()  
-    except MyUser.DoesNotExist:
-        return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-    serialized_user = UserSerializer(user)
-    
-    if request.method == 'DELETE':
-        user.delete()
-        return Response({'detail': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
-        # return Response({'error': 'You don\'t have permission, only for admin'}, status=status.HTTP_403_FORBIDDEN)
-    
-    if request.method == 'GET':
-        # if request.user.id == id or request.user.is_superuser:
-        return Response({'detail': serialized_user.data}, status=status.HTTP_204_NO_CONTENT)
-        # return Response({'error': 'You don\'t have permission, only for admin'}, status=status.HTTP_403_FORBIDDEN)
-    
-    if request.method == 'PUT':
-        user_serializer = UserSerializer(instance=user, data=request.data)
-        if user_serializer.is_valid():
-            user_serializer.save()
-            return Response({'detail': 'your data edited'}, status=status.HTTP_200_OK)
-        return Response({'error': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    # return Response({'error': 'You don\'t have permission'}, status=status.HTTP_403_FORBIDDEN)
-
-
-
+    if request.user.id == id or request.user.is_superuser:
+        user = MyUser.objects.filter(id=id).first()
+        if not user:  
+            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        serialized_user = UserSerializer(user)
+        if request.method == 'DELETE':
+            user.delete()
+            return Response({'detail': 'User deleted successfully'}, status=status.HTTP_200_OK)
+        
+        if request.method == 'GET':
+            return Response({'detail': serialized_user.data}, status=status.HTTP_200_OK)
+        if request.method == 'PUT':
+            user_serializer = UserSerializer(instance=user, data=request.data)
+            if user_serializer.is_valid():
+                user_serializer.save()
+                return Response({'detail': 'your data edited'}, status=status.HTTP_200_OK)
+            return Response({'error': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'massage': 'error you dont have permision'}, status=status.HTTP_200_OK)
 
 ####################################---------   get user data  -------------###################################
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def user_data_view(request):
-    auth_header = request.headers.get('Authorization')
-    if auth_header:
-        token = auth_header.split(' ')[1] if len(auth_header.split(' ')) == 2 else None
-        print(token)
-        try:
-            user = Token.objects.get(key=token).user
-            user_serializer =  UserSerializer(user).data
-            return Response({"user": user_serializer}, status=status.HTTP_200_OK)
-        except Token.DoesNotExist:
-            return Response({"message": "Unauthorized - Token not found"}, status=status.HTTP_401_UNAUTHORIZED)
-    return Response({"message": "Unauthorized - No token provided"}, status=status.HTTP_401_UNAUTHORIZED)
+    user = request.user
+    user_serializer =  UserSerializer(user).data
+    return Response({"user": user_serializer}, status=status.HTTP_200_OK)
+    
 
-
-
-####################################---------  edit user data  -------------###################################
 @api_view(['GET', 'POST'])
 def paymentCardList(request):
     if request.method == 'POST':
@@ -317,3 +310,98 @@ def complaintDetail(request, id):
             serializedComplaint.save()
             return Response({"messsage": 'complaint updated successfully', "complaint": serializedComplaint.data}, status=201)
         return Response({"errors":serializedComplaint.errors}, status=400)
+
+# @receiver(post_save, sender=MyUser)
+# def create_password_reset_token(sender, instance, created, **kwargs):
+#     if created:
+#         token = secrets.token_urlsafe(32)
+#         PasswordResetToken.objects.create(user=instance, token=token)    
+
+# class RequestPasswordReset(APIView):
+#     def post(self, request):
+#         email = request.data.get('email')
+#         user = MyUser.objects.filter(email=email).first()
+
+#         if user:
+#             token = secrets.token_urlsafe(32)
+#             reset_token = PasswordResetToken.objects.create(user=user, token=token)
+            
+
+#             # Send an email with a link containing the token
+#             reset_link = f"{settings.URL}{reverse('complete-password-reset', kwargs={'token': token})}"
+#             send_mail(
+#                 'Password Reset',
+#                 f'Click the following link to reset your password: {reset_link}',
+#                 settings.EMAIL_FROM_USER,
+#                 [user.email],
+#                 fail_silently=False,
+#             )
+
+#             return Response({'message': 'Password reset email sent successfully.'}, status=status.HTTP_200_OK)
+#         else:
+#             return Response({'message': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+# class CompletePasswordReset(UpdateAPIView):
+#     serializer_class = PasswordResetTokenSerializer
+#     def update(self, request, token, *args, **kwargs):
+#         print(token)
+#         reset_token = PasswordResetToken.objects.filter(token=token).first()
+#         print(reset_token)
+#         if not reset_token:
+#             return Response({'message': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+#         # Set a new password for the user
+#         new_password = request.data.get('new_password')
+#         reset_token.user.set_password(new_password)
+#         reset_token.user.save()
+#         reset_token.delete()
+#         return Response({'message': 'Password reset successful.'}, status=status.HTTP_200_OK)
+
+
+class RequestPasswordReset(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        user = get_object_or_404(MyUser, email=email)
+
+        if user:
+            verification_code = str(random.randint(100000, 999999))
+            user.email_verification_code = verification_code
+            user.save()
+
+            # Use Django's send_mail to send the verification code to the user's email
+            send_mail(
+                'Password Reset Verification Code',
+                f'Your verification code is: {verification_code}',
+                'from@example.com',
+                [user.email],
+                fail_silently=False,
+            )
+
+            return Response({'message': 'Verification code sent successfully.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+class CompletePasswordReset(UpdateAPIView):
+    serializer_class = PasswordResetSerializer
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data['email']
+        verification_code = serializer.validated_data['verification_code']
+        user = get_object_or_404(MyUser, email=email, email_verification_code=verification_code)
+        user.set_password(serializer.validated_data['new_password'])
+        user.email_verification_code = None
+        user.save()
+        return Response({'message': 'Password reset successful.'}, status=status.HTTP_200_OK)
+    
+
+class CheckVerificationCode(APIView):
+    serializer_class = CheckVerificationCodeSerializer
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data['email']
+        verification_code = serializer.validated_data['verification_code']
+        user = get_object_or_404(MyUser, email=email, email_verification_code=verification_code)
+        return Response({'message': 'true'}, status=status.HTTP_200_OK)
+

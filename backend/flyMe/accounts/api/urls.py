@@ -22,5 +22,9 @@ urlpatterns = [
     path('complaints/', complaintsList, name='complaint.list'),
     path('complaints/<int:id>',complaintDetail,name='complaint.detail'),
     path('user/<int:id>/complaints',userComplaints,name='user.complaints'),
+    path('request-password-reset/', RequestPasswordReset.as_view(), name='request-password-reset'),
+    # path('reset-password/<token>/', CompletePasswordReset.as_view(), name='complete-password-reset'),
+    path('complete-password-reset/', CompletePasswordReset.as_view(), name='complete-password-reset'),
+    path('cheack-verification-code/', CheckVerificationCode.as_view(), name='cheack-verification-code'),
 ]
 
