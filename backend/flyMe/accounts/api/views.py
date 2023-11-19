@@ -33,11 +33,7 @@ def getAllUsers(request):
     for user in users:
         serlized_users.append(UserSerializer(user).data)
     print(serlized_users)
-<<<<<<< HEAD
     return Response({"data":serlized_users, "massage":"data receved"},status=200)
-=======
-    return Response({"data":serlized_users,"massage":"data receved"},status=200)
->>>>>>> e1e2449bc2c6d7554ec126406ed3b6bc04b43c0c
 
 
 

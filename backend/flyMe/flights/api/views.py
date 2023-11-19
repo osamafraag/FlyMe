@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated , IsAdminUser
 
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated,IsAdminUser])
 def aircraftList(request):
     if request.method == 'POST':
         aircraft = AircraftSerializer(data=request.data)
