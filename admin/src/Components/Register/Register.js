@@ -3,23 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import './register.css'
 import { Register as RegisterAPI } from '../../APIs/Register'
 import { GetCountries } from '../../APIs/Countries';
-import { AllUsers } from '../../APIs/AllUsers'
 
 export default function Register() {
   let navigate = useNavigate()
+  const [isSuperUser, setIsSuperUser] = useState(false)
   const [errorMessage, seterrorMessage] = useState(null)
-  const [usersArray, setusersArray] = useState()
-  const [userEmailExist, setuserEmailExist] = useState(false)
-  const [isSuperUser, setIsSuperUser] = useState(false);
+  const [usernameExists, setUsernameExists] = useState(false)
+  const [emailExists, setEmailExists] = useState(false)
 
   // Call All users for validations:
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const result = await AllUsers();
-      setusersArray(result.data.data);
-    };
-    fetchUsers();
-  }, []);
+  // useEffect(() => {
+  //     const fetchUsers = async () => {
+  //         const result = await userData();
+  //         setusersArray(result.data.data);
+  //     };
+  //     fetchUsers();
+  // }, []);
 
   // Call api countries
   const [countries, setCountries] = useState([]);
@@ -55,7 +54,7 @@ export default function Register() {
     country: '',
     passport_number: '',
     passport_expire_date: '',
-    is_superuser: true
+    is_superuser: false
   })
   const [formError, setFormError] = useState({
     email: null,
@@ -93,7 +92,7 @@ export default function Register() {
         ...form,
         email: value
       });
-      const emailExists = usersArray ? usersArray.some(user => user.email === value) : false;
+      // const emailExists = usersArray ? usersArray.some(user => user.email === value) : false;
       setFormError({
         ...formError,
         email:
@@ -146,7 +145,7 @@ export default function Register() {
         ...form,
         username: value
       });
-      const usernameExists = usersArray ? usersArray.some(user => user.username === value) : false;
+      // const usernameExists = usersArray ? usersArray.some(user => user.username === value) : false;
       setFormError({
         ...formError,
         username:
@@ -263,14 +262,7 @@ export default function Register() {
             ? 'Expirty Date cannot be before today'
             : null
       })
-    }
-
-    else if (name === 'is_superuser') {
-      setForm({
-        ...form,
-        is_superuser: isSuperUser
-      });
-    }
+    } 
   }
 
   // country
@@ -302,6 +294,7 @@ export default function Register() {
           console.log('Register successful');
           console.log('res.data', res.data);
           navigate('/Login');
+
         })
         .catch((err) => {
           console.log('Register failed');
@@ -312,7 +305,8 @@ export default function Register() {
               password: "This password is too common.",
             });
           } else {
-            seterrorMessage('An error occurred. Please try again.');
+            err.response.data.email && setEmailExists(err.response.data.email);
+            err.response.data.username && setUsernameExists(err.response.data.username);
           }
         });
     } else {
@@ -325,8 +319,9 @@ export default function Register() {
 
   return (
     <div>
-      <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start" style={{width: "1000px"}}>
+      <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start">
         <div className="row align-items-center">
+
           <div className="col-12 pb-5">
             {(errorMessage) && (
               <p className="text-danger" style={{ fontSize: '14px' }}>
@@ -429,10 +424,17 @@ export default function Register() {
                   className="form-check-input"
                   id="isSuperUser"
                   checked={isSuperUser}
-                  onChange={() => setIsSuperUser(!isSuperUser)}
+                  onChange={() => {
+                    setIsSuperUser(!isSuperUser)
+                    setForm({
+                      ...form,
+                      is_superuser: !isSuperUser
+                    });
+                  }}
                 />
                 <label className="form-check-label" htmlFor="isSuperUser">Make Me Superuser</label>
               </div>
+
               <center><button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickRegister}>Register</button></center>
               <div>
                 <div className="d-flex justify-content-center ">

@@ -10,17 +10,17 @@ var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 export default function Register() {
     let navigate = useNavigate()
     const [errorMessage, seterrorMessage] = useState(null)
-    const [usersArray, setusersArray] = useState()
-    const [userEmailExist, setuserEmailExist] = useState(false)
+    const [usernameExists, setUsernameExists] = useState(false)
+    const [emailExists, setEmailExists] = useState(false)
 
     // Call All users for validations:
-    useEffect(() => {
-        const fetchUsers = async () => {
-            const result = await userData();
-            setusersArray(result.data.data);
-        };
-        fetchUsers();
-    }, []);
+    // useEffect(() => {
+    //     const fetchUsers = async () => {
+    //         const result = await userData();
+    //         setusersArray(result.data.data);
+    //     };
+    //     fetchUsers();
+    // }, []);
 
     // Call api countries
     const [countries, setCountries] = useState([]);
@@ -93,7 +93,7 @@ export default function Register() {
                 ...form,
                 email: value
             });
-            const emailExists = usersArray ? usersArray.some(user => user.email === value) : false;
+            // const emailExists = usersArray ? usersArray.some(user => user.email === value) : false;
             setFormError({
                 ...formError,
                 email:
@@ -146,7 +146,7 @@ export default function Register() {
                 ...form,
                 username: value
             });
-            const usernameExists = usersArray ? usersArray.some(user => user.username === value) : false;
+            // const usernameExists = usersArray ? usersArray.some(user => user.username === value) : false;
             setFormError({
                 ...formError,
                 username:
@@ -295,6 +295,7 @@ export default function Register() {
                     console.log('Register successful');
                     console.log('res.data',res.data);
                     navigate('/Login');
+                    
                 })
                 .catch((err) => {
                     console.log('Register failed');
@@ -305,7 +306,8 @@ export default function Register() {
                             password: "This password is too common.",
                         });
                     } else {
-                        seterrorMessage('An error occurred. Please try again.');
+                        err.response.data.email && setEmailExists(err.response.data.email);
+                        err.response.data.username && setUsernameExists(err.response.data.username);
                     }
                 });
         } else {
