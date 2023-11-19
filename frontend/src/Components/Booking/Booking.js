@@ -8,8 +8,6 @@ import Step2 from './BookingSteps/Step2';
 import Step3 from './BookingSteps/Step3';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChair, faMoneyCheckDollar, faPercent } from '@fortawesome/free-solid-svg-icons'
 
 export default function BookingComponent() {
   const [insurance, setInsurance] = useState(0)
