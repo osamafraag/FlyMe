@@ -176,6 +176,7 @@ import { useSelector } from 'react-redux';
 import { useNotificationContext } from './NotificationContext';
 import { axiosInstance } from "./../../APIs/Config";
 
+
 export default function NotificationsComponent() {
   const token = useSelector(state => state.Token.token);
   const [notifications, setNotifications] = useState([]);
@@ -265,9 +266,7 @@ export default function NotificationsComponent() {
   }
   const markNotificationAsRead = (notificationId) => {
       axiosInstance
-        .get(`accounts/api/notifications/${notificationId}`, {
-          headers: {Authorization: `Token ${token}`}
-        })
+        .get(`accounts/api/notifications/${notificationId}`)
         .then((result) => {
           console.log(result)
           result.data.data.status = 'READ'
