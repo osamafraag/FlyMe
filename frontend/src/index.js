@@ -8,6 +8,7 @@ import 'jquery/dist/jquery.min.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import { Provider } from 'react-redux';
 import Store from './Store';
+import { NotificationProvider } from './Components/Notifications/NotificationContext';
 
 // const cors = require("cors");
 // App.use(cors());
@@ -16,7 +17,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
   <Provider store={Store}>
-    <App />
+    <NotificationProvider>
+      <App />
+    </NotificationProvider>
   </Provider>
   // </React.StrictMode>
 );

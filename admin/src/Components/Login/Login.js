@@ -1,14 +1,16 @@
-import {React, useState} from 'react'
+import {React, useState, useContext} from 'react'
 import { useNavigate } from 'react-router-dom';
 import './login.css'
 import { Login } from '../../APIs/Login';
 import { AllUsers } from '../../APIs/AllUsers'
 import { useDispatch  } from 'react-redux';
 import { loginSuccess } from '../../Store/Slice/LoggedInUser';
+import { Token } from '../../Context/Token';
 
 
 var loginImage = require('../../Assets/Images/Accounts/login.jpg')
 export default function LoginForm() {
+    const { token, setToken } = useContext(Token)
     let navigate = useNavigate()
     const dispatch = useDispatch();
     const [ errorMessage, seterrorMessage ] = useState(null)
@@ -66,8 +68,12 @@ export default function LoginForm() {
             Login(form)
                 .then((res) => {
                     console.log(res && res.data);
+                    const token_data = res.data.token;
+                    setToken(token_data)
                     // Sava User Data in the Reducer
-                    AllUsers()
+                    AllUsers({
+                        Authorization: `Token ${token_data}`,
+                      })
                     .then((result) => {
                         const usersArray = result.data.data;
                         const logedinUser = usersArray.filter(user => user.username === form.username);
@@ -135,10 +141,6 @@ export default function LoginForm() {
                                 </div>
                             </div>
                         </form>
-                        <hr />
-                        <div className="text-center">
-                            <a href="" className="text-decoration-none" style={{color: '#426a9d'}} onClick={()=>navigate('/Register')}>Create New Account!</a>
-                        </div>
                     </div>
                 </div>
             </div>
