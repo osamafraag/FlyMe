@@ -6,12 +6,13 @@ var Visa = require('../../../Assets/Images/Booking/Visa.png')
 var MasterCard = require('../../../Assets/Images/Booking/MasterCard.png')
 
 
-export default function Step3({ dataSavedd }) {
+export default function Step3({setIsDataSaved3}) {
+    const [errorMessage, seterrorMessage] = useState(null)
+    const [dataSaved, setDataSaved] = useState(false);
     // handle click on the header to show or not the content of the step
     const [isContentVisible, setIsContentVisible] = useState(false);
     const handleToggle = () => {
-        console.log(dataSavedd)
-        if (dataSavedd) 
+        if (dataSaved !== true) 
         setIsContentVisible(!isContentVisible)
     }
 
@@ -101,8 +102,12 @@ export default function Step3({ dataSavedd }) {
         e.preventDefault();
         if (isFormValid) {
             console.log("Form Submitted Successfully");
+            handleToggle();
+            setDataSaved(true)
+            setIsDataSaved3(true)
         } else {
             console.log("Form Has Errors");
+            seterrorMessage('Please enter all data.')
             console.log(formError);
             console.log(form);
         }
@@ -123,6 +128,11 @@ export default function Step3({ dataSavedd }) {
                             We'll never share your data with anyone.
                         </div>
                         <div className='Body'>
+                        {(errorMessage) && (
+                            <div className="text-danger" style={{ fontSize: '14px' }}>
+                                <div>{errorMessage}</div>
+                            </div>
+                        )}
                             <form>
                                 {/* Card Type */}
                                 <div className="mb-3 d-flex">
