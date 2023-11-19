@@ -56,8 +56,11 @@ function PostponeForm() {
         <input type="datetime-local" class="form-control" id="inputGroup5" required name='arrivalTime'
         onChange={handleInputChange}/>
       </div>
-      <button type="submit" className='btn btn-warning mx-auto mt-4 w-25'>
-        <span>Postpone Flight</span></button>
+      <div className='input-group mx-auto mt-4'>
+        <button type="submit" className='btn mx-auto text-white border-0 ' style={{backgroundColor: "var(--main-color)"}}>
+          <span>Postpone Flight</span>
+        </button>
+      </div>
       </div>
     </form>
     </div>

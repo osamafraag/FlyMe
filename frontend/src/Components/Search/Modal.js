@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Flight from './Flight';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChair,faMoneyCheckDollar} from '@fortawesome/free-solid-svg-icons'
+import { faChair,faMoneyCheckDollar, faPercent} from '@fortawesome/free-solid-svg-icons'
 
 const CustomModal = ({ show, handleClose, handleBooking, title, flights }) => {
   return (
@@ -29,6 +29,7 @@ const CustomModal = ({ show, handleClose, handleBooking, title, flights }) => {
                   <div className='other-info mt-5 row row-cols-3 justify-content-center align-item-center'>
                     <p className='text-center mb-4'><FontAwesomeIcon icon={faChair} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Available Seats: </span>{segment.availableSeats}</p>
                     <p className='text-center mb-4'><FontAwesomeIcon icon={faMoneyCheckDollar} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Base Cost: </span>{segment.baseCost}</p>
+                    <p className='text-center mb-4'><FontAwesomeIcon icon={faPercent} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Offer: </span>{segment.offerPercentage}</p>
                   </div>
                   <br/><br/>
                 </>
@@ -46,6 +47,7 @@ const CustomModal = ({ show, handleClose, handleBooking, title, flights }) => {
               <div className='other-info mt-5 row row-cols-3 justify-content-center align-item-center'>
                 <p className='text-center mb-4'><FontAwesomeIcon icon={faChair} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Available Seats: </span>{flight.availableSeats}</p>
                 <p className='text-center mb-4'><FontAwesomeIcon icon={faMoneyCheckDollar} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Base Cost: </span>{flight.baseCost}</p>
+                <p className='text-center mb-4'><FontAwesomeIcon icon={faPercent} style={{color: "var(--main-color)"}}/> <span className='fw-bold'>Offer: </span>{flight.offerPercentage}%</p>
               </div>
               </>
              )}

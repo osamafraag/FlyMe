@@ -9,9 +9,12 @@ import { faPlaneDeparture, faBell } from '@fortawesome/free-solid-svg-icons'
 import { logout, logData } from '../../Store/Slice/LoggedInUser';
 import { useDispatch  } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { useState } from "react";
+import { useNotificationContext } from './../Notifications/NotificationContext';
 
 
 export default function NavBar() {
+  const { unreadCount } = useNotificationContext();
   const isUser = useSelector(state => state.loggedInUserSlice.data !== null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,7 +32,7 @@ export default function NavBar() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Book">Book</NavLink>
+            <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Book">Book & Offers</NavLink>
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/AboutUs">About</NavLink>
             <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Help">Help</NavLink>
           </Nav>
@@ -41,7 +44,10 @@ export default function NavBar() {
                 :
                 <div>
                   <NavLink onClick={handleLogout} className='me-3 fw-semibold text-dark text-decoration-none'><FontAwesomeIcon icon={faArrowRightFromBracket}/> Logout</NavLink>
-                  <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Notifications"><FontAwesomeIcon icon={faBell} /> Notifications</NavLink>
+                  <NavLink className='me-3 fw-semibold text-dark text-decoration-none px-3' to="/Notifications"><FontAwesomeIcon icon={faBell} /> {unreadCount > 0 &&  <span class="position-absolute top-3 start-60 translate-middle badge rounded-pill bg-danger">
+                     {unreadCount}
+                    <span class="visually-hidden">unread messages</span>
+                  </span>}</NavLink>
                   <NavLink className='me-3 fw-semibold text-dark text-decoration-none ' to="/Profile">{userData.username}</NavLink>
                 </div>
             }

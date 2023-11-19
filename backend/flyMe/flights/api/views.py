@@ -1,10 +1,11 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from flights.models import *
 from flights.api.serializers import *
 from accounts.models import *
 from datetime import datetime
 from cities_light.models import City
+from rest_framework.permissions import IsAuthenticated , IsAdminUser
 
 
 @api_view(['GET', 'POST'])
