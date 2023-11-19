@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { CheckVerificationCode, ResetPasswordApi } from '../../APIs/ForgetPassword';
 import { EmailAddress } from '../../Context/EmailAddress';
-import './ResetPassword.css';
+import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
   const { emailAddress } = useContext(EmailAddress);
@@ -9,6 +9,7 @@ const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (code) {
@@ -33,6 +34,7 @@ const ResetPassword = () => {
         console.log(res.data);
         setSuccessMessage('Password reset successful!');
         setErrorMessage('');
+        navigate("/login")
       })
       .catch((err) => {
         console.log(err);
@@ -42,7 +44,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="container my-5">
+    <div className="container my-5 fade-in">
       <div className="row align-items-center">
         <div className="col-lg-6">
           <img

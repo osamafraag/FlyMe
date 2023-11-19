@@ -29,6 +29,7 @@ class MyUser(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     email_verification_code = models.CharField(max_length=6, blank=True, null=True)
+    activation_code = models.CharField(max_length=6, blank=True, null=True)
 
 
     def save(self, *args, **kwargs):

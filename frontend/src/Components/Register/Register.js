@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import './register.css'
-import { Register as RegisterAPI } from '../../APIs/Register'
+import { Register as RegisterAPI, SendActivateEmail } from '../../APIs/Register'
 import { getCountries } from '../../APIs/Countries';
 import { userData } from '../../APIs/AllUsers'
 
@@ -281,8 +281,13 @@ export default function Register() {
                 .then((res) => {
                     console.log('Register successful');
                     console.log('res.data',res.data);
-                    navigate('/Login');
-                    
+                    const email = form.email
+                    SendActivateEmail({email:email}).then((result)=>{
+                        console.log(result)
+                        navigate('/Login');
+                    }).catch((error)=>{
+                        console.log(error)
+                    })
                 })
                 .catch((err) => {
                     console.log('Register failed');

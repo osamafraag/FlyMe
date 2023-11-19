@@ -16,6 +16,7 @@ const Nottificate = React.lazy(() => import('../Pages/Notifications'));
 const Error = React.lazy(() => import('../Pages/404'));
 const ForgetPassword = React.lazy(() => import('../../src/Pages/ForgetPassword/ForgetPassword'));
 const ResetPassword = React.lazy(() => import('../../src/Pages/ForgetPassword/ResetPassword'));
+const ActivateAccountPage = React.lazy(() => import('../../src/Pages/ActivateAccountPage'));
 
 
 export default function Router() {
@@ -36,6 +37,7 @@ export default function Router() {
         <Route path="/Notifications" element={<Nottificate />} />
         <Route path="/ForgetPassword" element={<ForgetPassword />} />
         <Route path="/ResetPassword" element={<ResetPassword />} />
+        <Route path="/CheckActivationCode" element={<ActivateAccountPage />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Suspense>
