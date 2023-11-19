@@ -13,8 +13,6 @@ export default function Step1({ TotalFare, setIsDataSaved1 }) {
     const navigate = useNavigate()
     const [userDidBookBefore, setUserDidBookBefore] = useState(false)
     const { flights } = useParams()
-    const flightIds = flights.split(',');
-    const flightID = flightIds[0]
     let userData = useSelector(state => state.loggedInUserSlice.data);
     const [dataSaved, setDataSaved] = useState(false);
 
@@ -93,7 +91,7 @@ export default function Step1({ TotalFare, setIsDataSaved1 }) {
         adults: 1,
         kids: 0,
         infants: 0,
-        flight: flightID,
+        flight: '',
     })
     const [formError, setFormError] = useState({
         email: null,
@@ -289,40 +287,63 @@ export default function Step1({ TotalFare, setIsDataSaved1 }) {
 
     const isFormValid = !formError.category_name && !formError.email && !formError.phone && !formError.first_name && !formError.last_name && (!formError.male || !formError.female) && !formError.birth_date && !formError.country && !formError.passport_number && !formError.passport_expire_date && form.category_name && form.email && form.phone && form.first_name && form.last_name && (form.male || form.female) && form.birth_date && form.country && form.passport_number && form.passport_expire_date
 
-    // handle click on save and submit button
     const handleOnClickSaveButton = (e) => {
         e.preventDefault();
         if (isFormValid) {
-            console.log("Form Submitted Successfully");
-            console.log(form)
-            FlightBooking(form)
-                .then((res) => {
-                    setDataSaved(true)
-                    console.log('res.data', res.data);
-                    setIsDataSaved1(true)
-                })
-                .catch((err) => { 
-                    console.log('err.response', err.response);
-                    const error = err.response.request.response;
-                    const parsedError = JSON.parse(error);
-
-                    if (
-                        parsedError.errors &&
-                        parsedError.errors.non_field_errors &&
-                        parsedError.errors.non_field_errors.includes(
-                            "The fields flight, passenger must make a unique set."
-                        )
-                    ) {
-                        setUserDidBookBefore(true);
-                    }
-                 })
-            handleToggle();
+          console.log('Form Submitted Successfully');
+      
+          const flightIds = flights.split(',');
+      
+          const promises = flightIds.map((flightId) => {
+            const passengerData = {
+              passenger: userData.id || '',
+              email: form.email,
+              phone: form.phone,
+              first_name: form.first_name,
+              last_name: form.last_name,
+              male: form.male,
+              female: form.female,
+              birth_date: form.birth_date,
+              country: form.country,
+              passport_number: form.passport_number,
+              passport_expire_date: form.passport_expire_date,
+              category: form.category,
+              category_name: form.category_name,
+              status: 'A',
+              totalCost: TotalFare,
+              cashBack: 0,
+              paymentMethod: 'C',
+              adults: 1,
+              kids: 0,
+              infants: 0,
+              flight: parseInt(flightId),
+            };
+      
+            return FlightBooking(passengerData);
+          });
+      
+          Promise.all(promises)
+            .then((responses) => {
+              setDataSaved(true);
+              console.log('Responses:', responses);
+              setIsDataSaved1(true);
+            })
+            .catch((err) => {
+              console.log('Error:', err);
+              setUserDidBookBefore(true);
+            });
+      
+          handleToggle();
         } else {
-            console.log("Form Has Errors");
-            console.log(formError);
-            console.log(form);
+          console.log('Form Has Errors');
+          console.log(formError);
+          console.log(form);
         }
-    };
+      };
+      
+      
+      
+      
 
     const handleCloseModal = () => {
         navigate('/')
@@ -471,3 +492,4 @@ export default function Step1({ TotalFare, setIsDataSaved1 }) {
         </>
     )
 }
+
