@@ -41,7 +41,7 @@ class BookHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = BookHistory
         # fields = '__all__'
-        fields = ['passenger','flight','category','category_name','status','totalCost','cashBack','paymentMethod','adults','kids','infants']
+        fields = ['id','passenger','flight','category','category_name','status','totalCost','cashBack','paymentMethod','adults','kids','infants']
 
         def create(self, validated_data):
             return BookHistory.objects.create(**validated_data)

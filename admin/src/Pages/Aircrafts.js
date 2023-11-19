@@ -1,4 +1,4 @@
-import { useState, useEffect, React} from 'react';
+import { useState, useEffect, useContext, React} from 'react';
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../APIs/Config";
 import { AircraftsAPI } from './../APIs/Aircrafts';
@@ -11,6 +11,7 @@ import lockheed from "./../Assets/Images/aircrafts/lockheedMartin.png";
 import {faWeightHanging, faPlane,faPersonWalkingLuggage,faTrash,faPenToSquare,faPlus,
         faPeopleGroup,faPlaneDeparture} from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
+import { Token } from "../Context/Token";
 
 export default function Aircrafts() {
   const token = useSelector(state => state.Token.token);
@@ -18,7 +19,8 @@ export default function Aircrafts() {
   const navigate = useNavigate()
   const [aircrafts, setAircrafts] = useState([])
   function fetchData(){
-    AircraftsAPI()
+    console.log(token)
+    AircraftsAPI({Authorization: `Token ${token}`,})
         .then((result) => {
           setAircrafts(result.data)
         })

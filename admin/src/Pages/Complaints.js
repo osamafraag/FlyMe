@@ -38,9 +38,7 @@ export default function Complaints() {
 
   const handleSubmit = (id) => {
     axiosInstance
-        .get(`accounts/api/complaints/${id}`, {
-          headers: {Authorization: `Token ${token}`}
-        })
+        .get(`accounts/api/complaints/${id}`)
         .then((result) => {
             console.log(result.data.data)
             putData(result.data.data)
@@ -51,10 +49,9 @@ export default function Complaints() {
   function putData(data) {
     data.answer = reply
     axiosInstance
-        .put(`/accounts/api/complaints/${data.id}`, data, {
-          headers: {Authorization: `Token ${token}`}
-        })  
+        .put(`/accounts/api/complaints/${data.id}`, data)  
         .then((response) => {
+          console.log(response)
           fetchData()
         })
         .catch((error) => {
@@ -72,10 +69,9 @@ export default function Complaints() {
       navigate('/Login');
     }
     else
-    GetComplaints({
-      Authorization: `Token ${token}`,
-    })
+    GetComplaints()
       .then((result) => {
+        console.log(result.data)
         setComplaints(result.data);
       })
       .catch((error) => {

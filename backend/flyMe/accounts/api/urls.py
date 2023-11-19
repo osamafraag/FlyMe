@@ -26,5 +26,9 @@ urlpatterns = [
     # path('reset-password/<token>/', CompletePasswordReset.as_view(), name='complete-password-reset'),
     path('complete-password-reset/', CompletePasswordReset.as_view(), name='complete-password-reset'),
     path('cheack-verification-code/', CheckVerificationCode.as_view(), name='cheack-verification-code'),
+    path('request-activate-code/', SendActivateEmail.as_view(), name='request-activate-code'),
+    path('activate-account/', ActivateAccount.as_view(), name='activate-account'),
+
+
 ]
 
