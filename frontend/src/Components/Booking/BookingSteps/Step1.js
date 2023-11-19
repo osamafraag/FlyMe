@@ -65,7 +65,6 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
                 male: true,
             }));
         }  
-        
     }, [userData.gender,dataSaved]);
 
     // Form State
@@ -268,18 +267,21 @@ export default function Step1({TotalFare,setIsDataSaved1}) {
     };
 
     // Class
-    const handleSelectClassChange = (event) =>{
+    const handleSelectClassChange = (event) => {
         const selectedValue = event.target.value;
         setSelectedClass(selectedValue);
-        setSelectedClassID((classesData.find(item => item.name === selectedValue)).id)    
-        setForm((prevForm) => ({
-            ...prevForm,
-            category_name: selectedValue,
-            category: selectedClassID
-        }))
-        console.log(selectedClassID)
-        console.log(form.category)
-    }
+    
+        // Use the callback function of setState to ensure the latest state is used
+        setSelectedClassID(prevClassID => {
+            const newClassID = (classesData.find(item => item.name === selectedValue)).id;
+            setForm(prevForm => ({
+                ...prevForm,
+                category_name: selectedValue,
+                category: newClassID
+            }));
+            return newClassID;
+        });
+    };
 
    const isFormValid = !formError.category_name && !formError.email && !formError.phone && !formError.first_name && !formError.last_name && (!formError.male || !formError.female) && !formError.birth_date && !formError.country && !formError.passport_number && !formError.passport_expire_date && form.category_name && form.email && form.phone && form.first_name && form.last_name && (form.male || form.female) && form.birth_date && form.country && form.passport_number && form.passport_expire_date
 
