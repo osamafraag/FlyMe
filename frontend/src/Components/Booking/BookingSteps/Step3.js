@@ -6,12 +6,12 @@ var Visa = require('../../../Assets/Images/Booking/Visa.png')
 var MasterCard = require('../../../Assets/Images/Booking/MasterCard.png')
 
 
-export default function Step3({ dataSavedd }) {
+export default function Step3() {
     // handle click on the header to show or not the content of the step
     const [isContentVisible, setIsContentVisible] = useState(false);
     const handleToggle = () => {
-        console.log(dataSavedd)
-        if (dataSavedd) 
+        // console.log(dataSavedd)
+        // if (dataSavedd) 
         setIsContentVisible(!isContentVisible)
     }
 
