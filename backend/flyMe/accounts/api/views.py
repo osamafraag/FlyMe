@@ -27,7 +27,7 @@ def getAllUsers(request):
     for user in users:
         serlized_users.append(UserSerializer(user).data)
     print(serlized_users)
-    return Response({"data":serlized_users, "token":token, "massage":"data receved"},status=200)
+    return Response({"data":serlized_users, "massage":"data receved"},status=200)
 
 
 
