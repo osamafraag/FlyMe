@@ -10,17 +10,29 @@ import { logout, logData } from '../../Store/Slice/LoggedInUser';
 import { useDispatch  } from 'react-redux';
 import { useSelector } from 'react-redux';
 import Profile from "./../../Assets/Images/Profile1.svg"
+import { useContext } from "react";
+import {Token} from "../../Context/Token"
+import { Logout } from "../../APIs/Login";
 
 
 export default function NavBar() {
   const isUser = useSelector(state => state.loggedInUserSlice.data !== null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {token} = useContext(Token)
 
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const handleLogout = () => {
-    dispatch(logout())
-    navigate('/');
+
+    Logout({
+      Authorization: `Token ${token}`,
+    }).then((res)=>{
+      console.log(res.data)
+      dispatch(logout())
+      navigate('/');
+    }).catch((error)=>{
+      console.log(error)
+    });
   };
 
   return (

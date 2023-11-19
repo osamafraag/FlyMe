@@ -28,6 +28,7 @@ class MyUser(AbstractUser):
     post_code = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    email_verification_code = models.CharField(max_length=6, blank=True, null=True)
 
 
     def save(self, *args, **kwargs):
@@ -184,3 +185,12 @@ class Notification(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+
+class PasswordResetToken(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    token = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+

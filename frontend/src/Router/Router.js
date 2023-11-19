@@ -14,6 +14,8 @@ const Login = React.lazy(() => import('../Pages/Login'));
 const Register = React.lazy(() => import('../Pages/Register'));
 const Nottificate = React.lazy(() => import('../Pages/Notifications'));
 const Error = React.lazy(() => import('../Pages/404'));
+const ForgetPassword = React.lazy(() => import('../../src/Pages/ForgetPassword/ForgetPassword'));
+const ResetPassword = React.lazy(() => import('../../src/Pages/ForgetPassword/ResetPassword'));
 
 
 export default function Router() {
@@ -32,6 +34,8 @@ export default function Router() {
         <Route path="/Login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/Notifications" element={<Nottificate />} />
+        <Route path="/ForgetPassword" element={<ForgetPassword />} />
+        <Route path="/ResetPassword" element={<ResetPassword />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Suspense>
