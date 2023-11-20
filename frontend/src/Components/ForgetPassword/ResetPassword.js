@@ -2,6 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { CheckVerificationCode, ResetPasswordApi } from '../../APIs/ForgetPassword';
 import { EmailAddress } from '../../Context/EmailAddress';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../Store/Slice/LoggedInUser';
+import { setToken } from '../../Store/Slice/Token';
 
 const ResetPassword = () => {
   const { emailAddress } = useContext(EmailAddress);
@@ -10,6 +13,11 @@ const ResetPassword = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate()
+
+  // if user loged in .. it loges out
+  const dispatch = useDispatch()
+  dispatch(setToken(null))
+  dispatch(logout())
 
   useEffect(() => {
     if (code) {

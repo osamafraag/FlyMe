@@ -1,16 +1,23 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { SendPasswordResetCode } from '../../APIs/ForgetPassword';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { EmailAddress } from '../../Context/EmailAddress';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../Store/Slice/LoggedInUser';
+import { setToken } from '../../Store/Slice/Token';
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const {setEmailAddress} = useContext(EmailAddress)
+  const { setEmailAddress } = useContext(EmailAddress)
   const navigate = useNavigate();
 
+  // if user loged in .. it loges out
+  const dispatch = useDispatch()
+  dispatch(setToken(null))
+  dispatch(logout())
 
   const handleSubmit = async (e) => {
     e.preventDefault();
