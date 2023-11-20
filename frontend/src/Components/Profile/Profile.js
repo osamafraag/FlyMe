@@ -8,8 +8,8 @@ import { FlightData } from '../../APIs/FlightData';
 
 const Profile = () => {
   const token = useSelector(state => state.Token.token) || {};
-  const [flightHistory, setFlightHistory] = useState()
-  const [flightData, setFlightData] = useState()
+  const [flightHistory, setFlightHistory] = useState([])
+  const [flightData, setFlightData] = useState([])
   const [showModal, setShowModal] = useState(false)
   const userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate()
@@ -102,11 +102,11 @@ const Profile = () => {
                 <ul className="list-group list-group-flush rounded-3 p-4" style={{ listStyleType: 'none' }}>
                   {
                     !flightHistory
-                      ? <li>You Don't Have any history</li>
+                      ? <li className="text-center">You Didn't Book Any Flight</li>
                       : flightHistory.map((flight, index) => (
-                        <li className="d-flex justify-content-between py-2" key={index}>
+                        <li className="d-flex justify-content-between align-items-center py-2" key={index}>
                           <span>{flightData[index].data.departureTime}</span>
-                          <button onClick={() => setShowModal(true)}>click</button>
+                          <button type="button" className="btn btn-primary" onClick={() => setShowModal(true)}>click</button>
                           <Modal show={showModal} onHide={() => setShowModal(false)} className='modal-lg modal-dialog-scrollable'>
                             <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
                               <Modal.Title>Flight Details</Modal.Title>
