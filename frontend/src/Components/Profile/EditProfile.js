@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { EditUserData } from '../../APIs/EditUser';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from "./../../Store/Slice/LoggedInUser"
 
 var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 
@@ -20,6 +22,7 @@ export default function EditProfile() {
 
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
+    const dispatch = useDispatch();
     useEffect(() => {
         // If !user navigate to login page 
         if (!userData || Object.keys(userData).length === 0) {
@@ -31,8 +34,7 @@ export default function EditProfile() {
         const fetchCountries = async () => {
             try {
                 const data = await getCountries();
-                const countryNames = data.map(country => country.name);
-                setCountries(countryNames);
+                setCountries(data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
@@ -239,20 +241,24 @@ export default function EditProfile() {
 
     const handleOnClickPassword = () =>{
         console.log(token, password, userData.id)
-        EditUserData(form ,token, password, userData.id)
-                .then((res) => {
-                    console.log('Edit Data successful');
-                    console.log('res.data', res.data);
-                })
-                .catch((err) => {
-                    console.log('Edit Data failed');
-                    console.log(err);
-                    err.response.data.email && setEmailExists('Email must be unique.');
-                    setShowModal(true)
-                    seterrorMessage(err.config.message); // Update error message
-                    setSuccessMessage('');
-                    console.log('err',err);
-                });
+        EditUserData(form , {Authorization: `Token ${token}`} , password, userData.id)
+        .then((res) => {
+            console.log('Edit Data successful');
+            console.log('res.data', res.data);
+            dispatch(loginSuccess(res.data.data))
+            setShowModal(false);
+            navigate("/Profile")
+        })
+        .catch((err) => {
+            console.log('Edit Data failed');
+            console.log(err);
+            err.response.data.email && setEmailExists('Email must be unique.');
+            setShowModal(false)
+            seterrorMessage(err.config.message); // Update error message
+            setSuccessMessage('');
+            console.log('err',err);
+        });
+        setShowModal(false)
     }
 
     return (
@@ -316,7 +322,7 @@ export default function EditProfile() {
                             </div>
                             {/* country */}
                             <div className="mb-3">
-                                <label htmlFor="country" className="form-label">country</label>
+                                <label htmlFor="country" className="form-label">Country</label>
                                 <select
                                     className="form-select"
                                     name="country"
@@ -326,7 +332,7 @@ export default function EditProfile() {
                                 >
                                     <option value="" disabled>Select your country</option>
                                     {countries.map((country, index) => (
-                                        <option key={index} value={country}>{country}</option>
+                                        <option key={index} value={country.id}>{country.name}</option>
                                     ))}
                                 </select>
                                 {formError.country && <div className="form-text text-danger text-start ">{formError.country}</div>}

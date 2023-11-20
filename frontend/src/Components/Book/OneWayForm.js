@@ -60,23 +60,21 @@ const OneWayForm = ({ handleFlightData, cities }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (destinationFrom === destinationTo & destinationTo != "" & destinationFrom != "") {
-      setErrorTo("You Can't Select Destination To To Be The Same Of From")
+    if (destinationFrom === destinationTo && destinationTo !== "" && destinationFrom !== "") {
+      setErrorTo("You can't select the same destination for 'From' and 'To'");
       return;
-    } else if (destinationFrom == "" & destinationTo == "") {
-      setErrorFrom("Required")
-      setErrorTo("Required")
+    } else if (destinationFrom === "" && destinationTo === "") {
+      setErrorFrom("Required");
+      setErrorTo("Required");
       return;
-    } else if (destinationFrom == "") {
-      setErrorFrom("Required")
+    } else if (destinationFrom === "") {
+      setErrorFrom("Required");
       return;
-    } else if (destinationTo == "") {
-      setErrorTo("Required")
+    } else if (destinationTo === "") {
+      setErrorTo("Required");
       return;
     }
-
-    const now = new Date();
-
+  
     SearchFlight(
       destinationFrom,
       destinationTo,
@@ -84,20 +82,17 @@ const OneWayForm = ({ handleFlightData, cities }) => {
       departureMonth,
       departureDay,
       directFlightsOnly
-   )
-   .then((searchResults) => {
-       const filteredResults = searchResults.data.filter(flight =>
-        new Date(flight.departure) > now && new Date(flight.departure) < new Date(now.getTime() + 1 * 60 * 60 * 1000)
-      );
-
-      handleFlightData(filteredResults);
-   })
-   .catch((error) => {
-      handleFlightData([]);
-      console.error("Error fetching search results:", error);
-   });
+    )
+      .then((searchResults) => {
+        console.log(searchResults.data)
+        handleFlightData(searchResults.data);
+      })
+      .catch((error) => {
+        handleFlightData([]);
+        console.error("Error fetching search results:", error);
+      });
   };
-
+  
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const toQuery = queryParams.get('to');

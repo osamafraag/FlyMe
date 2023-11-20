@@ -163,7 +163,8 @@ export default function TrendingPlaces() {
                   <Card.Title>{place.name}</Card.Title>
                   <Card.Text>
                     {place.name} - {place.cityName},{" "}
-                    {place.countryName}
+                    {place.countryName} 
+                    <p>id &rarr; {place.id}</p>
                   </Card.Text>
                   <div className="d-flex justify-content-between align-items-center">
                     <Button className="btn border-0 bg-white p-0" onClick={() => handleEditClick(place)}><FontAwesomeIcon icon={faPencilAlt} style={{color: "var(--main-color)"}} /></Button>
