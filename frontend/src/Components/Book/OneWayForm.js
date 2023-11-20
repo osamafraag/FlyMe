@@ -74,7 +74,9 @@ const OneWayForm = ({ handleFlightData, cities }) => {
       setErrorTo("Required")
       return;
     }
-    
+
+    const now = new Date();
+
     SearchFlight(
       destinationFrom,
       destinationTo,
@@ -84,8 +86,11 @@ const OneWayForm = ({ handleFlightData, cities }) => {
       directFlightsOnly
    )
    .then((searchResults) => {
-      console.log(searchResults.data)
-      handleFlightData(searchResults.data);
+       const filteredResults = searchResults.data.filter(flight =>
+        new Date(flight.departure) > now && new Date(flight.departure) < new Date(now.getTime() + 1 * 60 * 60 * 1000)
+      );
+
+      handleFlightData(filteredResults);
    })
    .catch((error) => {
       handleFlightData([]);
