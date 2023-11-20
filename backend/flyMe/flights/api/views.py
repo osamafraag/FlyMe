@@ -45,8 +45,64 @@ def aircraftDetail(request, id):
             return Response({"messsage": 'aircraft updated successfully', "aircraft": serializedAircraft.data}, status=201)
         return Response({"errors":serializedAircraft.errors}, status=400)
     
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 def flightList(request):
+    allFlights = Flight.all()
+    transetFlights = []
+    source = request.GET.get('from', None)
+    destination = request.GET.get('to', None)
+    year = request.GET.get('year', None)
+    month = request.GET.get('month', None)
+    day = request.GET.get("day", None)
+    type = request.GET.get("type", None)
+    if year :
+        flights = allFlights.filter(departureTime__year=year)
+        if month :
+            flights = flights.filter(departureTime__month=month)
+            if day :
+                flightDateTime = datetime(year=int(year),month=int(month),day=int(day))
+                if flightDateTime.date() <  datetime.now().date():
+                    return Response({"error":'can`t search for past dates'})
+                flights = flights.filter(departureTime__day=day)
+                if int(day) == datetime.now().day:
+                    year=datetime.now().year
+                    month=datetime.now().month
+                    day=datetime.now().day
+                    hour=datetime.now().hour 
+                    minute=datetime.now().minute
+                    second=datetime.now().second
+                    allowedTime = datetime(year=year,month=month,day=day,hour=hour+3,minute=minute,second=second)
+                if type == 'D':
+                    if source :
+                        flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
+                    if destination :
+                        flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
+                    if allowedTime:
+                        allowedFights=[]
+                        for flight in flights.all():
+                            if flight.departureTime.time() > allowedTime.time():
+                               allowedFights.append(flight)
+                    return Response(flightSearchSerializer(allowedFights))
+                elif type == 'T':
+                    if source :
+                        sFlights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
+                    if destination :
+                        dFlights = allFlights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
+                    for sFlight in sFlights.all():
+                        for dFlight in dFlights.all():
+                            if sFlight.arrivalTime.date() == dFlight.departureTime.date() and sFlight.arrivalTime.time() < dFlight.departureTime.time() and sFlight.endAirport.city == dFlight.startAirport.city :
+                                if allowedTime:
+                                    if sFlight.departureTime.time() > allowedTime.time():
+                                        transetFlights.append([flightSearchSerializer(sFlight,many=False),flightSearchSerializer(dFlight,many=False)])
+                                else:
+                                    transetFlights.append([flightSearchSerializer(sFlight,many=False),flightSearchSerializer(dFlight,many=False)])
+                    return Response(transetFlights)  
+        return Response(flightSearchSerializer(flights))
+    return Response(flightSearchSerializer(allFlights))
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated,IsAdminUser])
+def allFlights(request):
     if request.method == 'POST':
         flight = FlightSerializer(data=request.data)
         if flight.is_valid():
@@ -55,59 +111,24 @@ def flightList(request):
         return Response({'errors':flight.errors}, status=400)
 
     elif request.method=='GET':
-        allFlights = Flight.all()
-        transetFlights = []
-        source = request.GET.get('from', None)
-        destination = request.GET.get('to', None)
-        year = request.GET.get('year', None)
-        month = request.GET.get('month', None)
-        day = request.GET.get("day", None)
-        type = request.GET.get("type", None)
-        if year :
-            flights = allFlights.filter(departureTime__year=year)
-            if month :
-                flights = flights.filter(departureTime__month=month)
-                if day :
-                    flightDateTime = datetime(year=int(year),month=int(month),day=int(day))
-                    if flightDateTime.date() <  datetime.now().date():
-                        return Response({"error":'can`t search for past dates'})
-                    flights = flights.filter(departureTime__day=day)
-                    if int(day) == datetime.now().day:
-                        year=datetime.now().year
-                        month=datetime.now().month
-                        day=datetime.now().day
-                        hour=datetime.now().hour 
-                        minute=datetime.now().minute
-                        second=datetime.now().second
-                        allowedTime = datetime(year=year,month=month,day=day,hour=hour+3,minute=minute,second=second)
-                    if type == 'D':
-                        if source :
-                            flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
-                        if destination :
-                            flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
-                        if allowedTime:
-                            allowedFights=[]
-                            for flight in flights.all():
-                                if flight.departureTime.time() > allowedTime.time():
-                                    allowedFights.append(flight)
-                        return Response(flightSearchSerializer(allowedFights))
-                    elif type == 'T':
-                        if source :
-                            sFlights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
-                        if destination :
-                            dFlights = allFlights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
-                        
-                        for sFlight in sFlights.all():
-                            for dFlight in dFlights.all():
-                                if sFlight.arrivalTime.date() == dFlight.departureTime.date() and sFlight.arrivalTime.time() < dFlight.departureTime.time() and sFlight.endAirport.city == dFlight.startAirport.city :
-                                    if allowedTime:
-                                        if sFlight.departureTime.time() > allowedTime.time():
-                                            transetFlights.append([flightSearchSerializer(sFlight,many=False),flightSearchSerializer(dFlight,many=False)])
-                                    else:
-                                        transetFlights.append([flightSearchSerializer(sFlight,many=False),flightSearchSerializer(dFlight,many=False)])
-                        return Response(transetFlights)  
-            return Response(flightSearchSerializer(flights))
-        return Response(flightSearchSerializer(allFlights))
+        flights = Flight.objects.all()
+        cancledFlights = [] 
+        commingFlights = []
+        passedFlights = []
+        liveFlights = []
+        for flight in flights:
+            if flight.status == 'C':
+                cancledFlights.append(flight)
+            else:
+                if flight.departureTime.timestamp() > datetime.now().timestamp():
+                    commingFlights.append(flight)
+                elif flight.arrivalTime.timestamp() < datetime.now().timestamp():
+                    passedFlights.append(flight)
+                else:
+                    liveFlights.append(flight)
+        return Response({'passed':flightSearchSerializer(passedFlights),'live':flightSearchSerializer(liveFlights),
+                     'comming':flightSearchSerializer(commingFlights),'cancled':flightSearchSerializer(cancledFlights)})
+
 def flightSearchSerializer(flights,many=True):
     if many:
         serializer = FlightSerializer(flights, many=True).data
@@ -125,49 +146,6 @@ def flightSearchSerializer(flights,many=True):
     return serializer
     
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated,IsAdminUser])
-def allFlights(request):
-    flights = Flight.objects.all()
-    cancledFlights = [] 
-    commingFlights = []
-    passedFlights = []
-    liveFlights = []
-    for flight in flights:
-        if flight.status == 'C':
-            cancledFlights.append(flight)
-        else:
-            if flight.departureTime.timestamp() > datetime.now().timestamp():
-                commingFlights.append(flight)
-            elif flight.arrivalTime.timestamp() < datetime.now().timestamp():
-                passedFlights.append(flight)
-            else:
-                liveFlights.append(flight)
-    commingSerializer = FlightSerializer(commingFlights, many=True).data
-    for flight in commingSerializer:
-        flightId = flight['id']
-        flght = Flight.objects.get(id=flightId)
-        flight['from']=flght.startAirport.city.name
-        flight['to']=flght.endAirport.city.name
-    passedSerializer = FlightSerializer(passedFlights, many=True).data
-    for flight in passedSerializer:
-        flightId = flight['id']
-        flght = Flight.objects.get(id=flightId)
-        flight['from']=flght.startAirport.city.name
-        flight['to']=flght.endAirport.city.name
-    liveSerializer = FlightSerializer(liveFlights, many=True).data
-    for flight in liveSerializer:
-        flightId = flight['id']
-        flght = Flight.objects.get(id=flightId)
-        flight['from']=flght.startAirport.city.name
-        flight['to']=flght.endAirport.city.name
-    cancledSerializer = FlightSerializer(cancledFlights, many=True).data
-    for flight in cancledSerializer:
-        flightId = flight['id']
-        flght = Flight.objects.get(id=flightId)
-        flight['from']=flght.startAirport.city.name
-        flight['to']=flght.endAirport.city.name
-    return Response({'passed':passedSerializer,'live':liveSerializer,'comming':commingSerializer,'cancled':cancledSerializer})
 @api_view(['GET'])
 def offerFlights(request):
     flights = Flight.objects.all()

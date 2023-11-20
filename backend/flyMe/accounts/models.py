@@ -33,6 +33,9 @@ class MyUser(AbstractUser):
 
 
     def save(self, *args, **kwargs):
+        wallet = Wallet()
+        wallet.user = self.id
+        wallet.save()
         super().save(*args, **kwargs)
 
     @classmethod
