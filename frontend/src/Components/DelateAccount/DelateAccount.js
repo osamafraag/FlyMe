@@ -2,9 +2,12 @@ import React, { useContext, useState } from 'react';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { deleteUserAPI } from '../../APIs/DeleteUser'; 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../Store/Slice/LoggedInUser';
+import { setToken } from '../../Store/Slice/Token';
 
 export default function DeleteAccount() {
+  const dispatch = useDispatch()
   const [password, setPassword] = useState(''); 
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -24,6 +27,8 @@ export default function DeleteAccount() {
         console.log(res.data);
         setSuccessMessage('Account deleted successfully.');
         setErrorMessage('');
+        dispatch(setToken(null))
+        dispatch(logout())
         setTimeout(() => {
           navigate("/")
         }, 2000);
