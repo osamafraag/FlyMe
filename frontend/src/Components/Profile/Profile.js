@@ -87,7 +87,7 @@ const Profile = () => {
                 <p className="text-muted mb-4">{userData.address}</p>
                 <p className="text-muted mb-4">{userData.birth_date}</p>
                 <div className="d-flex justify-content-center mb-2">
-                  <button type="button" className="btn btn-primary">Edit</button>
+                  <button type="button" className="btn btn-primary" onClick={()=>{ navigate('/EditProfile') }}>Edit</button>
                   <button type="button" className="btn btn-danger ms-1" onClick={() => { navigate(`/deleteAccount`) }}>Delete</button>
                   {
                     userData.is_superuser &&
