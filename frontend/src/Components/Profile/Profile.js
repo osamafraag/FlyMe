@@ -22,30 +22,6 @@ const Profile = () => {
     // Open a new tab or window with the dashboard URL
     window.open('http://localhost:3001/', '_blank');
   };
-  // const userData = {
-  //   'username': 'JohnDoe',
-  //   'email': 'john.doe@example.com',
-  //   'first_name': 'John',
-  //   'last_name': 'Doe',
-  //   'passport_number': 'ABC123',
-  //   'passport_expire_date': '01/01/2025',
-  //   'phone': '123-456-7890',
-  //   'image': 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp',
-  //   'is_email_verified': true,
-  //   'activation_link_created_at': '01/01/2022',
-  //   'birth_date': '01/01/1990',
-  //   'address': '123 Main St, Cityville',
-  //   'gender': 'Male',
-  //   'post_code': '12345',
-  //   'is_superuser': false,
-  //   'history': {
-  //     'f': 'from EGYPT to USA',
-  //     's': 'form Dubai to Egypt',
-  //     't': 'from USA to EGYPT',
-  //   } ,
-  //   'created_at': '01/01/2021',
-  //   'updated_at': '01/02/2022',
-  // };
   return (
     <section style={{ backgroundColor: '#eee' }}>
       <div className="container py-5 text-start">
@@ -65,15 +41,11 @@ const Profile = () => {
                 <p className="text-muted mb-4">{userData.birth_date}</p>
                 <div className="d-flex justify-content-center mb-2">
                   <button type="button" className="btn btn-primary">Edit</button>
-                  <button type="button" className="btn btn-danger ms-1">Delete</button>
+                  <button type="button" className="btn btn-danger ms-1" onClick={()=>{navigate(`/deleteAccount`)}}>Delete</button>
                   {
-                    userData.is_superuser == true
-                    ?
+                    userData.is_superuser &&
                     <button type="button" className="btn btn-danger ms-1" onClick={handleDashboardButtonClick}>Dashboard</button>
-                    :
-                    ''
                   }
-                  
                 </div>
               </div>
             </div>

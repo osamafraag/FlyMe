@@ -10,29 +10,12 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics
 from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
-from django.core.mail import send_mail
-import secrets
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import UpdateAPIView
-from django.urls import reverse
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-import random
 from django.utils import timezone
-
-
-def send_random_code(user, emailHeader):
-    verification_code = str(random.randint(100000, 999999))
-    user.save()
-    send_mail(
-        f'{emailHeader}',
-        f'Your verification code is: {verification_code}',
-        '{email}',
-        [user.email],
-        fail_silently=False,
-    )
-    return verification_code
+from accounts.api.utils import send_random_code
+from django.contrib.auth.hashers import check_password
 
 
 
@@ -90,29 +73,42 @@ def user_logout(request):
 
 
 
-####################################---------  delete and edit user  (owner and admins) -------------###################################
-@csrf_exempt
-@api_view(['GET','DELETE','PUT'])
+####################################---------  delete user  (owner and admins) -------------###################################
+@api_view(['GET', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
 def delete_user(request, id):
-    if request.user.id == id or request.user.is_superuser:
-        user = MyUser.objects.filter(id=id).first()
-        if not user:  
-            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-        serialized_user = UserSerializer(user)
-        if request.method == 'DELETE':
-            user.delete()
-            return Response({'detail': 'User deleted successfully'}, status=status.HTTP_200_OK)
+    
+    user = MyUser.objects.filter(id=id).first()
+    start = False
+
+    if not user:
+        return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+    serialized_user = UserSerializer(user)
+
+    if request.user.is_superuser:
+        start = True
+
+    if (not request.user.is_superuser) and (request.user.id == id):
+        start = True
+        password_to_check = request.query_params.get('password')  # Use query_params to get password
+        is_password_true = check_password(password_to_check, user.password)
+        if not is_password_true:
+            return Response({'error': 'wrong password'}, status=status.HTTP_400_BAD_REQUEST)
         
-        if request.method == 'GET':
-            return Response({'detail': serialized_user.data}, status=status.HTTP_200_OK)
-        if request.method == 'PUT':
-            user_serializer = UserSerializer(instance=user, data=request.data)
-            if user_serializer.is_valid():
-                user_serializer.save()
-                return Response({'detail': 'your data edited'}, status=status.HTTP_200_OK)
-            return Response({'error': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    return Response({'massage': 'error you dont have permision'}, status=status.HTTP_200_OK)
+    if request.method == 'DELETE' and start:
+        user.delete()
+        return Response({'detail': 'User deleted successfully'}, status=status.HTTP_200_OK)
+    
+    if request.method == 'GET' and start:
+        return Response({'detail': serialized_user.data}, status=status.HTTP_200_OK)
+    
+    if request.method == 'PUT' and start:
+        user_serializer = UserSerializer(instance=user, data=request.data)
+        if user_serializer.is_valid():
+            user_serializer.save()
+            return Response({'detail': 'Your data edited', 'data': user_serializer.data}, status=status.HTTP_200_OK)
+        return Response({'error': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'error': 'You don\'t have permission'}, status=status.HTTP_200_OK)
 
 ####################################---------   get user data  -------------###################################
 @api_view(['GET'])
