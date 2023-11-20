@@ -48,6 +48,7 @@ def aircraftDetail(request, id):
 @api_view(['GET'])
 def flightList(request):
     allFlights = Flight.all()
+    allowedTime=False
     transetFlights = []
     source = request.GET.get('from', None)
     destination = request.GET.get('to', None)
@@ -71,18 +72,19 @@ def flightList(request):
                     hour=datetime.now().hour 
                     minute=datetime.now().minute
                     second=datetime.now().second
-                    allowedTime = datetime(year=year,month=month,day=day,hour=hour+3,minute=minute,second=second)
+                    allowedTime = datetime(year=year,month=month,day=day,hour=hour,minute=minute,second=second)
                 if type == 'D':
                     if source :
                         flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
                     if destination :
                         flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
                     if allowedTime:
-                        allowedFights=[]
+                        allowedFlights=[]
                         for flight in flights.all():
                             if flight.departureTime.time() > allowedTime.time():
-                               allowedFights.append(flight)
-                    return Response(flightSearchSerializer(allowedFights))
+                               allowedFlights.append(flight)
+                        return Response(flightSearchSerializer(allowedFlights))
+                    return Response(flightSearchSerializer(flights))
                 elif type == 'T':
                     if source :
                         sFlights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
