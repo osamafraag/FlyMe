@@ -290,70 +290,63 @@ export default function Step1({ TotalFare, setIsDataSaved1 }) {
     const handleOnClickSaveButton = (e) => {
         e.preventDefault();
         if (isFormValid) {
-          console.log('Form Submitted Successfully');
-      
-          const flightIds = flights.split(',');
-      
-          const promises = flightIds.map((flightId) => {
-            const passengerData = {
-              passenger: userData.id || '',
-              email: form.email,
-              phone: form.phone,
-              first_name: form.first_name,
-              last_name: form.last_name,
-              male: form.male,
-              female: form.female,
-              birth_date: form.birth_date,
-              country: form.country,
-              passport_number: form.passport_number,
-              passport_expire_date: form.passport_expire_date,
-              category: form.category,
-              category_name: form.category_name,
-              status: 'A',
-              totalCost: TotalFare,
-              cashBack: 0,
-              paymentMethod: 'C',
-              adults: 1,
-              kids: 0,
-              infants: 0,
-              flight: parseInt(flightId),
-            };
-      
-            return FlightBooking(passengerData);
-          });
-      
-          Promise.all(promises)
-            .then((responses) => {
-              setDataSaved(true);
-              console.log('Responses:', responses);
-              setIsDataSaved1(true);
-            })
-            .catch((err) => {
-              console.log('Error:', err);
-              setUserDidBookBefore(true);
-            });
-      
-          handleToggle();
-        } else {
-          console.log('Form Has Errors');
-          console.log(formError);
-          console.log(form);
-        }
-      };
-      
-      
-      
-      
+            console.log('Form Submitted Successfully');
 
-    const handleCloseModal = () => {
-        navigate('/')
-      }
+            const flightIds = flights.split(',');
+
+            const promises = flightIds.map((flightId) => {
+                const passengerData = {
+                  passenger: userData.id || '',
+                  email: form.email,
+                  phone: form.phone,
+                  first_name: form.first_name,
+                  last_name: form.last_name,
+                  male: form.male,
+                  female: form.female,
+                  birth_date: form.birth_date,
+                  country: form.country,
+                  passport_number: form.passport_number,
+                  passport_expire_date: form.passport_expire_date,
+                  category: form.category,
+                  category_name: form.category_name,
+                  status: 'A',
+                  totalCost: TotalFare,
+                  cashBack: 0,
+                  paymentMethod: 'C',
+                  adults: 1,
+                  kids: 0,
+                  infants: 0,
+                  flight: parseInt(flightId)
+                };
+
+                return FlightBooking(passengerData);
+            });
+
+            Promise.all(promises)
+                .then((responses) => {
+                    setDataSaved(true);
+                    console.log('Responses:', responses);
+                    setIsDataSaved1(true);
+                })
+                .catch((err) => {
+                    console.log('Error:', err);
+                    setUserDidBookBefore(true);
+                });
+                console.log('called')
+
+            handleToggle();
+        } else {
+            console.log('Form Has Errors');
+            console.log(formError);
+            console.log(form);
+        }
+    };
 
     return (
         <>
             <div className='Container'>
                 {/* Confirmation Window/Message */}
-                < Modal show={userDidBookBefore} onHide={handleCloseModal} className='modal-lg modal-dialog-scrollable'>
+                < Modal show={userDidBookBefore} onHide={()=>{navigate('/')}} className='modal-lg modal-dialog-scrollable'>
                     <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
                         <Modal.Title>Error Message</Modal.Title>
                     </Modal.Header>
@@ -363,7 +356,7 @@ export default function Step1({ TotalFare, setIsDataSaved1 }) {
                         </div>
                     </Modal.Body>
                     <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
-                        <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={handleCloseModal}>
+                        <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={()=>{ navigate('/') }}>
                             Back To Home
                         </Button>
                         <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => { navigate('/Profile') }}>

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { UserFlightHistory } from '../../APIs/UserFlightHistory';
 
 const Profile = () => {
   let userData = useSelector(state => state.loggedInUserSlice.data);
@@ -11,6 +12,13 @@ const Profile = () => {
       console.log('Navigating to /Login');
       navigate('/Login');
     }
+    UserFlightHistory(userData?.ID)
+    .then((res)=>{
+      console.log(res.data)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
   }, [userData, navigate]);
 
   // Return null if user data is not available
@@ -22,30 +30,7 @@ const Profile = () => {
     // Open a new tab or window with the dashboard URL
     window.open('http://localhost:3001/', '_blank');
   };
-  // const userData = {
-  //   'username': 'JohnDoe',
-  //   'email': 'john.doe@example.com',
-  //   'first_name': 'John',
-  //   'last_name': 'Doe',
-  //   'passport_number': 'ABC123',
-  //   'passport_expire_date': '01/01/2025',
-  //   'phone': '123-456-7890',
-  //   'image': 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp',
-  //   'is_email_verified': true,
-  //   'activation_link_created_at': '01/01/2022',
-  //   'birth_date': '01/01/1990',
-  //   'address': '123 Main St, Cityville',
-  //   'gender': 'Male',
-  //   'post_code': '12345',
-  //   'is_superuser': false,
-  //   'history': {
-  //     'f': 'from EGYPT to USA',
-  //     's': 'form Dubai to Egypt',
-  //     't': 'from USA to EGYPT',
-  //   } ,
-  //   'created_at': '01/01/2021',
-  //   'updated_at': '01/02/2022',
-  // };
+
   return (
     <section style={{ backgroundColor: '#eee' }}>
       <div className="container py-5 text-start">
@@ -85,6 +70,7 @@ const Profile = () => {
                 <li>{userData.history.s}</li>
                 <li>{userData.history.t}</li> */}
                   <li>You Dont Have any history</li>
+
                 </ul>
               </div>
             </div>

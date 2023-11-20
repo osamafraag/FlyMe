@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { FlightData } from '../../APIs/FlightData';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 export default function SideBar({ insurance, Total_Fare }) {
+  const navigate = useNavigate()
   const { flights } = useParams();
   const flightIds = flights.split(',');
+  const [error , setError] = useState(false)
 
   const [flightDataList, setFlightDataList] = useState([]);
   const [fetchError, setFetchError] = useState(false);
@@ -32,10 +36,10 @@ export default function SideBar({ insurance, Total_Fare }) {
     };
 
     fetchData();
-  }, [flightIds]);
+  }, []);
 
   if (fetchError) {
-    return <div>Error fetching flight data</div>;
+    setError(true);
   }
 
   const Total_TAX = flightDataList.reduce((acc, flightData) => acc + (flightData?.baseCost * 0.1 || 0), 0);
@@ -45,7 +49,22 @@ export default function SideBar({ insurance, Total_Fare }) {
 
   return (
     <div className='col'>
-      {/* Your rendering logic for each flight data */}
+      {/* Error Window */}
+      <Modal show={error} onHide={()=>{navigate('/')}} className='modal-lg modal-dialog-scrollable'>
+            <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
+              <Modal.Title>Opss</Modal.Title>
+            </Modal.Header>
+            <Modal.Body style={{ backgroundColor: "#fafafa" }}>
+              <div className='border border-1 rounded-3 p-4 my-3 bg-white' >
+                <p className='fw-bold'>Something Went Wrong, Please Try Again</p>
+              </div>
+            </Modal.Body>
+            <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
+              <Button className='border-0' style={{ backgroundColor: "var(--main-color)"}} onClick={()=>navigate('/')}>
+                Back To Home
+              </Button>
+            </Modal.Footer>
+          </Modal>
       <div className='Container SideBar'>
         <p className='py-0 my-0'>My Trip</p>
         {flightDataList.map((flightData, index) => (
