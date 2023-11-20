@@ -11,18 +11,18 @@ import { useDispatch  } from 'react-redux';
 import { useSelector } from 'react-redux';
 import Profile from "./../../Assets/Images/Profile1.svg"
 import { useContext } from "react";
-import {Token} from "../../Context/Token"
 import { Logout } from "../../APIs/Login";
 import { useState } from "react";
 import { useNotificationContext } from './../Notifications/NotificationContext';
+import { setToken } from '../../Store/Slice/Token';
 
 
 export default function NavBar() {
+  const token = useSelector(state => state.Token.token);
   const { unreadCount } = useNotificationContext();
   const isUser = useSelector(state => state.loggedInUserSlice.data !== null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {token} = useContext(Token)
 
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const handleLogout = () => {
@@ -32,6 +32,7 @@ export default function NavBar() {
     }).then((res)=>{
       console.log(res.data)
       dispatch(logout())
+      dispatch(setToken(null))
       navigate('/');
     }).catch((error)=>{
       console.log(error)

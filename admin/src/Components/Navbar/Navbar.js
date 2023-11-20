@@ -9,6 +9,7 @@ import Profile from "./../../Assets/Images/Profile1.svg"
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { logout, logData } from '../../Store/Slice/LoggedInUser';
+import { setToken } from '../../Store/Slice/Token';
 import { faArrowRightToBracket, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 
 export default function NavBar() {
@@ -19,6 +20,7 @@ export default function NavBar() {
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const handleLogout = () => {
     dispatch(logout())
+    dispatch(setToken(null))
     navigate('/Login');
   };
 

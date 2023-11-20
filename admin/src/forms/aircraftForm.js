@@ -4,17 +4,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { axiosInstance } from "../APIs/Config";
 import {faWeightHanging, faPlane,faPersonWalkingLuggage,
         faPeopleGroup} from '@fortawesome/free-solid-svg-icons';
-
+import { useSelector } from 'react-redux';
 
 function AircraftForm() {
-
+  const token = useSelector(state => state.Token.token);
   const navigate = useNavigate()
   const location = useLocation()
   const [aircraft,setAircraft]=useState({name:null,company:'A',capacity:null,maxLoad:0,baggageWeight:null,maxDistance:null})
 
   useEffect(() => {
     axiosInstance
-        .get(`flights/api/aircrafts/${location.state?.id}`)
+        .get(`flights/api/aircrafts/${location.state?.id}`, {
+          headers: {Authorization: `Token ${token}`}
+        })
         .then((result) => {
           setAircraft(result.data.data)
         })
@@ -34,7 +36,9 @@ function AircraftForm() {
     event.preventDefault();
     location.state?
     axiosInstance
-        .put(`/flights/api/aircrafts/${location.state.id}`, aircraft)  
+        .put(`/flights/api/aircrafts/${location.state.id}`, aircraft, {
+          headers: {Authorization: `Token ${token}`}
+        })  
         .then((response) => {
           navigate(`/Aircrafts`);
         })
@@ -43,7 +47,9 @@ function AircraftForm() {
         })
         :
     axiosInstance
-        .post("flights/api/aircrafts/", aircraft)
+        .post("flights/api/aircrafts/", aircraft, {
+          headers: {Authorization: `Token ${token}`}
+        })
         .then((response) => {
           navigate(`/Aircrafts`);
         })

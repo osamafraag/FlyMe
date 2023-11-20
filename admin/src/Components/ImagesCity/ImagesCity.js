@@ -5,8 +5,10 @@ import { faPencilAlt, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { Modal, Button, Form } from 'react-bootstrap';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Card from 'react-bootstrap/Card';
+import { useSelector } from "react-redux";
 
 export default function ImagesCity() {
+  const token = useSelector(state => state.Token.token);
   const [imagesCity, setImageCity] = useState([]);
   const [newImageCity, setNewImageCity] = useState({
     photo: null,
@@ -21,7 +23,9 @@ export default function ImagesCity() {
 
   const fetchData = () => {
     axiosInstance
-      .get("/countries/api/cities/images/add/")
+      .get("/countries/api/cities/images/add/", {
+        headers: {Authorization: `Token ${token}`}
+      })
       .then((res) => setImageCity(res.data))
       .catch((err) => console.log(err));
   };
@@ -70,6 +74,7 @@ export default function ImagesCity() {
         .post("/countries/api/cities/images/add/", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Token ${token}`
           },
         })
         .then((response) => {
@@ -89,6 +94,7 @@ export default function ImagesCity() {
       .put(`/countries/api/cities/images/${imageId}/`, updatedImage, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Token ${token}`
         },
       })
       .then((response) => {
@@ -110,7 +116,9 @@ export default function ImagesCity() {
     }
 
     axiosInstance
-      .delete(`/countries/api/cities/images/${imageId}/`)
+      .delete(`/countries/api/cities/images/${imageId}/`, {
+        headers: {Authorization: `Token ${token}`}
+      })
       .then((response) => {
         console.log(response.data);
         fetchData();

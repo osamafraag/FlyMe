@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-
 export default function Airports() {
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate()

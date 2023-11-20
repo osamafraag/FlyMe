@@ -4,8 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Modal, Button } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
+import { useSelector } from 'react-redux';
 
 export default function ImagesTrendPlaces() {
+  const token = useSelector(state => state.Token.token);
   const [imagesTrendPlace, setImagesTrendPlace] = useState([]);
   const [newImagesTrendPlace, setNewImagesTrendPlace] = useState({
     photo: null,
@@ -20,7 +22,9 @@ export default function ImagesTrendPlaces() {
 
   const fetchData = () => {
     axiosInstance
-      .get('countries/api/trendingPlaces/images/add/')
+      .get('countries/api/trendingPlaces/images/add/', {
+        headers: {Authorization: `Token ${token}`}
+      })
       .then((res) => setImagesTrendPlace(res.data))
       .catch((err) => console.log('Error Fetching data ', err));
   };
@@ -74,6 +78,7 @@ export default function ImagesTrendPlaces() {
         .post('/countries/api/trendingPlaces/images/add/', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Token ${token}`
           },
         })
         .then((response) => {
@@ -93,6 +98,7 @@ export default function ImagesTrendPlaces() {
       .put(`countries/api/trendingPlaces/images/${imageId}`, updatedImage, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Token ${token}`
         },
       })
       .then((response) => {
@@ -112,7 +118,9 @@ export default function ImagesTrendPlaces() {
     }
 
     axiosInstance
-      .delete(`countries/api/trendingPlaces/images/${imageId}`)
+      .delete(`countries/api/trendingPlaces/images/${imageId}`, {
+        headers: {Authorization: `Token ${token}`}
+      })
       .then((response) => {
         console.log(response.data);
         fetchData();

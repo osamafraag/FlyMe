@@ -293,7 +293,7 @@ export default function Register() {
         .then((res) => {
           console.log('Register successful');
           console.log('res.data', res.data);
-          navigate('/Login');
+          navigate('/Users');
 
         })
         .catch((err) => {
@@ -390,7 +390,7 @@ export default function Register() {
               </div>
               {/* country */}
               <div className="mb-3">
-                <label htmlFor="country" className="form-label">country</label>
+                <label htmlFor="country" className="form-label">Country</label>
                 <select
                   className="form-select"
                   name="country"
