@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useSelector } from 'react-redux';
 
-export default function SideBar({ insurance, TotalFare }) {
+export default function SideBar({ TotalFare }) {
   const token = useSelector(state => state.Token.token) || {};
   const navigate = useNavigate()
   const { flights } = useParams();
@@ -13,6 +13,7 @@ export default function SideBar({ insurance, TotalFare }) {
   const [error , setError] = useState(false)
 
   const [flightDataList, setFlightDataList] = useState([]);
+  console.log('flightDataList',flightDataList)
   const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
@@ -51,7 +52,8 @@ export default function SideBar({ insurance, TotalFare }) {
 
   const Total_TAX = flightDataList.reduce((acc, flightData) => acc + (flightData?.baseCost * 0.1 || 0), 0);
   const totalBaseCost = flightDataList.reduce((acc, flightData) => acc + (flightData?.baseCost || 0), 0);
-  const TotalFaree = totalBaseCost + Total_TAX + insurance || 0;
+  const totalOfferPercentage = flightDataList.reduce((acc, flightData) => acc + ((flightData?.offerPercentage) || 0), 0);
+  const TotalFaree = (totalBaseCost + Total_TAX ) - ((totalBaseCost + Total_TAX ) * (totalOfferPercentage * 0.01)) || 0;
   TotalFare(TotalFaree);
 
   return (
@@ -76,9 +78,9 @@ export default function SideBar({ insurance, TotalFare }) {
         <p className='py-0 my-0'>My Trip</p>
         {flightDataList.map((flightData, index) => (
           <div key={index} className='py-3 text-black'>
-            <div className='d-flex align-items-center text-start'>
+            <div className='d-flex align-items-center text-start justify-content-between'>
               <span className='pe-1 data'>{flightData?.from}</span>
-              <hr style={{ display: 'inline-block', width: '10%' }} />
+              <hr style={{ display: 'inline-block', width: '20%' }} />
               <span className='ps-1 data'>{flightData?.to}</span>
             </div>
             <div className='data d-flex justify-content-between'>
@@ -99,14 +101,13 @@ export default function SideBar({ insurance, TotalFare }) {
           <p>Total Flight base Cost</p>
           <p>{totalBaseCost} Egp</p>
         </div>
-
-        <div className='d-flex align-items-center justify-content-between data '>
-          <p>Insurance And Extra Services</p>
-          <p>{insurance} Egp</p>
-        </div>
         <div className='d-flex align-items-center justify-content-between data mb-0 pb-0'>
           <p>Total TAX</p>
           <p>{Total_TAX} Egp</p>
+        </div>
+        <div className='d-flex align-items-center justify-content-between data mb-0 pb-0'>
+          <p>Total Offer</p>
+          <p>{totalOfferPercentage}%</p>
         </div>
         <hr className='mt-0 pt-0' />
         <div className='d-flex align-items-center justify-content-between data'>

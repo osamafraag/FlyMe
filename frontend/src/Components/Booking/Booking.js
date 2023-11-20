@@ -12,7 +12,6 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 export default function BookingComponent() {
-  const [insurance, setInsurance] = useState(0)
   const [TotalFare, setTotalFare] = useState(0)
   const [isDataSaved1, setIsDataSaved1] = useState(false)
   const [isDataSaved3, setIsDataSaved3] = useState(false)
@@ -42,10 +41,6 @@ export default function BookingComponent() {
   if (!userData || Object.keys(userData).length === 0) {
     return null;
   }
-  const handleInsuranceFareChange = (insuranceFare) => {
-    console.log("Insurance Fare changed:", insuranceFare);
-    setInsurance(insuranceFare)
-  };
   const handleTotalFare = (TotalFare) => {
     console.log("Total Fare changed:", TotalFare);
     setTotalFare(TotalFare)
@@ -60,7 +55,7 @@ export default function BookingComponent() {
       <div className='col-8'>
         {/* Booking Steps: */}
         <Step11 />
-        <Step22 onInsuranceFareChange={handleInsuranceFareChange} setIsDataSaved1={setIsDataSaved1} TotalFare={TotalFare} />
+        <Step22 setIsDataSaved1={setIsDataSaved1} TotalFare={TotalFare} />
         <Step3 setIsDataSaved3={setIsDataSaved3} />
 
         {/* Confirmation Window/Message */}
@@ -81,7 +76,7 @@ export default function BookingComponent() {
           </Modal>
       </div>
       {/* Side Bar */}
-      <SideBar insurance={insurance} TotalFare={handleTotalFare} />
+      <SideBar TotalFare={handleTotalFare} />
     </div>
   )
 }
