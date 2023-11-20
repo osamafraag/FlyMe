@@ -12,11 +12,16 @@ class UserSerializer(serializers.ModelSerializer):
             'activation_link_created_at', 'birth_date',
             'gender', 'post_code', 'created_at', 'updated_at', 'is_superuser', 'country', 'city', 'region'
         )
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'username': {'read_only': True},
+            'is_email_verified':{'read_only': True},
+            'created_at':{'read_only': True},
+        }
+
     def update(self, instance, validated_data):
-        instance.username = validated_data.get('username', instance.username)
-        instance.email = validated_data.get('email', instance.email)
-        instance.first_name = validated_data.get('first_name', instance.first_name)
-        instance.last_name = validated_data.get('last_name', instance.last_name)
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
         instance.save()
         return instance
 
