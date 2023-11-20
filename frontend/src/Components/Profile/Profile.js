@@ -130,8 +130,8 @@ const Profile = () => {
                       :
                       flightHistory.map((flight, index) => (
                         <li className="py-2 d-flex justify-content-between align-items-center" key={index}>
-                          <span>{flightData[index]?.data?.departureTime}</span>
-                        <button type="button" className="btn text-white" style={{backgroundColor: "var(--main-color)"}} onClick={() => setShowModal(true)}>Show Details</button>
+                          <span>{(flightData[index]?.data?.departureTime)?.substring(0, 10)}</span>
+                        <button type="button" className="btn text-white" style={{backgroundColor: "var(--main-color)"}} onClick={() => setShowModal(true)}>Show</button>
                           <Modal show={showModal} onHide={() => setShowModal(false)} className='modal-lg modal-dialog-scrollable'>
                             <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
                               <Modal.Title>Flight Details</Modal.Title>
