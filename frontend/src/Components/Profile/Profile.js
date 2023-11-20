@@ -6,6 +6,8 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { FlightData } from '../../APIs/FlightData';
 import { UnbookFlight, GetFlightBook } from '../../APIs/UnbookFlight';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faUserPen, faUserXmark, faGauge } from "@fortawesome/free-solid-svg-icons"
 
 const Profile = () => {
   const token = useSelector(state => state.Token.token) || {};
@@ -110,13 +112,13 @@ const Profile = () => {
                 <p className="text-muted mb-4">{userData?.address}</p>
                 <p className="text-muted mb-4">{userData?.birth_date}</p>
                 <div className="d-flex justify-content-center mb-2">
-                  <button type="button" className="btn text-white" style={{ backgroundColor: "var(--main-color)" }} onClick={() => { navigate('/EditProfile') }}>Edit</button>
-                  <button type="button" className="btn btn-danger ms-1" onClick={() => { navigate(`/deleteAccount`) }}>Delete</button>
+                  <button type="button" className="btn text-white" style={{backgroundColor: "var(--main-color)"}} onClick={() => { navigate('/EditProfile') }}><FontAwesomeIcon icon={faUserPen} /> Edit</button>
+                  <button type="button" className="btn btn-danger ms-1" onClick={() => { navigate(`/deleteAccount`) }}><FontAwesomeIcon icon={faUserXmark} /> Delete</button>
+                  </div>
                   {
                     userData?.is_superuser &&
-                    <button type="button" className="btn ms-1 text-white" style={{ backgroundColor: "var(--main-color)" }} onClick={handleDashboardButtonClick}>Dashboard</button>
+                    <button type="button" className="btn btn-warning mx-auto text-white" onClick={handleDashboardButtonClick}><FontAwesomeIcon icon={faGauge} /> Dashboard</button>
                   }
-                </div>
               </div>
             </div>
             <h5>History </h5>
@@ -252,7 +254,7 @@ const Profile = () => {
                 {/* // */}
                 <div className="row">
                   <div className="col-sm-4">
-                    <p className="mb-0">passport expire date</p>
+                    <p className="mb-0">Passport Expire Date</p>
                   </div>
                   <div className="col-sm-8">
                     <p className="text-muted mb-0">{userData?.passport_expire_date}</p>
@@ -262,7 +264,7 @@ const Profile = () => {
                 {/* // */}
                 <div className="row">
                   <div className="col-sm-4">
-                    <p className="mb-0">passport number</p>
+                    <p className="mb-0">Passport Number</p>
                   </div>
                   <div className="col-sm-8">
                     <p className="text-muted mb-0">{userData?.passport_number}</p>
@@ -272,7 +274,7 @@ const Profile = () => {
                 {/* // */}
                 <div className="row">
                   <div className="col-sm-4">
-                    <p className="mb-0">phone</p>
+                    <p className="mb-0">Phone</p>
                   </div>
                   <div className="col-sm-8">
                     <p className="text-muted mb-0">{userData?.phone}</p>
@@ -282,17 +284,17 @@ const Profile = () => {
                 {/* // */}
                 <div className="row">
                   <div className="col-sm-4">
-                    <p className="mb-0">gender</p>
+                    <p className="mb-0">Gender</p>
                   </div>
                   <div className="col-sm-8">
-                    <p className="text-muted mb-0">{userData?.gender}</p>
+                    <p className="text-muted mb-0">{userData?.gender == "F" ? "Female" : "Male"}</p>
                   </div>
                 </div>
                 <hr />
                 {/* // */}
                 <div className="row">
                   <div className="col-sm-4">
-                    <p className="mb-0">birth_date</p>
+                    <p className="mb-0">Birth Date</p>
                   </div>
                   <div className="col-sm-8">
                     <p className="text-muted mb-0">{userData?.birth_date}</p>

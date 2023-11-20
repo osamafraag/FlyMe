@@ -31,7 +31,7 @@ export default function Step1() {
             }
         };
         fetchClassOptions();
-    },);
+    },[]);
 
     return (
         <>
