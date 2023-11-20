@@ -1,7 +1,10 @@
 import { axiosInstance } from "./Config";
 
-export const GetComplaints = () => {
-  return axiosInstance.get('accounts/api/complaints/')
+export const GetComplaints = (headers) => {
+  return axiosInstance.get('accounts/api/complaints/', {
+    headers: headers
+  })
+
 }
 
 export const PostComplaints = (data, headers) => {

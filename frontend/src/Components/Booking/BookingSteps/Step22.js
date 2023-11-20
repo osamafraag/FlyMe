@@ -122,11 +122,7 @@ export default function Step2({ TotalFare, setIsDataSaved1 }) {
                     flight: parseInt(flightId)
                 };
 
-                return FlightBooking(passengerData, {
-                    headers: {
-                        Authorization: `Token ${token}`,
-                    },
-                });
+                return FlightBooking(passengerData, {Authorization: `Token ${token}`});
             });
 
             Promise.all(promises)
