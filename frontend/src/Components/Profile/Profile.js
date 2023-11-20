@@ -38,7 +38,11 @@ const Profile = () => {
         // Fetch flight data for each flight ID
         Promise.all(
           flightIds.map((flightId) =>
-            FlightData(flightId, { Authorization: `Token ${token}` })
+            FlightData(flightId, {
+              Authorization: `Token ${token}`,
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            })
               .then((flightDataResponse) => flightDataResponse.data)
           )
         )
@@ -97,7 +101,7 @@ const Profile = () => {
             <div className="card mb-4">
               <div className="card-body text-center">
                 <img
-                  src={userData?.image || 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'}
+                  src={userData?.image || 'https://static.vecteezy.com/system/resources/thumbnails/007/033/146/small/profile-icon-login-head-icon-vector.jpg'}
                   alt="avatar"
                   className="rounded-circle img-fluid"
                   style={{ width: '150px' }}
@@ -125,7 +129,9 @@ const Profile = () => {
                       <li className="text-center">You Didn't Book Any Flight</li>
                       :
                       flightHistory.map((flight, index) => (
-                        <li className="py-2" key={index}>
+                        <li className="py-2 d-flex justify-content-between align-items-center" key={index}>
+                          <span>{flightData[index]?.data?.departureTime}</span>
+                        <button type="button" className="btn text-white" style={{backgroundColor: "var(--main-color)"}} onClick={() => setShowModal(true)}>Show Details</button>
                           <Modal show={showModal} onHide={() => setShowModal(false)} className='modal-lg modal-dialog-scrollable'>
                             <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
                               <Modal.Title>Flight Details</Modal.Title>
