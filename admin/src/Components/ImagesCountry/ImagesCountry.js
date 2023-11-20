@@ -4,8 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Modal, Button } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
+import { useSelector } from 'react-redux';
 
 export default function ImagesCountry() {
+  const token = useSelector(state => state.Token.token);
   const [imagesCountry, setImageCountry] = useState([]);
   const [newImageCountry, setNewImageCountry] = useState({
     photo: null,
@@ -20,7 +22,9 @@ export default function ImagesCountry() {
 
   const fetchData = () => {
     axiosInstance
-      .get('/countries/api/images/add/')
+      .get('/countries/api/images/add/', {
+        headers: {Authorization: `Token ${token}`}
+      })
       .then((res) => setImageCountry(res.data))
       .catch((err) => console.log(err));
   };
@@ -69,6 +73,7 @@ export default function ImagesCountry() {
         .post('/countries/api/images/add/', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Token ${token}`
           },
         })
         .then((response) => {
@@ -88,6 +93,7 @@ export default function ImagesCountry() {
       .put(`/countries/api/images/${imageId}/`, updatedImage, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Token ${token}`
         },
       })
       .then((response) => {
@@ -107,7 +113,9 @@ export default function ImagesCountry() {
     }
 
     axiosInstance
-      .delete(`/countries/api/images/${imageId}/`)
+      .delete(`/countries/api/images/${imageId}/`, {
+        headers: {Authorization: `Token ${token}`}
+      })
       .then((response) => {
         console.log(response.data);
         fetchData();

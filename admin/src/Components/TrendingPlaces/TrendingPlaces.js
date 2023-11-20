@@ -6,8 +6,10 @@ import { Modal, Button } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
 import Carousel from 'react-bootstrap/Carousel';
 import NoImage from "./../../Assets/Images/NoImage.jpg"
+import { useSelector } from "react-redux";
 
 export default function TrendingPlaces() {
+  const token = useSelector(state => state.Token.token);
   const [trendingPlaces, setTrendingPlaces] = useState([]);
   const [newTrendingPlace, setNewTrendingPlace] = useState({
     city: "",
@@ -23,7 +25,9 @@ export default function TrendingPlaces() {
 
   const fetchData = () => {
     axiosInstance
-      .get("countries/api/trendingPlaces/")
+      .get("countries/api/trendingPlaces/", {
+        headers: {Authorization: `Token ${token}`}
+      })
       .then((res) => setTrendingPlaces(res.data))
       .catch((err) => console.error("Error fetching data:", err));
   };
@@ -67,7 +71,9 @@ export default function TrendingPlaces() {
       }
 
       axiosInstance
-        .post("/countries/api/trendingPlaces/", newTrendingPlace)
+        .post("/countries/api/trendingPlaces/", newTrendingPlace, {
+          headers: {Authorization: `Token ${token}`}
+        })
         .then((response) => {
           console.log(response.data);
           fetchData();
@@ -82,7 +88,9 @@ export default function TrendingPlaces() {
 
   const handleEdit = (placeId, updatedPlace) => {
     axiosInstance
-      .put(`/countries/api/trendingPlaces/${placeId}`, updatedPlace)
+      .put(`/countries/api/trendingPlaces/${placeId}`, updatedPlace, {
+        headers: {Authorization: `Token ${token}`}
+      })
       .then((response) => {
         console.log(response.data);
         fetchData();
@@ -100,7 +108,9 @@ export default function TrendingPlaces() {
     }
 
     axiosInstance
-      .delete(`/countries/api/trendingPlaces/${placeId}`)
+      .delete(`/countries/api/trendingPlaces/${placeId}`, {
+        headers: {Authorization: `Token ${token}`}
+      })
       .then((response) => {
         console.log(response.data);
         fetchData();

@@ -5,15 +5,15 @@ import Footer from "./Components/Footer/Footer";
 import Router from "./Router/Router"
 import './App.css';
 import './master.css';
-import { Token } from "./Context/Token";
-import { useState } from "react";
+// import { Token } from "./Context/Token";
+// import { useState } from "react";
 
 function App() {
-  const [token, setToken] = useState(1);
+  // const [token, setToken] = useState(1);
   return (
     <div className="App">
       <BrowserRouter>
-      <Token.Provider value={{ token, setToken }}>
+      {/* <Token.Provider value={{ token, setToken }}> */}
         <div className="d-flex">
           <div style={{width: "17%"}}>
             <Sidebar />
@@ -26,7 +26,7 @@ function App() {
             <Footer />
           </div>
         </div>
-        </Token.Provider>
+        {/* </Token.Provider> */}
       </BrowserRouter>
     </div>
   );

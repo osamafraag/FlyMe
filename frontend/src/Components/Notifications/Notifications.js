@@ -178,13 +178,14 @@ import { axiosInstance } from "./../../APIs/Config";
 
 
 export default function NotificationsComponent() {
+  const token = useSelector(state => state.Token.token);
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
   const API_BASE_URL = 'http://127.0.0.1:8000';
   const { updateUnreadCount } = useNotificationContext();
 
   let userData = useSelector(state => state.loggedInUserSlice.data);
-  let userId = userData.id
+  let userId = userData ? userData.id : null
   console.log(userData)
   const navigate = useNavigate();
 
@@ -250,7 +251,9 @@ export default function NotificationsComponent() {
   // };
 
   const fetchData = () =>{
-    fetch(`${API_BASE_URL}/accounts/api/user/${userId}/notifications`)
+    fetch(`${API_BASE_URL}/accounts/api/user/${userId}/notifications`, {
+      headers: {Authorization: `Token ${token}`}
+    })
       .then(response => response.json())
       .then(result => {
         setNotifications(result);
@@ -263,12 +266,16 @@ export default function NotificationsComponent() {
   }
   const markNotificationAsRead = (notificationId) => {
       axiosInstance
-        .get(`accounts/api/notifications/${notificationId}`)
+        .get(`accounts/api/notifications/${notificationId}`, {
+          headers: {Authorization: `Token ${token}`}
+        })
         .then((result) => {
           console.log(result)
           result.data.data.status = 'READ'
           axiosInstance
-            .put(`accounts/api/notifications/${notificationId}`, result.data.data)  
+            .put(`accounts/api/notifications/${notificationId}`, result.data.data, {
+              headers: {Authorization: `Token ${token}`}
+            }) 
             .then((response) => {
               fetchData()
             })
@@ -282,6 +289,8 @@ export default function NotificationsComponent() {
 const deleteNotification = (notificationId) => {
     fetch(`${API_BASE_URL}/accounts/api/notifications/${notificationId}`, {
       method: 'DELETE',
+    }, {
+      headers: {Authorization: `Token ${token}`}
     })
       .then((response) => {
         if (response.ok) {

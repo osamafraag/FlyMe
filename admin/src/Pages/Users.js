@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPlus} from '@fortawesome/free-solid-svg-icons'
 
 export default function Users() {
+  const token = useSelector(state => state.Token.token);
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate();
   const [regularUsers, setRegularUsers] = useState([]);
@@ -21,7 +22,7 @@ export default function Users() {
   }, [userData, navigate]);
 
   useEffect(() => {
-    AllUsers()
+    AllUsers({Authorization: `Token ${token}`})
       .then((result) => {
         console.log(result.data.data);
 

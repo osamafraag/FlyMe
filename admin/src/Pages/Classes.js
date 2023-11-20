@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function Classes() {
+  const token = useSelector(state => state.Token.token);
   const [classes, setClasses] = useState([])
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate() 
@@ -18,7 +19,7 @@ export default function Classes() {
       navigate('/Login');
     }
     else
-    GetClasses()
+    GetClasses({Authorization: `Token ${token}`})
     .then((result) => {
       console.log(result.data);
       setClasses(result.data)
@@ -36,7 +37,7 @@ export default function Classes() {
       return;
     }
 
-    DeleteClass(id)  
+    DeleteClass(id, {Authorization: `Token ${token}`})  
     .then((response) => {
       setDeleteClass(`${name} Class Deleted Successfully`)
     })

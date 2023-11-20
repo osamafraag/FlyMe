@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function Cities() {
+  const token = useSelector(state => state.Token.token);
   const [cities, SetCities] = useState([])
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate() 
@@ -19,7 +20,7 @@ export default function Cities() {
       navigate('/Login');
     }
     else
-    GetCities()
+    GetCities({Authorization: `Token ${token}`})
     .then((result) => {
       SetCities(result.data)
     })
@@ -29,7 +30,7 @@ export default function Cities() {
   }, [userData, navigate, specificCity])
 
   const handleFeautered = (id) => {
-    GetSpecificCity(id)
+    GetSpecificCity(id, {Authorization: `Token ${token}`})
       .then((result) => {
         const specificCityData = result.data[0];
         console.log(result) 
@@ -38,7 +39,7 @@ export default function Cities() {
           setSpecificCity(updatedCity);
           
           try {
-            const response = EditCity(id, JSON.stringify(updatedCity));
+            const response = EditCity(id, JSON.stringify(updatedCity),{Authorization: `Token ${token}`});
             console.log(updatedCity);
             console.log('Post Response:', response.data);
           } catch (error) {

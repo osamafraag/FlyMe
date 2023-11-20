@@ -1,19 +1,20 @@
-import {React, useState, useContext} from 'react'
+import { React, useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import './login.css'
 import { Login } from '../../APIs/Login';
 import { AllUsers } from '../../APIs/AllUsers'
-import { useDispatch  } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../../Store/Slice/LoggedInUser';
-import { Token } from '../../Context/Token';
+import { setToken } from '../../Store/Slice/Token';
+// import { Token } from '../../Context/Token';
 
 
 var loginImage = require('../../Assets/Images/Accounts/login.jpg')
 export default function LoginForm() {
-    const { token, setToken } = useContext(Token)
+    // const { token, setToken } = useContext(Token)
     let navigate = useNavigate()
     const dispatch = useDispatch();
-    const [ errorMessage, seterrorMessage ] = useState(null)
+    const [errorMessage, seterrorMessage] = useState(null)
     // Form State
     const [form, setForm] = useState({
         username: '',
@@ -69,28 +70,29 @@ export default function LoginForm() {
                 .then((res) => {
                     console.log(res && res.data);
                     const token_data = res.data.token;
-                    setToken(token_data)
+                    dispatch(setToken(res.data.token))
+                    // setToken(token_data)
                     // Sava User Data in the Reducer
                     AllUsers({
                         Authorization: `Token ${token_data}`,
-                      })
-                    .then((result) => {
-                        const usersArray = result.data.data;
-                        const logedinUser = usersArray.filter(user => user.username === form.username);
-                        if (logedinUser[0].is_superuser == true){
-                            dispatch(loginSuccess(logedinUser[0]))
-                            navigate('/');
-                        }
-                        else{
-                            seterrorMessage('You are not Admin.')
-                            console.log('not admin')
-                            navigate('/Login')
-                        }
                     })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-                    
+                        .then((result) => {
+                            const usersArray = result.data.data;
+                            const logedinUser = usersArray.filter(user => user.username === form.username);
+                            if (logedinUser[0].is_superuser == true) {
+                                dispatch(loginSuccess(logedinUser[0]))
+                                navigate('/');
+                            }
+                            else {
+                                seterrorMessage('You are not Admin.')
+                                console.log('not admin')
+                                navigate('/Login')
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+
                 })
                 .catch((err) => {
                     console.log(err.response && err.response.data);
@@ -105,7 +107,7 @@ export default function LoginForm() {
 
     return (
         <div>
-            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start" style={{width: "1000px"}}>
+            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start" style={{ width: "1000px" }}>
                 <div className="row align-items-center">
                     <img
                         src={loginImage}
@@ -113,28 +115,28 @@ export default function LoginForm() {
                         width="300"
                     />
                     <div className="col-6 pb-5">
-                    {(errorMessage) && (
-                        <p className="text-danger" style={{fontSize:'14px'}}>
-                            {errorMessage}
-                        </p>
+                        {(errorMessage) && (
+                            <p className="text-danger" style={{ fontSize: '14px' }}>
+                                {errorMessage}
+                            </p>
                         )}
                         <form method="post" encType="multipart/form-data">
                             {/* Username */}
                             <div className=" mb-3">
                                 <label htmlFor="floatingInput" className='form-label'>Username</label>
-                                <input type="username" className="form-control" id="floatingInput" value={form.username} onChange={handleOnChangeForm} placeholder='Enter your username' name="username" required/>
+                                <input type="username" className="form-control" id="floatingInput" value={form.username} onChange={handleOnChangeForm} placeholder='Enter your username' name="username" required />
                                 {formError.username && <div className="form-text text-danger text-start ">{formError.username}</div>}
                             </div>
                             {/* Password */}
                             <div className=" mb-3">
                                 <label htmlFor="floatingPassword">Password</label>
-                                <input type="password" className="form-control" id="floatingPassword" value={form.password} onChange={handleOnChangeForm} name='password' placeholder='Enter your password' required/>
+                                <input type="password" className="form-control" id="floatingPassword" value={form.password} onChange={handleOnChangeForm} name='password' placeholder='Enter your password' required />
                                 {formError.password && <div className="form-text text-danger text-start ">{formError.password}</div>}
                             </div>
                             {/* Forgot Password */}
                             <div className="d-flex flex-column">
-                                <a href="" className="text-decoration-none text-end mt-3" style={{color: '#426a9d'}}>Forgot Password?</a>
-                                <button type="submit" className="btn custom-btn my-4 py-2" style={{borderRadius: '7px'}} onClick={handleOnClickLogin}>Login</button>
+                                <a href="" className="text-decoration-none text-end mt-3" style={{ color: '#426a9d' }}>Forgot Password?</a>
+                                <button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickLogin}>Login</button>
                             </div>
                             <div>
                                 <div className="d-flex justify-content-center ">

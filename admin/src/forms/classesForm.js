@@ -4,8 +4,10 @@ import { PostClasses, GetSpecificClass, EditClass } from "./../APIs/Classes"
 import "./classForm.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWifi, faPlug, faTv } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
 
 export default function AddClass() {
+  const token = useSelector(state => state.Token.token);
   const [name, setName] = useState('noName');
   const [additionalCostPercentage, setAdditionalCostPercentage] = useState(1);
   const [seatCategory, setSeatCategory] = useState('E')
@@ -18,7 +20,7 @@ export default function AddClass() {
   const location = useLocation()
 
   useEffect(() => {
-    GetSpecificClass(location.state?.id)
+    GetSpecificClass(location.state?.id, {Authorization: `Token ${token}`})
     .then((result) => {
       console.log(result.data.data)
       setName(result.data.data.name)
@@ -47,7 +49,7 @@ export default function AddClass() {
     }
     if(location.state){
         try {
-          const response = await EditClass(location.state.id, JSON.stringify(formData));
+          const response = await EditClass(location.state.id, JSON.stringify(formData), {Authorization: `Token ${token}`});
           console.log(formData)
           console.log('Post Response:', response.data);
         } catch (error) {
@@ -55,7 +57,7 @@ export default function AddClass() {
         }
       } else {
         try {
-          const response = await PostClasses(JSON.stringify(formData));
+          const response = await PostClasses(JSON.stringify(formData), {Authorization: `Token ${token}`});
           console.log(formData)
           console.log('Post Response:', response.data);
         } catch (error) {

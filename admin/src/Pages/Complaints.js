@@ -2,17 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { GetComplaints } from './../APIs/Complaints';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import './complaints.css'
+import './CSS/Style.css'
 import { axiosInstance } from "../APIs/Config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faReply ,faPencil,faTrash} from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Token } from "../Context/Token";
 
 export default function Complaints() {
-  const { token, setToken } = useState(Token);
-  console.log(Token)
+  const token = useSelector(state => state.Token.token);
   const [complaints, setComplaints] = useState([]);
   const [show, setShow] = useState(false);
   const [showReply, setShowReply] = useState(false);
@@ -175,7 +173,7 @@ export default function Complaints() {
               </Button>
             </td>
             <td>{formatDate(complaint.created_at)}</td>
-            <td><a className='btn btn-danger' onClick={()=>{handleDelete(complaint.id)}}><FontAwesomeIcon icon={faTrash} /></a></td>
+            <td><a className='btn border-0' onClick={()=>{handleDelete(complaint.id)}}><FontAwesomeIcon icon={faTrash} className='text-danger' /></a></td>
             </tr>
           ))}
         </tbody>

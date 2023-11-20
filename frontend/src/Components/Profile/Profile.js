@@ -30,7 +30,6 @@ const Profile = () => {
     // Open a new tab or window with the dashboard URL
     window.open('http://localhost:3001/', '_blank');
   };
-
   return (
     <section style={{ backgroundColor: '#eee' }}>
       <div className="container py-5 text-start">
@@ -50,15 +49,11 @@ const Profile = () => {
                 <p className="text-muted mb-4">{userData.birth_date}</p>
                 <div className="d-flex justify-content-center mb-2">
                   <button type="button" className="btn btn-primary">Edit</button>
-                  <button type="button" className="btn btn-danger ms-1">Delete</button>
+                  <button type="button" className="btn btn-danger ms-1" onClick={()=>{navigate(`/deleteAccount`)}}>Delete</button>
                   {
-                    userData.is_superuser == true
-                    ?
+                    userData.is_superuser &&
                     <button type="button" className="btn btn-danger ms-1" onClick={handleDashboardButtonClick}>Dashboard</button>
-                    :
-                    ''
                   }
-                  
                 </div>
               </div>
             </div>

@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux';
 import { Token } from "../Context/Token";
 
 export default function Aircrafts() {
-  const { token, setToken } = useContext(Token)
+  const token = useSelector(state => state.Token.token);
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate()
   const [aircrafts, setAircrafts] = useState([])
@@ -47,7 +47,9 @@ export default function Aircrafts() {
     }
 
     axiosInstance
-    .delete(`/flights/api/aircrafts/${aircraftId}`)  
+    .delete(`/flights/api/aircrafts/${aircraftId}`, {
+      headers: {Authorization: `Token ${token}`}
+    }) 
     .then((response) => {
       fetchData()
     })

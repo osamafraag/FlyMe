@@ -1,7 +1,9 @@
 import { axiosInstance } from "./Config";
 
 
-export default function ImagesTrendPlaces() {
-    return axiosInstance.get('countries/api/trendingPlaces/images/')
+export default function ImagesTrendPlaces(headers) {
+    return axiosInstance.get('countries/api/trendingPlaces/images/', {
+        headers: headers
+    })
 }
 

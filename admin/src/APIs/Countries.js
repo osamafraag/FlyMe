@@ -1,9 +1,13 @@
 import { axiosInstance } from "./Config";
 
-export const GetCountries = () => {
-  return axiosInstance.get('countries/api/')
+export const GetCountries = (headers) => {
+  return axiosInstance.get('countries/api/', {
+    headers: headers
+})
 }
 
-export const PostCountries = (data) => {
-  return axiosInstance.post('countries/api/', data)
+export const PostCountries = (data, headers) => {
+  return axiosInstance.post('countries/api/', data, {
+    headers: headers
+})
 }
