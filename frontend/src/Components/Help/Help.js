@@ -11,10 +11,10 @@ export default function HelpComponent() {
   const token = useSelector(state => state.Token.token);
   let userId = userData ? userData.id : null
   console.log(userId)
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [firstName, setFirstName] = useState(userData? userData.first_name : '');
+  const [lastName, setLastName] = useState(userData? userData.last_name : '');
+  const [email, setEmail] = useState(userData? userData.email : '');
+  const [phoneNumber, setPhoneNumber] = useState(userData? userData.phone : '');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
@@ -101,10 +101,10 @@ export default function HelpComponent() {
           // Process the response data
           setSuccessMessage('Data saved successfully!');
           // Reset form fields
-          setFirstName('');
-          setLastName('');
-          setEmail('');
-          setPhoneNumber('');
+          !userData && setFirstName('');
+          !userData && setLastName('');
+          !userData && setEmail('');
+          !userData && setPhoneNumber('');
           setMessage('');
         })
         .catch(error => {
@@ -158,6 +158,7 @@ export default function HelpComponent() {
                     type="text"
                     id="first-name"
                     name="first-name"
+                    readOnly={userData}
                     // placeholder="first-name"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
@@ -171,6 +172,7 @@ export default function HelpComponent() {
                     type="text"
                     id="last-name"
                     name="last-name"
+                    readOnly={userData}
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                   />
