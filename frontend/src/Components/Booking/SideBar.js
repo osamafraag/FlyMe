@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useSelector } from 'react-redux';
 
-export default function SideBar({ insurance, TotalFare }) {
+export default function SideBar({ TotalFare }) {
   const token = useSelector(state => state.Token.token) || {};
   const navigate = useNavigate()
   const { flights } = useParams();
@@ -53,7 +53,7 @@ export default function SideBar({ insurance, TotalFare }) {
   const Total_TAX = flightDataList.reduce((acc, flightData) => acc + (flightData?.baseCost * 0.1 || 0), 0);
   const totalBaseCost = flightDataList.reduce((acc, flightData) => acc + (flightData?.baseCost || 0), 0);
   const totalOfferPercentage = flightDataList.reduce((acc, flightData) => acc + ((flightData?.offerPercentage) || 0), 0);
-  const TotalFaree = (totalBaseCost + Total_TAX + insurance) - ((totalBaseCost + Total_TAX + insurance) * (totalOfferPercentage * 0.01)) || 0;
+  const TotalFaree = (totalBaseCost + Total_TAX ) - ((totalBaseCost + Total_TAX ) * (totalOfferPercentage * 0.01)) || 0;
   TotalFare(TotalFaree);
 
   return (
@@ -100,11 +100,6 @@ export default function SideBar({ insurance, TotalFare }) {
         <div className='d-flex align-items-center justify-content-between data'>
           <p>Total Flight base Cost</p>
           <p>{totalBaseCost} Egp</p>
-        </div>
-
-        <div className='d-flex align-items-center justify-content-between data '>
-          <p>Insurance And Extra Services</p>
-          <p>{insurance} Egp</p>
         </div>
         <div className='d-flex align-items-center justify-content-between data mb-0 pb-0'>
           <p>Total TAX</p>
