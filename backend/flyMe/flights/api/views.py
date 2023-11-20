@@ -68,59 +68,62 @@ def flightList(request):
             if month :
                 flights = flights.filter(departureTime__month=month)
                 if day :
-                    flights = flights.filter(departureTime__day=day)
                     flightDateTime = datetime(year=int(year),month=int(month),day=int(day))
-                    if flightDateTime.date() < datetime.now().date():
+                    if flightDateTime.date() <  datetime.now().date():
                         return Response({"error":'can`t search for past dates'})
+                    flights = flights.filter(departureTime__day=day)
+                    if int(day) == datetime.now().day:
+                        year=datetime.now().year
+                        month=datetime.now().month
+                        day=datetime.now().day
+                        hour=datetime.now().hour 
+                        minute=datetime.now().minute
+                        second=datetime.now().second
+                        allowedTime = datetime(year=year,month=month,day=day,hour=hour+3,minute=minute,second=second)
                     if type == 'D':
                         if source :
                             flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
                         if destination :
                             flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
-                            
-                        serializer = FlightSerializer(flights, many=True)
-                        for flight in serializer.data:
-                            flightId = flight['id']
-                            flght = Flight.objects.get(id=flightId)
-                            flight['from']=flght.startAirport.city.name
-                            flight['to']=flght.endAirport.city.name
-                        return Response(serializer.data)
+                        if allowedTime:
+                            allowedFights=[]
+                            for flight in flights.all():
+                                if flight.departureTime.time() > allowedTime.time():
+                                    allowedFights.append(flight)
+                        return Response(flightSearchSerializer(allowedFights))
                     elif type == 'T':
                         if source :
                             sFlights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
                         if destination :
                             dFlights = allFlights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
+                        
                         for sFlight in sFlights.all():
                             for dFlight in dFlights.all():
                                 if sFlight.arrivalTime.date() == dFlight.departureTime.date() and sFlight.arrivalTime.time() < dFlight.departureTime.time() and sFlight.endAirport.city == dFlight.startAirport.city :
-                                    sSerializer = FlightSerializer(sFlight).data
-                                    flightId = sSerializer['id']
-                                    flight = Flight.objects.get(id=flightId)
-                                    sSerializer['from']=flight.startAirport.city.name
-                                    sSerializer['to']=flight.endAirport.city.name
-                                    dSerializer = FlightSerializer(dFlight).data
-                                    flightId = dSerializer['id']
-                                    flight = Flight.objects.get(id=flightId)
-                                    dSerializer['from']=flight.startAirport.city.name
-                                    dSerializer['to']=flight.endAirport.city.name
-                                    transetFlights.append([sSerializer,dSerializer])
+                                    if allowedTime:
+                                        if sFlight.departureTime.time() > allowedTime.time():
+                                            transetFlights.append([flightSearchSerializer(sFlight,many=False),flightSearchSerializer(dFlight,many=False)])
+                                    else:
+                                        transetFlights.append([flightSearchSerializer(sFlight,many=False),flightSearchSerializer(dFlight,many=False)])
                         return Response(transetFlights)  
-           
-            serializer = FlightSerializer(flights, many=True)
-            for flight in serializer.data:
-                flightId = flight['id']
-                flght = Flight.objects.get(id=flightId)
-                flight['from']=flght.startAirport.city.name
-                flight['to']=flght.endAirport.city.name
-            return Response(serializer.data)          
-      
-        serializer = FlightSerializer(allFlights, many=True)
-        for flight in serializer.data:
+            return Response(flightSearchSerializer(flights))
+        return Response(flightSearchSerializer(allFlights))
+def flightSearchSerializer(flights,many=True):
+    if many:
+        serializer = FlightSerializer(flights, many=True).data
+        for flight in serializer:
             flightId = flight['id']
             flght = Flight.objects.get(id=flightId)
             flight['from']=flght.startAirport.city.name
             flight['to']=flght.endAirport.city.name
-        return Response(serializer.data)
+    else:
+        serializer = FlightSerializer(flights).data
+        flightId = serializer['id']
+        flight = Flight.objects.get(id=flightId)
+        serializer['from']=flight.startAirport.city.name
+        serializer['to']=flight.endAirport.city.name
+    return serializer
+    
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated,IsAdminUser])
