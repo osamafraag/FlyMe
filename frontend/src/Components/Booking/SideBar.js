@@ -22,9 +22,12 @@ export default function SideBar({ TotalFare }) {
       try {
         const dataPromises = flightIds.map(async (flightID) => {
           try {
+            console.log('ID',flightID)
             const res = await FlightData(flightID, {
               headers: {
                 Authorization: `Token ${token}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
               },
             });
             

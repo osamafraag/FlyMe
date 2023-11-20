@@ -2,6 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ActivateEmail, SendActivateEmail} from '../../APIs/Register';
 import { EmailAddress } from '../../Context/EmailAddress';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../Store/Slice/LoggedInUser';
+import { setToken } from '../../Store/Slice/Token';
 
 const ActivateAcoontCheckCode = () => {
   const { emailAddress } = useContext(EmailAddress);
@@ -11,6 +14,11 @@ const ActivateAcoontCheckCode = () => {
   const navigate = useNavigate()
   const[view,setView] = useState(false)
 
+  // if user loged in .. it loges out
+  const dispatch = useDispatch()
+  dispatch(setToken(null))
+  dispatch(logout())
+  
   const timeoutView = (delay)=>{
     setTimeout(() => {
       setView(true);
