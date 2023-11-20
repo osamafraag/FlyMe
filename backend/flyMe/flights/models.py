@@ -78,16 +78,14 @@ class Flight(models.Model):
             if self.status == 'C':
                 books = BookHistory.objects.filter(flight=self.id)
                 for book in books.all():
-                    notify = Notification()
-                    notify.user = book.passenger
-                    notify.title = 'Flight Canceled'
-                    notify.description = f'sorry but your flight from {self.startAirport.city} to {self.endAirport.city} at {self.departureTime} is canceld'
-                    notify.save()
-                    book.passenger.wallet.available_balance += book.totalCost
-                    book.passenger.wallet.pendding_balance -= book.cashBack
-                    book.passenger.save()
-                    book.status = 'C'
-                    book.save(True)
+                    if book.status == 'A':
+                        notify = Notification()
+                        notify.user = book.passenger
+                        notify.title = 'Flight Canceled'
+                        notify.description = f'sorry but your flight from {self.startAirport.city} to {self.endAirport.city} at {self.departureTime} is canceld'
+                        notify.save()
+                        book.status = 'C'
+                        book.save(True)
             
         else:    
             self.full_clean()
@@ -184,6 +182,16 @@ class BookHistory(models.Model):
     
     def clean(self):
         flight = Flight.get(self.flight.id)
+        if self.status == 'C' and self.id:
+            if (self.flight.departureTime.timestamp() - datetime.now().timestamp()) < 86400:
+                raise ValidationError({'flight':'it is too late to cancel this ticket'})
+            self.passenger.wallet.pendding_balance -= self.cashBack
+            self.passenger.wallet.save()
+            transaction = Transaction()
+            transaction.user=self.passenger
+            transaction.type = 'DEPOSIT'
+            transaction.amount = self.totalCost
+            transaction.save()
         if flight.availableSeats < self.adults + self.kids + self.infants :
             raise ValidationError({'flight':'No enough Seat Available For This Flight!'})
         if flight.status == 'C' :
@@ -194,10 +202,9 @@ class BookHistory(models.Model):
         self.cashBack = self.totalCost*0.03
         if self.paymentMethod == 'W':
             self.passenger.wallet.pendding_balance += self.cashBack
-            self.passenger.save()
+            self.passenger.wallet.save()
             transaction = Transaction()
             transaction.user=self.passenger
-            
             transaction.type = 'WPURCHASE'
             transaction.amount = self.totalCost
             transaction.save()
@@ -210,6 +217,14 @@ class BookHistory(models.Model):
 
     def save(self,update=False ,*args, **kwargs):
         if update:
+            if self.status == 'C':
+                self.passenger.wallet.pendding_balance -= self.cashBack
+                self.passenger.wallet.save()
+                transaction = Transaction()
+                transaction.user=self.passenger
+                transaction.type = 'DEPOSIT'
+                transaction.amount = self.totalCost
+                transaction.save()
             super().save(*args, **kwargs)
         else:
             self.full_clean()

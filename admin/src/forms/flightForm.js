@@ -66,7 +66,7 @@ function FlightForm() {
         })
         :
     axiosInstance
-        .post("flights/api/", flight, {
+        .post("flights/api/all/", flight, {
           headers: {Authorization: `Token ${token}`}
         })
         .then((response) => {
