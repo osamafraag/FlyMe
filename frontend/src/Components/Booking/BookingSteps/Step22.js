@@ -9,11 +9,8 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { AllClasses } from '../../../APIs/AllClasses';
 
-export default function Step2({ TotalFare, onInsuranceFareChange, setIsDataSaved1 }) {
+export default function Step2({ TotalFare, setIsDataSaved1 }) {
     const navigate = useNavigate()
-    const [insuranceFare, setInsuranceFare] = useState(0)
-    const [addInsuranceButton, setAddInsuranceButton] = useState('Add')
-    const [addInsuranceIcon, setAddInsuranceIcon] = useState('faPlus')
     const [dataSaved, setDataSaved] = useState(false);
     const [selectedClass, setSelectedClass] = useState('');
     const [selectedClassID, setSelectedClassID] = useState('');
@@ -151,22 +148,6 @@ export default function Step2({ TotalFare, onInsuranceFareChange, setIsDataSaved
             console.log(form);
         }
     };
-    const handleInsuranceFare = (e) => {
-        e.preventDefault();
-        if (insuranceFare == 0){
-            setInsuranceFare(300)
-            onInsuranceFareChange(300)
-            setAddInsuranceButton('Remove')
-            setAddInsuranceIcon('faXmark')
-        }
-        else{
-            setInsuranceFare(0)
-            onInsuranceFareChange(0)
-            setAddInsuranceButton('Add')
-            setAddInsuranceIcon('faPlus')
-            
-        }
-    }
 
     return (
         <>
@@ -192,17 +173,16 @@ export default function Step2({ TotalFare, onInsuranceFareChange, setIsDataSaved
                 </Modal>
                 {/* Header */}
                 <div onClick={handleToggle}>
-                    <Header StepNumber='2' title='Insurance And Extra Services' />
+                    <Header StepNumber='2' title='Extra Data' />
                 </div>
                 {/* Body */}
                 {isContentVisible &&
                     <>
-                        <div className='Body'>
-                            <p>Trip cancellation Protection</p>
-                            <p className='form-label' style={{ color: 'rgb(95, 95, 95)' }}>If you or your traveling companions want to cancel yor trip after booking and want a <strong>full refund</strong>, you can <strong>add 300 EGP</strong> for every passenger, or you can continue to Payment Method.</p>
-                            <div className='d-flex justify-content-end'>
-                                <button className='me-3 fw-semibold btn custom-outline-btn' onClick={handleInsuranceFare}> <FontAwesomeIcon icon={addInsuranceIcon} /> {addInsuranceButton}</button>
+                    <div className='Note px-5 py-2' style={{ backgroundColor: '#fef7cd' }}>
+                            If you want to cancel yor trip after booking, you can find it in the history section in your profile
                             </div>
+                        <div className='Body'>
+                            
                             <form onSubmit={handleOnClickSaveButton}>
                                 {/* Class */}
                                 <div className="mb-3">
