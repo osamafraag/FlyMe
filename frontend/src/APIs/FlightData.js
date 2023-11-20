@@ -1,5 +1,5 @@
 import { axiosInstance } from "./Config";
 
-export const FlightData = (flightID) => {
-  return axiosInstance.get(`flights/api/${flightID}`)
+export const FlightData = (flightID, headers) => {
+  return axiosInstance.get(`flights/api/${flightID}`, headers)
 }

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { UserFlightHistory } from '../../APIs/UserFlightHistory';
 
 const Profile = () => {
   let userData = useSelector(state => state.loggedInUserSlice.data);
@@ -11,6 +12,13 @@ const Profile = () => {
       console.log('Navigating to /Login');
       navigate('/Login');
     }
+    UserFlightHistory(userData?.ID)
+    .then((res)=>{
+      console.log(res.data)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
   }, [userData, navigate]);
 
   // Return null if user data is not available
@@ -57,6 +65,7 @@ const Profile = () => {
                 <li>{userData.history.s}</li>
                 <li>{userData.history.t}</li> */}
                   <li>You Dont Have any history</li>
+
                 </ul>
               </div>
             </div>
