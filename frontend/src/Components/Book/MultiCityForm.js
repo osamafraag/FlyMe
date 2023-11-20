@@ -85,13 +85,7 @@ const MultiCityForm = ({ handleFlightData, cities }) => {
           return result.data;
         })
         );
-        const now = new Date();
-        const filteredResults = resultsArray.map(flights =>
-          flights.filter(flight =>
-            new Date(flight.departure) > now && new Date(flight.departure) < new Date(now.getTime() + 1 * 60 * 60 * 1000)
-          )
-        );
-      handleFlightData(filteredResults);
+      handleFlightData(resultsArray);
     } catch (error) {
       console.error("Error fetching search results:", error);
       handleFlightData([]);
