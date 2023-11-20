@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GetComplaints } from './../APIs/Complaints';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import './complaints.css'
+import './CSS/Style.css'
 import { axiosInstance } from "../APIs/Config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faReply ,faPencil,faTrash} from '@fortawesome/free-solid-svg-icons';

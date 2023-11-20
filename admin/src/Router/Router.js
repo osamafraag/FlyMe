@@ -16,11 +16,9 @@ const Login = React.lazy(() => import('../Pages/Login'));
 const AircraftForm = React.lazy(() => import('../forms/aircraftForm'));
 const ClassForm = React.lazy(() => import('../forms/classesForm'));
 const FlightForm = React.lazy(() => import('../forms/flightForm'));
-const FlightPostponeForm = React.lazy(() => import('../forms/flightPostponeForm'));
 const Error = React.lazy(() => import('../Pages/404'));
 const ImagesTrendPlaces = React.lazy(() => import('../Pages/ImagesTrendPlaces'));
 const ImagesCountry = React.lazy(() => import('../Pages/ImagesCountry'));
-const PostponeForm = React.lazy(() => import('../forms/flightPostponeForm'));
 const ImagesCity = React.lazy(() => import('../Pages/ImagesCity'));
 const SuperUserForm = React.lazy(() => import('../forms/superUserForm'));
 
@@ -44,10 +42,7 @@ export default function Router() {
         <Route path="/ClassForm" element={<ClassForm />} />
         <Route path="/ImagesCity" element={<ImagesCity />} />
         <Route path="/ImagesCountry" element={<ImagesCountry />} />
-        <Route path="/PostponeForm" element={<PostponeForm />} />
-        <Route path="/flightForm" element={<FlightForm />} />
         <Route path="/FlightForm" element={<FlightForm />} />
-        <Route path="/FlightPostponeForm" element={<FlightPostponeForm />} />
         <Route path="/SuperUserForm" element={<SuperUserForm />} />
         <Route path="*" element={<Error />} />
       </Routes>
