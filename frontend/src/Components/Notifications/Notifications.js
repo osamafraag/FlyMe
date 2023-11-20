@@ -185,7 +185,7 @@ export default function NotificationsComponent() {
   const { updateUnreadCount } = useNotificationContext();
 
   let userData = useSelector(state => state.loggedInUserSlice.data);
-  let userId = userData.id
+  let userId = userData ? userData.id : null
   console.log(userData)
   const navigate = useNavigate();
 
