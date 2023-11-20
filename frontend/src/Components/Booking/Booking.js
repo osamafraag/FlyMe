@@ -4,7 +4,9 @@ import SideBar from './SideBar'
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Step1 from './BookingSteps/Step1';
+import Step11 from './BookingSteps/Step11';
 import Step2 from './BookingSteps/Step2';
+import Step22 from './BookingSteps/Step22';
 import Step3 from './BookingSteps/Step3';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -13,7 +15,6 @@ export default function BookingComponent() {
   const [insurance, setInsurance] = useState(0)
   const [TotalFare, setTotalFare] = useState(0)
   const [isDataSaved1, setIsDataSaved1] = useState(false)
-  const [isDataSaved2, setIsDataSaved2] = useState(false)
   const [isDataSaved3, setIsDataSaved3] = useState(false)
   const [isAllDataSaved, setIsAllDataSaved] = useState(false)
   let userData = useSelector(state => state.loggedInUserSlice.data);
@@ -24,20 +25,18 @@ export default function BookingComponent() {
       navigate('/Login');
     }
     const handleIsDataSaved = () => {
-      if (isDataSaved3 && isDataSaved2 && isDataSaved1) {
+      if (isDataSaved3 && isDataSaved1) {
         console.log("All Data Saved")
         setIsAllDataSaved(true)
       }
       else if (isDataSaved1) {
         console.log('1')
-      } else if (isDataSaved2) {
-        console.log('2')
-      } else if (isDataSaved3) {
+       } else if (isDataSaved3) {
         console.log('3')
       }
     }
     handleIsDataSaved()
-  }, [userData, navigate, isDataSaved1, isDataSaved2, isDataSaved3]);
+  }, [userData, navigate, isDataSaved1, isDataSaved3]);
 
   // Return null if user data is not available
   if (!userData || Object.keys(userData).length === 0) {
@@ -47,9 +46,9 @@ export default function BookingComponent() {
     console.log("Insurance Fare changed:", insuranceFare);
     setInsurance(insuranceFare)
   };
-  const handleTotalFare = (Total_Fare) => {
-    console.log("Total Fare changed:", Total_Fare);
-    setTotalFare(Total_Fare)
+  const handleTotalFare = (TotalFare) => {
+    console.log("Total Fare changed:", TotalFare);
+    setTotalFare(TotalFare)
   };
 
   const handleCloseModal = () => {
@@ -60,8 +59,8 @@ export default function BookingComponent() {
     <div className='bookingPage w-100 text-start row'>
       <div className='col-8'>
         {/* Booking Steps: */}
-        <Step1 TotalFare={TotalFare} setIsDataSaved1={setIsDataSaved1} />
-        <Step2 onInsuranceFareChange={handleInsuranceFareChange} setIsDataSaved2={setIsDataSaved2} />
+        <Step11 />
+        <Step22 onInsuranceFareChange={handleInsuranceFareChange} setIsDataSaved1={setIsDataSaved1} TotalFare={TotalFare} />
         <Step3 setIsDataSaved3={setIsDataSaved3} />
 
         {/* Confirmation Window/Message */}
@@ -82,7 +81,7 @@ export default function BookingComponent() {
           </Modal>
       </div>
       {/* Side Bar */}
-      <SideBar insurance={insurance} Total_Fare={handleTotalFare} />
+      <SideBar insurance={insurance} TotalFare={handleTotalFare} />
     </div>
   )
 }
