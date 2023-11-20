@@ -31,7 +31,7 @@ export default function SideBar({ insurance, Total_Fare }) {
       }
     };
 
-    fetchData();
+    // fetchData();
   }, [flightIds]);
 
   if (fetchError) {

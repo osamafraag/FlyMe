@@ -250,7 +250,8 @@ export default function NotificationsComponent() {
   // };
 
   const fetchData = () =>{
-    fetch(`${API_BASE_URL}/accounts/api/user/${userId}/notifications`)
+    fetch(`${API_BASE_URL}/accounts/api/user/${userId}/notifications`,
+    {headers:{Authorization: `Token 31a86af62e54f4958b1cb69f37e62f2db8908d8e`,}})
       .then(response => response.json())
       .then(result => {
         setNotifications(result);
@@ -281,8 +282,8 @@ export default function NotificationsComponent() {
 
 const deleteNotification = (notificationId) => {
     fetch(`${API_BASE_URL}/accounts/api/notifications/${notificationId}`, {
-      method: 'DELETE',
-    })
+      method: 'DELETE'
+    },{headers:{Authorization: `Token 31a86af62e54f4958b1cb69f37e62f2db8908d8e`,}})
       .then((response) => {
         if (response.ok) {
           // If the deletion is successful, update the notifications state to remove the deleted notification

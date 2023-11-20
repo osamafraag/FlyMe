@@ -77,6 +77,7 @@ def flightList(request):
                             flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=source)[0]).values('outFlights'))
                         if destination :
                             flights = flights.filter(id__in=AirPort.objects.filter(city=City.objects.filter(name=destination)[0]).values('inFlights'))
+                            
                         serializer = FlightSerializer(flights, many=True)
                         for flight in serializer.data:
                             flightId = flight['id']
