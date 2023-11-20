@@ -81,6 +81,7 @@ class CityListCreateView(generics.ListCreateAPIView):
                 many=True,context=self.get_serializer_context()).data
 
         return Response(serializer.data)
+    
 class CityPopuarListCreateView(generics.ListCreateAPIView):
     queryset = City.objects.all().order_by('-popularity')[:5]
     serializer_class = CitySerializer
