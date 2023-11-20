@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 export default function Step1({ TotalFare, setIsDataSaved1 }) {
+    const token = useSelector(state => state.Token.token) || {};
     const navigate = useNavigate()
     const [userDidBookBefore, setUserDidBookBefore] = useState(false)
     const { flights } = useParams()
@@ -17,7 +18,7 @@ export default function Step1({ TotalFare, setIsDataSaved1 }) {
     const [dataSaved, setDataSaved] = useState(false);
 
     // handle click on the header to show or not the content of the step
-    const [isContentVisible, setIsContentVisible] = useState(false);
+    const [isContentVisible, setIsContentVisible] = useState(true);
     const handleToggle = () => {
         if (dataSaved !== true)
             setIsContentVisible(!isContentVisible)
@@ -71,7 +72,7 @@ export default function Step1({ TotalFare, setIsDataSaved1 }) {
 
     // Form State
     const [form, setForm] = useState({
-        passenger: userData.id || '',
+        passenger: userData.id,
         email: userData.email || '',
         phone: userData.phone || '',
         first_name: userData.first_name || '',
@@ -319,7 +320,11 @@ export default function Step1({ TotalFare, setIsDataSaved1 }) {
                   flight: parseInt(flightId)
                 };
 
-                return FlightBooking(passengerData);
+                return FlightBooking(passengerData, {
+                    headers: {
+                      Authorization: `Token ${token}`,
+                    },
+                  });
             });
 
             Promise.all(promises)

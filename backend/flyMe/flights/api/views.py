@@ -217,7 +217,7 @@ def userFlights(request,id):
 
 
 @api_view(['GET', 'DELETE', 'PUT'])
-@permission_classes([IsAuthenticated,IsAdminUser])
+# @permission_classes([IsAuthenticated,IsAdminUser])
 def flightDetail(request, id):
     flight = Flight.get(id)
     if request.method=='GET':

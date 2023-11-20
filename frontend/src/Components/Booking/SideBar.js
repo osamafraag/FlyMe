@@ -3,8 +3,10 @@ import { FlightData } from '../../APIs/FlightData';
 import { useNavigate, useParams } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { useSelector } from 'react-redux';
 
-export default function SideBar({ insurance, Total_Fare }) {
+export default function SideBar({ insurance, TotalFare }) {
+  const token = useSelector(state => state.Token.token) || {};
   const navigate = useNavigate()
   const { flights } = useParams();
   const flightIds = flights.split(',');
@@ -15,10 +17,16 @@ export default function SideBar({ insurance, Total_Fare }) {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log(token)
       try {
         const dataPromises = flightIds.map(async (flightID) => {
           try {
-            const res = await FlightData(flightID);
+            const res = await FlightData(flightID, {
+              headers: {
+                Authorization: `Token ${token}`,
+              },
+            });
+            
             return res.data.data;
           } catch (err) {
             console.log(err);
@@ -26,26 +34,25 @@ export default function SideBar({ insurance, Total_Fare }) {
             return null;
           }
         });
-
+  
         const flightDataArray = await Promise.all(dataPromises);
         setFlightDataList(flightDataArray.filter((data) => data !== null));
       } catch (error) {
         console.log(error);
         setFetchError(true);
+      } finally {
+        if (fetchError) {
+          setError(true);
+        }
       }
     };
-
     fetchData();
   }, []);
 
-  if (fetchError) {
-    setError(true);
-  }
-
   const Total_TAX = flightDataList.reduce((acc, flightData) => acc + (flightData?.baseCost * 0.1 || 0), 0);
   const totalBaseCost = flightDataList.reduce((acc, flightData) => acc + (flightData?.baseCost || 0), 0);
-  const Total_Faree = totalBaseCost + Total_TAX + insurance || 0;
-  Total_Fare(Total_Faree);
+  const TotalFaree = totalBaseCost + Total_TAX + insurance || 0;
+  TotalFare(TotalFaree);
 
   return (
     <div className='col'>
@@ -104,7 +111,7 @@ export default function SideBar({ insurance, Total_Fare }) {
         <hr className='mt-0 pt-0' />
         <div className='d-flex align-items-center justify-content-between data'>
           <p>Total Fare</p>
-          <p>{Total_Faree} Egp</p>
+          <p>{TotalFaree} Egp</p>
         </div>
       </div>
     </div>
