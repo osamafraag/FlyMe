@@ -18,6 +18,8 @@ const ForgetPassword = React.lazy(() => import('../../src/Pages/ForgetPassword/F
 const ResetPassword = React.lazy(() => import('../../src/Pages/ForgetPassword/ResetPassword'));
 const ActivateAccountPage = React.lazy(() => import('../../src/Pages/ActivateAccountPage'));
 const DelateAccountPage = React.lazy(() => import('../../src/Pages/DelateAccountPage'));
+const EditProfile = React.lazy(() => import('../Pages/EditProfilePage'));
+
 
 
 export default function Router() {
@@ -40,6 +42,7 @@ export default function Router() {
         <Route path="/ResetPassword" element={<ResetPassword />} />
         <Route path="/CheckActivationCode" element={<ActivateAccountPage />} />
         <Route path="/deleteAccount" element={<DelateAccountPage />} />
+        <Route path="/EditProfile" element={<EditProfile />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Suspense>
