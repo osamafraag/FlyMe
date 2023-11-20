@@ -30,7 +30,7 @@ const RoundTripResult = ({ flightData }) => {
 
   return (
     <div>
-      {flightData.length != 0 ? (
+      {flightData[0].length != 0 || flightData[1].length != 0 ? (
         flightData[0].map((flight1, index1) => (
           flightData[1].map((flight2, index2) => (
             <div className='flight border border-1 rounded-2 p-5 pe-0 mb-3 row align-items-center bg-white' key={index1 + '-' + index2}>
