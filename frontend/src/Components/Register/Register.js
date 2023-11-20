@@ -3,11 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import './register.css'
 import { Register as RegisterAPI, SendActivateEmail } from '../../APIs/Register'
 import { getCountries } from '../../APIs/Countries';
-import { userData } from '../../APIs/AllUsers'
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../Store/Slice/LoggedInUser';
+import { setToken } from '../../Store/Slice/Token';
 
 var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 
 export default function Register() {
+    // if user loged in .. it loges out
+    const userData = useSelector(state => state.loggedInUserSlice.data) || {};
+    const token = useSelector(state => state.Token.token);
+    const dispatch = useDispatch()
+    dispatch(setToken(null))
+    dispatch(logout())
+
     let navigate = useNavigate()
     const [errorMessage, seterrorMessage] = useState(null)
     const [usernameExists, setUsernameExists] = useState(false)
