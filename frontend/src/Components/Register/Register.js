@@ -19,8 +19,7 @@ export default function Register() {
         const fetchCountries = async () => {
             try {
                 const data = await getCountries();
-                const countryNames = data.map(country => country.name);
-                setCountries(countryNames);
+                setCountries(data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
@@ -389,7 +388,7 @@ export default function Register() {
                             </div>
                             {/* country */}
                             <div className="mb-3">
-                                <label htmlFor="country" className="form-label">country</label>
+                                <label htmlFor="country" className="form-label">Country</label>
                                 <select
                                     className="form-select"
                                     name="country"
@@ -399,7 +398,7 @@ export default function Register() {
                                 >
                                     <option value="" disabled>Select your country</option>
                                     {countries.map((country, index) => (
-                                        <option key={index} value={country}>{country}</option>
+                                        <option key={index} value={country.id}>{country.name}</option>
                                     ))}
                                 </select>
                                 {formError.country && <div className="form-text text-danger text-start ">{formError.country}</div>}
