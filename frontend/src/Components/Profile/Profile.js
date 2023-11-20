@@ -5,7 +5,7 @@ import { UserFlightHistory } from '../../APIs/UserFlightHistory';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { FlightData } from '../../APIs/FlightData';
-import { UnbookFlight } from '../../APIs/UnbookFlight';
+import { UnbookFlight, GetFlightBook } from '../../APIs/UnbookFlight';
 
 const Profile = () => {
   const token = useSelector(state => state.Token.token) || {};
@@ -16,6 +16,7 @@ const Profile = () => {
   const userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate()
   const [fetchError, setFetchError] = useState(false);
+  const [unbook, setUnbook] = useState('')
 
   useEffect(() => {
     // If !user navigate to login page 
@@ -26,14 +27,11 @@ const Profile = () => {
     }
 
     // Fetch user flight history
-    UserFlightHistory(userData?.id, {
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    })
+    UserFlightHistory(userData?.id, { Authorization: `Token ${token}` })
       .then((res) => {
         console.log(res?.data);
         setFlightHistory(res?.data);
+        console.log(res?.data)
 
         const flightIds = res?.data.map((flight) => flight.flight);
 
@@ -41,10 +39,11 @@ const Profile = () => {
         Promise.all(
           flightIds.map((flightId) =>
             FlightData(flightId, {
-              headers: {
-                Authorization: `Token ${token}`,
-              },
-            }).then((flightDataResponse) => flightDataResponse.data)
+              Authorization: `Token ${token}`,
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            })
+              .then((flightDataResponse) => flightDataResponse.data)
           )
         )
           .then((flightDataArray) => {
@@ -60,7 +59,7 @@ const Profile = () => {
         console.log(err);
         setFetchError(true);
       });
-  }, [userData, navigate, token]);
+  }, [userData, navigate, token, unbook]);
 
   // Return null if user data is not available
   if (!userData || Object.keys(userData).length === 0) {
@@ -68,16 +67,25 @@ const Profile = () => {
   }
 
   const handleUnbookFlightButtonClick = (bookId) => {
-    
-    UnbookFlight(token,bookId)
-    .then((res)=>{
-      console.log('Flight unbooked')
-      setShowDeleteFlightModal(false);
-    })
-    .catch((err)=>{
-      console.log(err)
-    })  
 
+    GetFlightBook(bookId, { Authorization: `Token ${token}` })
+      .then((result) => {
+        const flightData = result.data.data;
+        flightData.status = 'C';
+        console.log(flightData)
+        UnbookFlight(bookId, flightData, { Authorization: `Token ${token}` })
+          .then((res) => {
+            console.log('Flight Unbooked')
+            setShowDeleteFlightModal(false);
+            setUnbook(`Book ${bookId} is Cancelled`)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   const handleDashboardButtonClick = () => {
@@ -93,7 +101,7 @@ const Profile = () => {
             <div className="card mb-4">
               <div className="card-body text-center">
                 <img
-                  src={userData?.image || 'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'}
+                  src={userData?.image || 'https://static.vecteezy.com/system/resources/thumbnails/007/033/146/small/profile-icon-login-head-icon-vector.jpg'}
                   alt="avatar"
                   className="rounded-circle img-fluid"
                   style={{ width: '150px' }}
@@ -102,11 +110,11 @@ const Profile = () => {
                 <p className="text-muted mb-4">{userData?.address}</p>
                 <p className="text-muted mb-4">{userData?.birth_date}</p>
                 <div className="d-flex justify-content-center mb-2">
-                  <button type="button" className="btn btn-primary" onClick={() => { navigate('/EditProfile') }}>Edit</button>
+                  <button type="button" className="btn text-white" style={{ backgroundColor: "var(--main-color)" }} onClick={() => { navigate('/EditProfile') }}>Edit</button>
                   <button type="button" className="btn btn-danger ms-1" onClick={() => { navigate(`/deleteAccount`) }}>Delete</button>
                   {
                     userData?.is_superuser &&
-                    <button type="button" className="btn btn-danger ms-1" onClick={handleDashboardButtonClick}>Dashboard</button>
+                    <button type="button" className="btn ms-1 text-white" style={{ backgroundColor: "var(--main-color)" }} onClick={handleDashboardButtonClick}>Dashboard</button>
                   }
                 </div>
               </div>
@@ -115,81 +123,86 @@ const Profile = () => {
             <div className="card mb-4 mb-lg-0">
               <div className="card-body p-0">
                 <ul className="list-group list-group-flush rounded-3 p-4" style={{ listStyleType: 'none' }}>
-                  {!flightHistory
-                    ? <li className="text-center">You Didn't Book Any Flight</li>
-                    : flightHistory.map((flight, index) => (
-                      <li className="d-flex justify-content-between align-items-center py-2" key={index}>
-                        <span>{flightData[index]?.data?.departureTime}</span>
-                        <button type="button" className="btn btn-primary" onClick={() => setShowModal(true)}>click</button>
-                        <Modal show={showModal} onHide={() => setShowModal(false)} className='modal-lg modal-dialog-scrollable'>
-                          <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
-                            <Modal.Title>Flight Details</Modal.Title>
-                          </Modal.Header>
-                          {flightData && flightData[index] && flightData[index].data && (
+                  {
+                    flightHistory.length == 0
+                      ?
+                      <li className="text-center">You Didn't Book Any Flight</li>
+                      :
+                      flightHistory.map((flight, index) => (
+                        <li className="py-2 d-flex justify-content-between align-items-center" key={index}>
+                          <span>{(flightData[index]?.data?.departureTime)?.substring(0, 10)}</span>
+                        <button type="button" className="btn text-white" style={{backgroundColor: "var(--main-color)"}} onClick={() => setShowModal(true)}>Show</button>
+                          <Modal show={showModal} onHide={() => setShowModal(false)} className='modal-lg modal-dialog-scrollable'>
+                            <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
+                              <Modal.Title>Flight Details</Modal.Title>
+                            </Modal.Header>
+                            {flightData && flightData[index] && flightData[index].data && (
+                              <Modal.Body style={{ backgroundColor: "#fafafa" }}>
+                                <div className='border border-1 rounded-3 p-4 my-3 bg-white'>
+                                  <div className='d-flex justify-content-between align-items-center'>
+                                    <div>
+                                      <p className='fw-bold m-0 p-0'>{flightData[index].data.departureTime}</p>
+                                    </div>
+                                    <hr className="w-25" />
+                                    <div>
+                                      <p className='fw-bold m-0 p-0'>{flightData[index].data.arrivalTime}</p>
+                                    </div>
+                                  </div>
+                                  <div className='d-flex justify-content-between align-items-center'>
+                                    <div>
+                                      <p className='m-0 p-0'>{flightData[index].data.from}</p>
+                                    </div>
+                                    <div>
+                                      <p className='m-0 p-0'>{flightData[index].data.to}</p>
+                                    </div>
+                                  </div>
+                                  <br />
+                                  <br />
+                                  <div className='d-flex justify-content-between flex-wrap'>
+                                    <p>Class: {flight.category_name}</p>
+                                    <p>Trip Distance: {flightData[index].data.distance} Km</p>
+                                    <p>Flight Status: {flightData[index].data.status == "A" ? "Active" : "Cancelled"}</p>
+                                    <p>Book Status: {flightHistory[index].status == "A" ? "Active" : "Cancelled"}</p>
+                                  </div>
+                                </div>
+                              </Modal.Body>
+                            )}
+                            <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
+                              <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => setShowModal(false)}>
+                                Close
+                              </Button>
+                              {flightHistory[index].status == "A" &&
+                                <Button className='border-0 btn btn-danger' onClick={() => { setShowModal(false); setShowDeleteFlightModal(true) }}>
+                                  Unbook This Flight
+                                </Button>}
+                            </Modal.Footer>
+                          </Modal>
+                          {/* Delete flight Modal */}
+                          <Modal show={showDeleteFlightModal} onHide={() => setShowDeleteFlightModal(false)} className='modal-lg modal-dialog-scrollable'>
+                            <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
+                              <Modal.Title>Flight Details</Modal.Title>
+                            </Modal.Header>
                             <Modal.Body style={{ backgroundColor: "#fafafa" }}>
                               <div className='border border-1 rounded-3 p-4 my-3 bg-white'>
                                 <div className='d-flex justify-content-between align-items-center'>
                                   <div>
-                                    <p className='fw-bold m-0 p-0'>{flightData[index].data.departureTime}</p>
+                                    <p className='fw-bold m-0 p-0'>Are You Sure You Want To Unbook This Flight?</p>
+                                    <p className='m-0 p-0'>If You Choose To Unbook, You will loose <strong>10%</strong> of the Total Trip Cost.</p>
                                   </div>
-                                  <hr className="w-25" />
-                                  <div>
-                                    <p className='fw-bold m-0 p-0'>{flightData[index].data.arrivalTime}</p>
-                                  </div>
-                                </div>
-                                <div className='d-flex justify-content-between align-items-center'>
-                                  <div>
-                                    <p className='m-0 p-0'>{flightData[index].data.from}</p>
-                                  </div>
-                                  <div>
-                                    <p className='m-0 p-0'>{flightData[index].data.to}</p>
-                                  </div>
-                                </div>
-                                <br />
-                                <br />
-                                <div className='d-flex justify-content-between flex-wrap'>
-                                  <p>Class: {flight.category_name}</p>
-                                  <p>Trip Distance: {flightData[index].data.distance} Km</p>
-                                  <p>Flight Status: {flightData[index].data.status === 'A' ? 'Active' : 'Cancelled'}</p>
                                 </div>
                               </div>
                             </Modal.Body>
-                          )}
-                          <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
-                            <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => setShowModal(false)}>
-                              Close
-                            </Button>
-                            <Button className='border-0 btn btn-danger' onClick={() => { setShowModal(false); setShowDeleteFlightModal(true) }}>
-                              Unbook This Flight
-                            </Button>
-                          </Modal.Footer>
-                        </Modal>
-                        {/* Delete flight Modal */}
-                        <Modal show={showDeleteFlightModal} onHide={() => setShowDeleteFlightModal(false)} className='modal-lg modal-dialog-scrollable'>
-                          <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
-                            <Modal.Title>Flight Details</Modal.Title>
-                          </Modal.Header>
-                          <Modal.Body style={{ backgroundColor: "#fafafa" }}>
-                            <div className='border border-1 rounded-3 p-4 my-3 bg-white'>
-                              <div className='d-flex justify-content-between align-items-center'>
-                                <div>
-                                  <p className='fw-bold m-0 p-0'>Are You Sure You Want To Unbook This Flight?</p>
-                                  <p className='m-0 p-0'>If You Choose To Unbook, You will loose <strong>10%</strong> of the Total Trip Cost.</p>
-                                </div>
-                              </div>
-                            </div>
-                          </Modal.Body>
-                          <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
-                            <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => setShowDeleteFlightModal(false)}>
-                              Close
-                            </Button>
-                            <Button className='border-0 btn btn-danger' onClick={handleUnbookFlightButtonClick(flightHistory[index].id)}>
-                              Unbook This Flight
-                            </Button>
-                          </Modal.Footer>
-                        </Modal>
-                      </li>
-                    ))}
+                            <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
+                              <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => setShowDeleteFlightModal(false)}>
+                                Close
+                              </Button>
+                              <Button className='border-0 btn btn-danger' onClick={() => handleUnbookFlightButtonClick(flightHistory[index].id)}>
+                                Unbook This Flight
+                              </Button>
+                            </Modal.Footer>
+                          </Modal>
+                        </li>
+                      ))}
                 </ul>
               </div>
             </div>

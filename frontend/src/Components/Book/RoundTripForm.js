@@ -96,8 +96,6 @@ const RoundTripForm = ({ handleFlightData, cities }) => {
     }
   
     try {
-      const now = new Date();
-      
       const [flights1, flights2] = await Promise.all([
         SearchFlight(
           destinationFrom,
@@ -117,14 +115,7 @@ const RoundTripForm = ({ handleFlightData, cities }) => {
         )
       ]);
 
-      const filteredFlights1 = flights1.data.filter(flight =>
-        new Date(flight.departure) > now && new Date(flight.departure) < new Date(now.getTime() + 1 * 60 * 60 * 1000)
-      );
-      const filteredFlights2 = flights2.data.filter(flight =>
-        new Date(flight.departure) > now && new Date(flight.departure) < new Date(now.getTime() + 1 * 60 * 60 * 1000)
-      );
-  
-      const searchResults = [filteredFlights1, filteredFlights2];
+      const searchResults = [flights1.data, flights2.data];
       handleFlightData(searchResults);
     } catch (error) {
       handleFlightData([]);

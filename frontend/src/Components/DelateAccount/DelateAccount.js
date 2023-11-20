@@ -1,29 +1,43 @@
-import React, { useContext, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { deleteUserAPI } from '../../APIs/DeleteUser'; 
-import { useSelector } from 'react-redux';
+import { deleteUserAPI } from '../../APIs/DeleteUser';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../Store/Slice/LoggedInUser';
+import { setToken } from '../../Store/Slice/Token';
 
 export default function DeleteAccount() {
-  const [password, setPassword] = useState(''); 
+  const dispatch = useDispatch()
+  const [password, setPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
-  
+
   // Ensure userData is not undefined or null before accessing its properties
   const userData = useSelector(state => state.loggedInUserSlice.data) || {};
-  console.log(userData.id);
-
   const token = useSelector(state => state.Token.token);
-  console.log(token);
 
+  // If !user navigate to this page
+  useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+      return;
+    }
+  },[])
+  // Return null if user data is not available
+  if (!userData || Object.keys(userData).length === 0) {
+    return null;
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
-    deleteUserAPI(token, password, userData.id) 
+    deleteUserAPI(token, password, userData.id)
       .then((res) => {
         console.log(res.data);
         setSuccessMessage('Account deleted successfully.');
         setErrorMessage('');
+        dispatch(setToken(null))
+        dispatch(logout())
         setTimeout(() => {
           navigate("/")
         }, 2000);

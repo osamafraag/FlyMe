@@ -54,7 +54,7 @@ class CountryFeaturedListCreateView(generics.ListCreateAPIView):
 
         return Response(serializer.data)
     
-@permission_classes([IsAuthenticated,IsAdminUser])
+# @permission_classes([IsAuthenticated,IsAdminUser])
 class CountryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
@@ -113,7 +113,7 @@ class CityFeaturedListCreateView(generics.ListCreateAPIView):
                 many=True,context=self.get_serializer_context()).data
         return Response(serializer.data)
 
-@permission_classes([IsAuthenticated,IsAdminUser])
+# @permission_classes([IsAuthenticated,IsAdminUser])
 class CityRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer

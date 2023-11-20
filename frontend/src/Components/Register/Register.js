@@ -3,11 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import './register.css'
 import { Register as RegisterAPI, SendActivateEmail } from '../../APIs/Register'
 import { getCountries } from '../../APIs/Countries';
-import { userData } from '../../APIs/AllUsers'
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../Store/Slice/LoggedInUser';
+import { setToken } from '../../Store/Slice/Token';
 
 var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 
 export default function Register() {
+    // if user loged in .. it loges out
+    const userData = useSelector(state => state.loggedInUserSlice.data) || {};
+    const token = useSelector(state => state.Token.token);
+    const dispatch = useDispatch()
+    dispatch(setToken(null))
+    dispatch(logout())
+
     let navigate = useNavigate()
     const [errorMessage, seterrorMessage] = useState(null)
     const [usernameExists, setUsernameExists] = useState(false)
@@ -19,8 +28,7 @@ export default function Register() {
         const fetchCountries = async () => {
             try {
                 const data = await getCountries();
-                const countryNames = data.map(country => country.name);
-                setCountries(countryNames);
+                setCountries(data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
@@ -389,7 +397,7 @@ export default function Register() {
                             </div>
                             {/* country */}
                             <div className="mb-3">
-                                <label htmlFor="country" className="form-label">country</label>
+                                <label htmlFor="country" className="form-label">Country</label>
                                 <select
                                     className="form-select"
                                     name="country"
@@ -399,7 +407,7 @@ export default function Register() {
                                 >
                                     <option value="" disabled>Select your country</option>
                                     {countries.map((country, index) => (
-                                        <option key={index} value={country}>{country}</option>
+                                        <option key={index} value={country.id}>{country.name}</option>
                                     ))}
                                 </select>
                                 {formError.country && <div className="form-text text-danger text-start ">{formError.country}</div>}
