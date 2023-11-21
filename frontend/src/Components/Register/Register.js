@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './register.css'
 import { Register as RegisterAPI, SendActivateEmail } from '../../APIs/Register'
@@ -13,6 +13,8 @@ export default function Register() {
     // if user loged in .. it loges out
     const { setEmailAddress } = useContext(EmailAddress);
     const{setUserNameAndPassword} = useContext(AutoLogin)
+
+    const formContainerRef = useRef()
     let navigate = useNavigate()
     const [errorMessage, seterrorMessage] = useState(null)
     const [usernameExists, setUsernameExists] = useState(false)
@@ -32,6 +34,17 @@ export default function Register() {
 
         fetchCountries();
     }, []);
+
+    // To scroll up in the form container
+    const scrollToTop = () => {
+        const container = formContainerRef.current;
+        const scrollOptions = {
+          top: 0,
+          behavior: 'smooth',
+        };
+      
+        container.scrollTo(scrollOptions);
+      };
     
 
     // Form State
@@ -81,6 +94,9 @@ export default function Register() {
         let name = event.target.name
         let value = event.target.value
 
+        setEmailExists(false);
+        setUsernameExists(false);
+
         // Email Validations
         if (name === 'email') {
             setForm({
@@ -88,6 +104,7 @@ export default function Register() {
                 email: value
             });
             // const emailExists = usersArray ? usersArray.some(user => user.email === value) : false;
+
             setFormError({
                 ...formError,
                 email:
@@ -272,7 +289,7 @@ export default function Register() {
     };
 
     const isFormValid = !formError.email && !formError.password && !formError.password2 && !formError.phone && !formError.first_name && !formError.last_name && !formError.male && !formError.female && !formError.birth_date && !formError.country && !formError.passport_number && !formError.passport_expire_date && form.email && form.password && form.password2 && form.phone && form.first_name && form.last_name && (form.male || form.female) && form.birth_date && form.country && form.passport_number && form.passport_expire_date
-    
+    console.log('valid:',isFormValid)
     
 
     // handle click on Register button
@@ -300,24 +317,28 @@ export default function Register() {
                         navigate('/CheckActivationCode');
                     }).catch((error)=>{
                         console.log(error)
+                        scrollToTop()
                     })
                 })
                 .catch((err) => {
                     console.log('Register failed');
                     console.log(err.response.data);
+                    scrollToTop()
                     if (err.response.data.password) {
                         setFormError({
                             ...formError,
                             password: "This password is too common.",
                         });
                     } else {
-                        err.response.data.email && setEmailExists('Email must be unique.');
+                        err.response.data.email && setEmailExists('Their Is An Account With That Email Address!');
                         err.response.data.username && setUsernameExists(err.response.data.username);
+                        scrollToTop()
                     }
                 });
         } else {
             console.log("Form Has Errors");
             seterrorMessage('Please enter all data.')
+            scrollToTop()
             console.log(formError);
             console.log(form);
         }
@@ -330,7 +351,7 @@ export default function Register() {
                     <div className='col-5 text-center'>
                         <img src={RegisterImage} width={400} />
                     </div>
-                    <div className="fade-in form bg-white text-start col-7 px-4">
+                    <div ref={formContainerRef} className="fade-in form bg-white text-start col-7 px-4">
                         {(errorMessage || emailExists || usernameExists) && (
                             <p className="text-danger" style={{ fontSize: '14px' }}>
                                 <div>{errorMessage}</div>
