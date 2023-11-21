@@ -438,3 +438,41 @@ class ActivateAccount(UpdateAPIView):
         user.is_email_verified = True
         user.save()
         return Response({'message': 'Account activated.'}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request, id):
+    user = get_object_or_404(MyUser, id=id)
+
+    current_password = request.data.get('current_password')
+    password = request.data.get('password')
+    password2 = request.data.get('password2')
+
+    if not request.user.is_superuser:
+        if not check_password(current_password, user.password):
+            return Response({'error': 'Current password is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if password == password2:
+        user.set_password(password)
+        user.save()
+        return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+
+    return Response({'error': 'New password and confirm new password do not match.'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def check_user_name(request):
+    username = request.data.get('username')
+    check_username = MyUser.objects.filter(username=username).first()
+    
+    if check_username:
+        return Response({'error': 'Username already exsist.'}, status=status.HTTP_400_BAD_REQUEST) 
+    return Response({'message': 'ok'}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def check_email(request):
+    email = request.data.get('email')
+    check_email = MyUser.objects.filter(email=email).first()
+    
+    if check_email:
+        return Response({'error': 'Email already exsist.'}, status=status.HTTP_400_BAD_REQUEST) 
+    return Response({'message': 'ok'}, status=status.HTTP_200_OK)
