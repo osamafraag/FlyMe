@@ -175,9 +175,9 @@ export default function Users() {
         </Modal.Body>
         <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
         <Button className='border-0 btn btn-danger' onClick={() => handelDelateUser()}>
-                Submit
+                Delate User
             </Button>
-            <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => navigate('/Users')}>
+            <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() =>setShowModal(false)}>
                 Back to Users
             </Button>
         </Modal.Footer>
