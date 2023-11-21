@@ -21,6 +21,7 @@ const ImagesTrendPlaces = React.lazy(() => import('../Pages/ImagesTrendPlaces'))
 const ImagesCountry = React.lazy(() => import('../Pages/ImagesCountry'));
 const ImagesCity = React.lazy(() => import('../Pages/ImagesCity'));
 const SuperUserForm = React.lazy(() => import('../forms/superUserForm'));
+const EditProfile = React.lazy(() => import('../Components/EditUser/EditUser'));
 
 export default function Router() {
   return (
@@ -44,6 +45,7 @@ export default function Router() {
         <Route path="/ImagesCountry" element={<ImagesCountry />} />
         <Route path="/FlightForm" element={<FlightForm />} />
         <Route path="/SuperUserForm" element={<SuperUserForm />} />
+        <Route path="/Users/Edit/:id" element={<EditProfile />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Suspense>

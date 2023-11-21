@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom'
 import { AllUsers } from "./../APIs/AllUsers";
+import { deleteUserAPI } from "./../APIs/DeleteUser";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPlus} from '@fortawesome/free-solid-svg-icons'
+import { getAllUsersData } from '../Store/Slice/LoggedInUser';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 export default function Users() {
   const token = useSelector(state => state.Token.token);
@@ -12,6 +16,29 @@ export default function Users() {
   const navigate = useNavigate();
   const [regularUsers, setRegularUsers] = useState([]);
   const [superUsers, setSuperUsers] = useState([]);
+  const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState(false)
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [numberOfUserDeleted, setNumberOfUserDeleted] = useState(0);
+
+  function handelNavagateToEdit(id) {
+    navigate(`Edit/${id}`);
+  }
+
+  function handelDelateUser(){
+    deleteUserAPI(token, userToDelete).then((res)=>{
+      console.log(res)
+      setNumberOfUserDeleted(numberOfUserDeleted+1)
+      setShowModal(false)
+    }).catch((err)=>{
+      console.log(err)
+    })
+  }
+
+  function handelClickDeleteUser(userId){
+    setUserToDelete(userId)
+    setShowModal(true)
+  }
 
   // If !user navigate to login page 
   useEffect(() => {
@@ -25,17 +52,17 @@ export default function Users() {
     AllUsers({Authorization: `Token ${token}`})
       .then((result) => {
         console.log(result.data.data);
-
-        const regularUsers = result.data.data.filter(user => !user.is_superuser);
-        const adminUsers = result.data.data.filter(user => user.is_superuser);
-
+        const allUsersData = result.data.data;
+        dispatch(getAllUsersData(allUsersData))
+        const regularUsers = allUsersData.filter(user => !user.is_superuser);
+        const adminUsers = allUsersData.filter(user => user.is_superuser);
         setRegularUsers(regularUsers);
         setSuperUsers(adminUsers);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [numberOfUserDeleted]);
 
   return (
     <div className='container py-5 px-4'>
@@ -57,6 +84,8 @@ export default function Users() {
               <th>E-mail</th> 
               <th>Gender</th>  
               <th>Birth Date</th> 
+              <th>Edit</th>  
+              <th>Delate</th>  
             </tr>
           </thead>
           <tbody>
@@ -69,6 +98,16 @@ export default function Users() {
               <td>{user.email}</td>
               <td>{user.gender == "F" ? "Female" : "Male"}</td>
               <td>{user.birth_date}</td>
+              <td>
+              <button type="button" className="btn btn-secondary btn-sm mr-2" onClick={()=>handelNavagateToEdit(user.id)} >
+                Edit
+              </button> 
+              </td>
+              <td>
+              <button type="button" className="btn btn-danger btn-sm" onClick={()=>handelClickDeleteUser(user.id)} >
+                Delete
+              </button>
+              </td>
             </tr>
           ))}
           </tbody>
@@ -91,6 +130,8 @@ export default function Users() {
               <th>B.O.D</th>  
               <th>P.Num</th>
               <th>P.E.D</th>  
+              <th>Edit</th>  
+              <th>Delate</th>  
             </tr>
           </thead>
           <tbody>
@@ -105,12 +146,42 @@ export default function Users() {
               <td>{user.gender == "F" ? "Female" : "Male"}</td>  
               <td>{user.birth_date}</td>  
               <td>{user.passport_number}</td>
-              <td>{user.passport_expire_date}</td>  
+              <td>{user.passport_expire_date}</td>
+              <td>
+              <button type="button" className="btn btn-secondary btn-sm mr-2" onClick={()=>handelNavagateToEdit(user.id)} >
+                Edit
+              </button> 
+              </td>
+              <td>
+              <button type="button" className="btn btn-danger btn-sm" onClick={()=>handelClickDeleteUser(user.id)} >
+                Delete
+              </button>
+              </td>
             </tr>
           ))}
           </tbody>
         </table>
       </div>
+      <Modal show={showModal} onHide={() => setShowModal(false)} className='modal-lg modal-dialog-scrollable'>
+        <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
+            <Modal.Title>Admin</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ backgroundColor: "#fafafa" }}>
+            <form>
+                <p className="text text-danger">
+                <strong>Warning:</strong> Be careful{'\n'}You are trying to delete user "as Admin".
+                </p>
+            </form>
+        </Modal.Body>
+        <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
+        <Button className='border-0 btn btn-danger' onClick={() => handelDelateUser()}>
+                Submit
+            </Button>
+            <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => navigate('/Users')}>
+                Back to Users
+            </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

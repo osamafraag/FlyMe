@@ -86,7 +86,7 @@ export default function LoginForm() {
                             else {
                                 seterrorMessage('You are not Admin.')
                                 console.log('not admin')
-                                navigate('/Login')
+                                // navigate('/Login')
                             }
                         })
                         .catch((error) => {

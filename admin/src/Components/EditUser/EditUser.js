@@ -1,67 +1,62 @@
-import { React, useState, useEffect, useContext } from 'react'
-import { useNavigate } from 'react-router-dom';
-import './register.css'
-import { Register as RegisterAPI, SendActivateEmail } from '../../APIs/Register'
-import { getCountries } from '../../APIs/Countries';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../Store/Slice/LoggedInUser';
-import { setToken } from '../../Store/Slice/Token';
-import { EmailAddress } from '../../Context/EmailAddress';
+import { React, useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom';
+import { GetCountries } from '../../APIs/Countries';
+import { useSelector } from 'react-redux';
+import { EditUserData } from '../../APIs/EditUser';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import { useDispatch } from 'react-redux';
 
-var RegisterImage = require('../../Assets/Images/Login/Register.jpg')
-
-export default function Register() {
-    // if user loged in .. it loges out
-    const userData = useSelector(state => state.loggedInUserSlice.data) || {};
+export default function EditProfile() {
+    const [successMessage, setSuccessMessage] = useState('');
+    const [showModal, setShowModal] = useState(false)
+    const { id } = useParams();
+    const numericId = parseInt(id, 10);
+    const usersData = useSelector(state => state.loggedInUserSlice.allUsersData);
+    const userData = usersData.find(user => user.id === numericId);
     const token = useSelector(state => state.Token.token);
-    const dispatch = useDispatch()
-    dispatch(setToken(null))
-    dispatch(logout())
-    const { setEmailAddress } = useContext(EmailAddress);
-
-
-    let navigate = useNavigate()
+    const navigate = useNavigate()
+    const [password, setPassword] = useState('');
     const [errorMessage, seterrorMessage] = useState(null)
-    const [usernameExists, setUsernameExists] = useState(false)
     const [emailExists, setEmailExists] = useState(false)
+
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
+    const dispatch = useDispatch();
     useEffect(() => {
+        // If !user navigate to login page 
+        if (!userData || Object.keys(userData).length === 0) {
+            console.log('User-Not-Found');
+            navigate('/Users');
+            return;
+        }
         const fetchCountries = async () => {
             try {
-                const data = await getCountries();
+                const data = await GetCountries();
                 setCountries(data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
         };
-
         fetchCountries();
     }, []);
-    
 
     // Form State
     const [form, setForm] = useState({
-        email: '',
-        password: '',
-        password2: '',
-        username: '',
-        phone: '',
-        first_name: '',
-        last_name: '',
-        gender:'',
-        male: '',
-        female: '',
-        birth_date: '',
-        country: '',
-        passport_number: '',
-        passport_expire_date: '',
+        email: userData?.email || '',
+        phone: userData?.phone || '',
+        first_name: userData?.first_name || '',
+        last_name: userData?.last_name || '',
+        gender: userData?.gender || '',
+        male: userData?.gender == 'F' ? false : true || '',
+        female: userData?.gender == 'F' ? true : false || '',
+        birth_date: userData?.birth_date || '',
+        country: userData?.country || '',
+        passport_number: userData?.passport_number || '',
+        passport_expire_date: userData?.passport_expire_date || '',
     })
     const [formError, setFormError] = useState({
         email: null,
-        password: null,
-        password2: null,
-        username: null,
         phone: null,
         first_name: null,
         last_name: null,
@@ -71,17 +66,20 @@ export default function Register() {
         country: null,
         passport_number: null,
         passport_expire_date: null,
-
     });
+
+    // Return null if user data is not available
+    if (!userData || Object.keys(userData).length === 0) {
+        return null;
+    }
+
 
     // Regex Validations
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/; // Minimum eight characters, at least 1 letter and 1 number
-    const weakPassword = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/
     const phoneRegex = /^01[0125][0-9]{8}$/;      // 010, 011, 012 or 015 + other 8 digits
     const passport_numberRegex = /(^A)[0-9]{8}$/;         // A + 8 numbers
-    
-    
+
+
 
     const handleOnChangeForm = (event) => {
         let name = event.target.name
@@ -93,7 +91,6 @@ export default function Register() {
                 ...form,
                 email: value
             });
-            // const emailExists = usersArray ? usersArray.some(user => user.email === value) : false;
             setFormError({
                 ...formError,
                 email:
@@ -102,60 +99,7 @@ export default function Register() {
                         : !value.match(emailRegex)
                             ? "Invalid Email, Email Should Be Like This name@example.com"
                             : emailExists
-                            ? "This email already exist"
-                            : null
-            })
-        }
-        // Password Validations
-        else if (name === 'password') {
-            setForm({
-                ...form,
-                password: value
-            });
-            setFormError({
-                ...formError,
-                password:
-                    value.trim(" ").length === 0
-                        ? "You Should Enter Your Password"
-                        : !value.match(passwordRegex)
-                            ? "Invalid Password, Password Should be Minimum eight characters, at least 1 letter and 1 number"
-                            : !value.match(weakPassword)
-                            ? "This password is too common."
-                            : null
-            })
-        }
-        // Confirm Password Validations
-        else if (name === 'password2') {
-            setForm({
-                ...form,
-                password2: value
-            });
-            setFormError({
-                ...formError,
-                password2:
-                    value.trim(" ").length === 0
-                        ? "You Should Enter Your Password"
-                        : value !== form.password
-                            ? "Password Don't Match"
-                            : null
-            })
-        }
-        // Username Validations
-        else if (name === 'username') {
-            setForm({
-                ...form,
-                username: value
-            });
-            // const usernameExists = usersArray ? usersArray.some(user => user.username === value) : false;
-            setFormError({
-                ...formError,
-                username:
-                    value.trim(" ").length === 0
-                        ? "You Should Enter Your Username"
-                        : value.length < 3 || value.length > 20
-                            ? "Invalid Name, Username can't Be Less Than 3 Nor Greater Than 20 Character."
-                            : usernameExists == true
-                            ? "This username already exist"
+                                ? "This email already exist"
                                 : null
             })
         }
@@ -277,88 +221,67 @@ export default function Register() {
         }))
     };
 
-    const isFormValid = !formError.email && !formError.password && !formError.password2 && !formError.phone && !formError.first_name && !formError.last_name && !formError.male && !formError.female && !formError.birth_date && !formError.country && !formError.passport_number && !formError.passport_expire_date && form.email && form.password && form.password2 && form.phone && form.first_name && form.last_name && (form.male || form.female) && form.birth_date && form.country && form.passport_number && form.passport_expire_date
-    
-    
+    const isFormValid = !formError.email && !formError.phone && !formError.first_name && !formError.last_name && !formError.male && !formError.female && !formError.birth_date && !formError.passport_number && !formError.passport_expire_date && form.email && form.phone && form.first_name && form.last_name && (form.male || form.female) && form.birth_date && form.passport_number && form.passport_expire_date
 
-    // handle click on Register button
-    const handleOnClickRegister = (e) => {
+    // handle click on Save Data button
+    const handleOnClickSaveData = (e) => {
         e.preventDefault();
         if (isFormValid) {
-            console.log('form',form)
+            console.log('form', form)
             console.log("Form Submitted Successfully");
-            RegisterAPI(form)
-                .then((res) => {
-                    console.log('Register successful');
-                    console.log('res.data',res.data);
-                    SendActivateEmail({email:form.email}).then((result)=>{
-                        setEmailAddress(form.email)
-                        console.log(result)
-                        navigate('/CheckActivationCode');
-                    }).catch((error)=>{
-                        console.log(error)
-                    })
-                })
-                .catch((err) => {
-                    console.log('Register failed');
-                    console.log(err.response.data);
-                    if (err.response.data.password) {
-                        setFormError({
-                            ...formError,
-                            password: "This password is too common.",
-                        });
-                    } else {
-                        err.response.data.email && setEmailExists('Email must be unique.');
-                        err.response.data.username && setUsernameExists(err.response.data.username);
-                    }
-                });
+            setShowModal(true)
         } else {
             console.log("Form Has Errors");
-            seterrorMessage('Please enter all data.')
             console.log(formError);
             console.log(form);
         }
     };
 
+    const handleOnClickPassword = () =>{
+        console.log(token, userData.id)
+        EditUserData(form , {Authorization: `Token ${token}`} , userData.id)
+        .then((res) => {
+            console.log('Edit Data successful');
+            console.log('res.data', res.data);
+            // dispatch(loginSuccess(res.data.data))
+            setShowModal(false);
+            navigate("/Users")
+        })
+        .catch((err) => {
+            console.log('Edit Data failed');
+            console.log(err);
+            err.response.data.email && setEmailExists('Email must be unique.');
+            setShowModal(false)
+            seterrorMessage(err.config.message); 
+            setSuccessMessage('');
+            console.log('err',err);
+        });
+        setShowModal(false)
+    }
+
     return (
         <div>
-            <div className="register container p-5 my-5 shadow rounded-3 bg-white text-start" style={{width: "1000px"}}>
-                <div className="row align-items-start g-5">
-                    <div className='col-5 text-center'>
-                        <img src={RegisterImage} width={400} />
-                    </div>
-                    <div className="fade-in form bg-white text-start col-7 px-4">
-                        {(errorMessage || emailExists || usernameExists) && (
+            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start">
+                <div className="row align-items-center">
+                    <img
+                        src="https://www.seiu1000.org/sites/main/files/main-images/camera_lense_0.jpeg"
+                        className="col-6"
+                        width="300"
+                    />
+                    <div className="col-6 pb-5">
+                        {(errorMessage || emailExists) && (
                             <p className="text-danger" style={{ fontSize: '14px' }}>
                                 <div>{errorMessage}</div>
                                 <div>{emailExists}</div>
-                                <div>{usernameExists}</div>
                             </p>
                         )}
                         <form method="post" encType="multipart/form-data">
+
                             {/* Email */}
                             <div className=" mb-3">
                                 <label htmlFor="floatingInput" className='form-label'>Email address</label>
                                 <input type="email" className="form-control" id="floatingInput" value={form.email} onChange={handleOnChangeForm} placeholder='Enter your email' name="email" required />
                                 {formError.email && <div className="form-text text-danger text-start ">{formError.email}</div>}
-                            </div>
-                            {/* Username */}
-                            <div className="mb-3">
-                                <label htmlFor="username" className="form-label">Username</label>
-                                <input type="text" className="form-control" name='username' value={form.username} id="username" placeholder='Enter your Username' onChange={handleOnChangeForm} required />
-                                {formError.username && <div className="form-text text-danger text-start ">{formError.username}</div>}
-                            </div>
-                            {/* Password */}
-                            <div className=" mb-3">
-                                <label htmlFor="floatingPassword">Password</label>
-                                <input type="password" className="form-control" id="floatingPassword" value={form.password} onChange={handleOnChangeForm} name='password' placeholder='Enter your password' required />
-                                {formError.password && <div className="form-text text-danger text-start ">{formError.password}</div>}
-                            </div>
-                            {/* Confirm Password */}
-                            <div className=" mb-3">
-                                <label htmlFor="password2">Confirm Password</label>
-                                <input type="password" className="form-control" id="password2" value={form.password2} onChange={handleOnChangeForm} name='password2' placeholder='Enter your password' required />
-                                {formError.password2 && <div className="form-text text-danger text-start ">{formError.password2}</div>}
                             </div>
                             {/* First Name */}
                             <div className="mb-3">
@@ -406,9 +329,9 @@ export default function Register() {
                                     onChange={handleSelectChange}
                                 >
                                     <option value="" disabled>Select your country</option>
-                                    {countries.map((country, index) => (
+                                    {/* {countries.map((country, index) => (
                                         <option key={index} value={country.id}>{country.name}</option>
-                                    ))}
+                                    ))} */}
                                 </select>
                                 {formError.country && <div className="form-text text-danger text-start ">{formError.country}</div>}
                             </div>
@@ -424,7 +347,10 @@ export default function Register() {
                                 <input type="date" className="form-control" name='passport_expire_date' value={form.passport_expire_date} id="passport_expire_date" onChange={handleOnChangeForm} required />
                                 {formError.passport_expire_date && <div className="form-text text-danger text-start ">{formError.passport_expire_date}</div>}
                             </div>
-                            <center><button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickRegister}>Register</button></center>
+                            <div>
+                                <button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickSaveData}>Save Data</button>
+                                <button  className="btn custom-btn m-4 p-2" style={{ borderRadius: '7px' }} onClick={() => navigate('/Users')}>Back To Users</button>
+                            </div>
                             <div>
                                 <div className="d-flex justify-content-center ">
                                 </div>
@@ -433,6 +359,26 @@ export default function Register() {
                     </div>
                 </div>
             </div>
+            <Modal show={showModal} onHide={() => setShowModal(false)} className='modal-lg modal-dialog-scrollable'>
+                <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
+                    <Modal.Title>Admin</Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{ backgroundColor: "#fafafa" }}>
+                    <form>
+                        <p className="text text-danger">
+                        <strong>Warning:</strong> Be careful{'\n'}You are trying to edit data "as Admin".
+                        </p>
+                    </form>
+                </Modal.Body>
+                <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
+                <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => handleOnClickPassword()}>
+                        Submit
+                    </Button>
+                    <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => navigate('/Users')}>
+                        Back to Users
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const INITIAL_STATE = {
     data: null,
+    allUsersData: null,
 }
 
 const loggedInUserSlice = createSlice({
@@ -21,9 +22,13 @@ const loggedInUserSlice = createSlice({
             console.log('Reducer logging out user');
             state.data = null;
         },
+        getAllUsersData: (state, action) => {
+            state.allUsersData  = action.payload
+            console.log('Reducer updating state with userData:', state.data);
+        },
     },
 });
 
-export const { loginSuccess , logout , logData } = loggedInUserSlice.actions;
+export const { loginSuccess, logout, logData, getAllUsersData } = loggedInUserSlice.actions;
 
 export default loggedInUserSlice.reducer;
