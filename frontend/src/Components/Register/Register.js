@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../Store/Slice/LoggedInUser';
 import { setToken } from '../../Store/Slice/Token';
 
-var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
+var RegisterImage = require('../../Assets/Images/Login/Register.jpg')
 
 export default function Register() {
     // if user loged in .. it loges out
@@ -320,14 +320,12 @@ export default function Register() {
 
     return (
         <div>
-            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start">
-                <div className="row align-items-center">
-                    <img
-                        src={RegisterImage}
-                        className="col-6"
-                        width="300"
-                    />
-                    <div className="col-6 pb-5">
+            <div className="register container p-5 my-5 shadow rounded-3 bg-white text-start" style={{width: "1000px"}}>
+                <div className="row align-items-start g-5">
+                    <div className='col-5 text-center'>
+                        <img src={RegisterImage} width={400} />
+                    </div>
+                    <div className="fade-in form bg-white text-start col-7 px-4">
                         {(errorMessage || emailExists || usernameExists) && (
                             <p className="text-danger" style={{ fontSize: '14px' }}>
                                 <div>{errorMessage}</div>

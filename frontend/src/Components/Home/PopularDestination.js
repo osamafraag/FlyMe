@@ -17,7 +17,7 @@ export default function PopularDestination({popularDestination}) {
       <div className="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-4 justify-content-center align-items-center ">
         {popularDestination.slice(0, 3).map((destination, index) => {
           return (
-            <div className="col d-flex justify-content-center align-items-center" key={index}>
+            <div className="fade-out col d-flex justify-content-center align-items-center" key={index}>
               <HomeCard data={destination} navigation={(id) => redirectSearchResult(id)} />
             </div>
           )

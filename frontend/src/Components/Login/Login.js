@@ -9,7 +9,7 @@ import { EmailAddress} from '../../Context/EmailAddress';
 import { SendActivateEmail } from '../../APIs/Register';
 import { setToken } from '../../Store/Slice/Token';
 
-var loginImage = require('../../Assets/Images/Accounts/login.jpg')
+var loginImage = require('../../Assets/Images/Login/Login4.png')
 
 export default function LoginForm() {
     const{setEmailAddress}= useContext(EmailAddress)
@@ -110,8 +110,8 @@ export default function LoginForm() {
     };
 
     return (
-        <div>
-            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start" style={{width: "1000px"}}>
+        <div className='d-flex justify-content-center align-items-center' >
+            <div className="profile container p-5 my-5  shadow rounded-3 bg-white text-start" style={{ width: "1000px" }}>
                 <div className="row align-items-center">
                     <img
                         src={loginImage}
@@ -149,7 +149,7 @@ export default function LoginForm() {
                         </form>
                         <hr />
                         <div className="text-center">
-                            <a href="" className="text-decoration-none" style={{color: '#426a9d'}} onClick={()=>navigate('/Register')}>Create New Account!</a>
+                            <a href="" className="text-decoration-none" style={{color: 'var(--main-color)'}} onClick={()=>navigate('/Register')}>Create New Account!</a>
                         </div>
                     </div>
                 </div>
