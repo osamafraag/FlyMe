@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../Store/Slice/LoggedInUser';
 import { setToken } from '../../Store/Slice/Token';
+import ActivationImage from '../../Assets/Images/Login/Activation.jpg'
 
 const ActivateAcoontCheckCode = () => {
   const { emailAddress } = useContext(EmailAddress);
@@ -76,39 +77,37 @@ const ActivateAcoontCheckCode = () => {
   }
 
   return (
-    <div className="container my-5 fade-in">
-      <div className="row align-items-center">
-        <div className="col-lg-6">
+    <div className="container my-5 fade-in ">
+      <div className="row row-cols-1 align-items-center px-5  rounded-3 shadow mx-auto" style={{width: "700px"}}>
+        <div>
           <img
-            src="https://static.vecteezy.com/system/resources/thumbnails/007/033/146/small/profile-icon-login-head-icon-vector.jpg"
+            src={ActivationImage}
+            width={200}
             className="img-fluid mb-4"
             alt="Login"
           />
         </div>
-        <div className="col-lg-6 pb-5">
+        <div className="pb-5">
           <form onSubmit={handleSubmit}> 
-            <h4>we have send activation code to your email: </h4>
-            <h5>{emailAddress}</h5>
-            <br/>
-            <div className="mb-3">
-              <label htmlFor="code" className="form-label">
-                Verification Code
-              </label>
-              <input
-                type="number"
-                className="form-control"
+            <h5 className='text-start text-secondary'>Check Your Email</h5>
+            <h6 className='mb-2 text-secondary '>{emailAddress}</h6>
+            <div class="form-floating mb-3">
+              <input 
+                type="number" 
+                class="form-control"
                 id="code"
                 name="code"
                 placeholder="Verification Code"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 required
-              />
+                />
+                <label htmlFor="code">Verification Code</label>
             </div>
             {code && (
               <>
             <div className="d-flex justify-content-between align-items-center mt-4">
-              <button type="submit" className="btn btn-success">
+              <button type="submit" className="btn text-white" style={{backgroundColor: "var(--main-color)"}}>
                 Activate Email
               </button>
             </div>
@@ -117,15 +116,14 @@ const ActivateAcoontCheckCode = () => {
             )}
             {view && (
               <div className='fade-in'>
-                <hr className="text-success" />
-                <div className="d-flex justify-content-between align-items-center mt-4">
-                  <button className="btn btn-primary" onClick={handelSendActivationToEmail}>
-                    Send Activation Code Again
+                <div className="d-flex justify-content-end align-items-center mt-4">
+                  <button className="btn text-white" style={{backgroundColor: "var(--main-color)"}} onClick={handelSendActivationToEmail}>
+                    Send Code Again
                   </button>
                 </div>
               </div>
             )}
-            <hr className="text-success" />
+            <hr style={{color: "var(--main-color)"}} />
 
             {successMessage && (
               <div className="alert alert-success mt-3" role="alert">
@@ -141,13 +139,13 @@ const ActivateAcoontCheckCode = () => {
 
           </form>
 
-          <div className="text-center mt-3">
-            <a href="/Register" className="text-primary">
-              Create Now Account
+          <div className="text-end mt-3">
+            <a href="/Register" className="text-decoration-none" style={{color: 'var(--main-color)'}}>
+              Create Now Account!
             </a>
           </div>
           <div className="text-center mt-3">
-            <a href="/Login" className="text-success">
+            <a href="/Login" className="btn text-white" style={{backgroundColor: 'var(--main-color)'}}>
               Login
             </a>
           </div>

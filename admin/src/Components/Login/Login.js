@@ -9,7 +9,7 @@ import { setToken } from '../../Store/Slice/Token';
 // import { Token } from '../../Context/Token';
 
 
-var loginImage = require('../../Assets/Images/Accounts/login.jpg')
+var loginImage = require('../../Assets/Images/Login/Login4.png')
 export default function LoginForm() {
     // const { token, setToken } = useContext(Token)
     let navigate = useNavigate()
@@ -106,8 +106,8 @@ export default function LoginForm() {
     };
 
     return (
-        <div>
-            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start" style={{ width: "1000px" }}>
+        <div className='d-flex justify-content-center align-items-center' style={{height: "570px"}}>
+            <div className="profile container p-5 my-5  shadow rounded-3 bg-white text-start" style={{ width: "800px" }}>
                 <div className="row align-items-center">
                     <img
                         src={loginImage}
@@ -135,7 +135,7 @@ export default function LoginForm() {
                             </div>
                             {/* Forgot Password */}
                             <div className="d-flex flex-column">
-                                <a href="" className="text-decoration-none text-end mt-3" style={{ color: '#426a9d' }}>Forgot Password?</a>
+                                {/* <a href="" className="text-decoration-none text-end mt-3" style={{ color: '#426a9d' }}>Forgot Password?</a> */}
                                 <button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickLogin}>Login</button>
                             </div>
                             <div>

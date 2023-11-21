@@ -152,13 +152,17 @@ export default function Complaints() {
                 </Button>
               </td>
               <td>{formatDate(complaint.created_at)}</td>
+              {complaint.user_id ?
               <td><Button
-                  className='btn'
-                  style={{ backgroundColor: 'transparent', border: 'none' }}
-                  onClick={() => handleShowReply(complaint)}
-                >
-                  <FontAwesomeIcon icon={faReply} style={{ color: 'var(--main-color)' }} />
-                </Button></td>
+                className='btn'
+                style={{ backgroundColor: 'transparent', border: 'none' }}
+                onClick={() => handleShowReply(complaint)}
+              >
+                <FontAwesomeIcon icon={faReply} style={{ color: 'var(--main-color)' }} />
+              </Button></td>
+              :
+              <td><a className='btn border-0'>-</a></td>
+              }
             </tr>
             :
             <tr key={index}>
@@ -177,7 +181,11 @@ export default function Complaints() {
               </Button>
             </td>
             <td>{formatDate(complaint.created_at)}</td>
-            <td><a className='btn border-0' onClick={()=>{handleDelete(complaint.id)}}><FontAwesomeIcon icon={faTrash} className='text-danger' /></a></td>
+            {complaint.user_id ?
+              <td><a className='btn border-0' onClick={()=>{handleDelete(complaint.id)}}><FontAwesomeIcon icon={faTrash} className='text-danger' /></a></td>
+              :
+              <td><a className='btn border-0'>-</a></td>
+            }
             </tr>
           ))}
         </tbody>

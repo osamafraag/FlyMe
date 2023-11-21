@@ -13,7 +13,7 @@ export default function TripIdeas({tripIdeas}) {
       <div className="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-4 justify-content-center align-items-center ">
         {tripIdeas.slice(0, 3).map((trip, index) => {
           return (
-            <div className="col d-flex justify-content-center align-items-center" key={index}>
+            <div className="fade-in col d-flex justify-content-center align-items-center" key={index}>
               <HomeCard data={trip} navigation={(id) => redirectToTripIdeas(id)} />
             </div>
           )
