@@ -34,7 +34,10 @@ class MyUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        if not self.wallet:
+        try:
+            if not self.wallet:
+                pass
+        except:
             wallet = Wallet()
             wallet.user = self
             wallet.save()
