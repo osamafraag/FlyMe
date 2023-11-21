@@ -36,7 +36,7 @@ const ActivateAcoontCheckCode = () => {
           setErrorMessage(null);
           const myTimeout = setTimeout(() => {
             navigate("/login")
-          }, 2000);
+          }, 600);
           
         })
         .catch((err) => {

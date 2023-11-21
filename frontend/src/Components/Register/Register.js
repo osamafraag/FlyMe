@@ -3,29 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import './register.css'
 import { Register as RegisterAPI, SendActivateEmail } from '../../APIs/Register'
 import { getCountries } from '../../APIs/Countries';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../Store/Slice/LoggedInUser';
-import { setToken } from '../../Store/Slice/Token';
 import { EmailAddress } from '../../Context/EmailAddress';
+import { AutoLogin } from '../../Context/AutoLogin';
+
 
 var RegisterImage = require('../../Assets/Images/Login/Register.jpg')
 
 export default function Register() {
     // if user loged in .. it loges out
-    const userData = useSelector(state => state.loggedInUserSlice.data) || {};
-    const token = useSelector(state => state.Token.token);
-    const dispatch = useDispatch()
-    dispatch(setToken(null))
-    dispatch(logout())
     const { setEmailAddress } = useContext(EmailAddress);
-
-
+    const{setUserNameAndPassword} = useContext(AutoLogin)
     let navigate = useNavigate()
     const [errorMessage, seterrorMessage] = useState(null)
     const [usernameExists, setUsernameExists] = useState(false)
     const [emailExists, setEmailExists] = useState(false)
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
+    
     useEffect(() => {
         const fetchCountries = async () => {
             try {
@@ -294,6 +288,15 @@ export default function Register() {
                     SendActivateEmail({email:form.email}).then((result)=>{
                         setEmailAddress(form.email)
                         console.log(result)
+
+                        // for auto login
+                        const userNameAndPasswordForAutoLogin = {
+                            username: form.username,
+                            password: form.password
+                        }
+                        setUserNameAndPassword(userNameAndPasswordForAutoLogin)
+                        console.log(userNameAndPasswordForAutoLogin)
+
                         navigate('/CheckActivationCode');
                     }).catch((error)=>{
                         console.log(error)

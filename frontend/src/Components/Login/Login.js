@@ -1,4 +1,4 @@
-import {React, useContext, useState} from 'react'
+import {React, useContext, useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import './login.css'
 import { Login } from '../../APIs/Login';
@@ -8,10 +8,12 @@ import { loginSuccess } from '../../Store/Slice/LoggedInUser';
 import { EmailAddress} from '../../Context/EmailAddress';
 import { SendActivateEmail } from '../../APIs/Register';
 import { setToken } from '../../Store/Slice/Token';
+import { AutoLogin } from '../../Context/AutoLogin';
 
 var loginImage = require('../../Assets/Images/Login/Login4.png')
 
 export default function LoginForm() {
+    const{userNameAndPassword, setUserNameAndPassword}= useContext(AutoLogin)
     const{setEmailAddress}= useContext(EmailAddress)
     let navigate = useNavigate()
     const dispatch = useDispatch();
@@ -25,6 +27,25 @@ export default function LoginForm() {
         username: null,
         password: null,
     });
+
+    function ifLoginSucess(res){
+        console.log(res.data.token)
+        const token_data = res.data.token
+        dispatch(setToken(res.data.token))
+        
+        // Sava User Data in the Reducer
+        userData({
+            Authorization: `Token ${token_data}`,
+            })
+        .then((result) => {
+            dispatch(loginSuccess(result.data.user))
+            setUserNameAndPassword(null)
+            navigate('/');
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
 
     const handleOnChangeForm = (event) => {
         let name = event.target.name
@@ -60,6 +81,7 @@ export default function LoginForm() {
         }
     }
 
+
     const isFormValid = !formError.username && !formError.password && form.username && form.password
 
     // handle click on Login button
@@ -69,22 +91,7 @@ export default function LoginForm() {
             console.log("Form Submitted Successfully");
             Login(form)
                 .then((res) => {
-                    console.log(res.data.token)
-                    const token_data = res.data.token
-                    dispatch(setToken(res.data.token))
-
-                    // Sava User Data in the Reducer
-                    userData({
-                        Authorization: `Token ${token_data}`,
-                      })
-                    .then((result) => {
-                        dispatch(loginSuccess(result.data.user))
-                        console.log(result)
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-                    navigate('/');
+                    ifLoginSucess(res)
                 })
                 .catch((err) => {
                     if (err.response && err.response.data.email) {
@@ -108,6 +115,18 @@ export default function LoginForm() {
             console.log(form);
         }
     };
+
+    useEffect(() => {
+        // for auto login
+        if (userNameAndPassword ) {
+            Login(userNameAndPassword)
+            .then((res) => {
+                ifLoginSucess(res)
+            }).catch((err)=>{
+                console.log(err);
+            })
+        } 
+    }, []);
 
     return (
         <div className='d-flex justify-content-center align-items-center' >

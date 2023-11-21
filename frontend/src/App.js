@@ -6,15 +6,18 @@ import './App.css';
 import './master.css';
 import { Token } from "./Context/Token";
 import { EmailAddress } from "./Context/EmailAddress";
+import { AutoLogin } from "./Context/AutoLogin";
 import { useState } from "react";
 
 function App() {
-  const [token, setToken] = useState();
-  const [emailAddress, setEmailAddress] = useState();
-  const [userId, setUserId] = useState(null);
+  const [token, setToken] = useState(null);
+  const [emailAddress, setEmailAddress] = useState(null);
+  const [userNameAndPassword, setUserNameAndPassword] = useState(null);
+
   return (
     <div className="App">
       <BrowserRouter>
+        <AutoLogin.Provider value={{ userNameAndPassword, setUserNameAndPassword }}>
         <Token.Provider value={{ token, setToken }}>
         <EmailAddress.Provider value={{ emailAddress, setEmailAddress }}>
           <NavBar />
@@ -24,6 +27,7 @@ function App() {
           <Footer />
         </EmailAddress.Provider>
         </Token.Provider>
+        </AutoLogin.Provider>
       </BrowserRouter>
     </div>
   );
