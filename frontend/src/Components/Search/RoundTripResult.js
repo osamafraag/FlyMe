@@ -48,16 +48,48 @@ const RoundTripResult = ({ flightData }) => {
                   ) : (
                     <Flight flight={flight2} />
                   )}
-                </div>
+                </div>                
               </div>
-              
+
               <div className='flight-more col-4 h-100 justify-content-end'>
-                <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {(Array.isArray(flight1)? flight1[0].baseCost + flight1[1].baseCost : flight1.baseCost) + (Array.isArray(flight2) ? flight2[0].baseCost + flight2[1].baseCost : flight2.baseCost)}</h4>
+                {
+                  (Array.isArray(flight1) ? flight1[0].offerPercentage + flight1[1].offerPercentage : flight1.offerPercentage) + (Array.isArray(flight2) ? flight2[0].offerPercentage + flight2[1].offerPercentage : flight2.offerPercentage) == 0
+                    ?
+                    <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {(Array.isArray(flight1) ? flight1[0].baseCost + flight1[1].baseCost : flight1.baseCost) + (Array.isArray(flight2) ? flight2[0].baseCost + flight2[1].baseCost : flight2.baseCost)}</h4>
+                    :
+                    <h4><span className='fw-normal text-secondary fs-6'>EGP</span> 
+                    {
+                  (Array.isArray(flight1) ? flight1[0].baseCost + flight1[1].baseCost : flight1.baseCost)
+                  -
+                  ((
+                  (Array.isArray(flight1) ? flight1[0].baseCost + flight1[1].baseCost : flight1.baseCost)
+                  *
+                    (
+                      (Array.isArray(flight1) ? flight1[0].offerPercentage + flight1[1].offerPercentage : flight1.offerPercentage) 
+                      / 100
+                    )
+                  ))
+                  +
+                  (
+                    (Array.isArray(flight2) ? flight2[0].baseCost + flight2[1].baseCost : flight2.baseCost)
+                    -
+                    ((Array.isArray(flight2) ? flight2[0].baseCost + flight2[1].baseCost : flight2.baseCost)
+                    *
+                     (
+                      (Array.isArray(flight2) ? flight2[0].offerPercentage + flight2[1].offerPercentage : flight2.offerPercentage)
+                      / 100
+                     ))
+                  )
+
+                } 
+                    <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{(Array.isArray(flight1) ? flight1[0].baseCost + flight1[1].baseCost : flight1.baseCost) + (Array.isArray(flight2) ? flight2[0].baseCost + flight2[1].baseCost : flight2.baseCost)}</smal></h4>
+                  }
+
                 <p className='text-secondary'><small>Per Person</small></p>
-                <button 
-                  type="button" 
-                  className="btn rounded-5 text-white px-3 py-2" 
-                  style={{backgroundColor: "var(--main-color)"}} 
+                <button
+                  type="button"
+                  className="btn rounded-5 text-white px-3 py-2"
+                  style={{ backgroundColor: "var(--main-color)" }}
                   onClick={() => handleShowModal([flight1, flight2])}
                 >
                   View Deals
@@ -67,19 +99,19 @@ const RoundTripResult = ({ flightData }) => {
           ))
         ))
       ) : (
-      <div className='d-flex flex-column  justify-content-center align-items-center text-secondary '>
-        <h3>Sorry We Couldn't Found Any Result</h3>
-        <img src={NoResult} width={400}/>
-      </div>
+        <div className='d-flex flex-column  justify-content-center align-items-center text-secondary '>
+          <h3>Sorry We Couldn't Found Any Result</h3>
+          <img src={NoResult} width={400} />
+        </div>
       )}
 
       {selectedFlight && (
-        <Modal 
-          show={showModal} 
-          handleClose={handleCloseModal} 
-          handleBooking={() => handleBooking(selectedFlight)} 
-          title="Flight Details" 
-          flights={selectedFlight} 
+        <Modal
+          show={showModal}
+          handleClose={handleCloseModal}
+          handleBooking={() => handleBooking(selectedFlight)}
+          title="Flight Details"
+          flights={selectedFlight}
         />
       )}
     </div>

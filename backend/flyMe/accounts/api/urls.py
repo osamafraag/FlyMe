@@ -28,7 +28,9 @@ urlpatterns = [
     path('cheack-verification-code/', CheckVerificationCode.as_view(), name='cheack-verification-code'),
     path('request-activate-code/', SendActivateEmail.as_view(), name='request-activate-code'),
     path('activate-account/', ActivateAccount.as_view(), name='activate-account'),
-
-
+    path('change-password/<int:id>/', change_password, name='change-password'),
+    path('check_user_name/', check_user_name, name='check_user_name'),
+    path('check_email/', check_email, name='check_email'),
+    
 ]
 

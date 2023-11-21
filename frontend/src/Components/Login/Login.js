@@ -105,8 +105,8 @@ export default function LoginForm() {
                             console.log(errors)
                         })
                     } else {
-                        console.log(err.response && err.response.data);
-                        seterrorMessage('Please enter your username and password correctly.');
+                        console.log(err.response.data);
+                        seterrorMessage(err.response.data.error);
                     }
                 });
         } else {
