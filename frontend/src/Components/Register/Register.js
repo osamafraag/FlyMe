@@ -5,6 +5,9 @@ import { Register as RegisterAPI, SendActivateEmail } from '../../APIs/Register'
 import { getCountries } from '../../APIs/Countries';
 import { EmailAddress } from '../../Context/EmailAddress';
 import { AutoLogin } from '../../Context/AutoLogin';
+import axios from 'axios';
+import { CheckUsername } from '../../APIs/CheckUsername';
+import { CheckEmail } from '../../APIs/CheckEmail';
 
 
 var RegisterImage = require('../../Assets/Images/Login/Register.jpg')
@@ -17,8 +20,6 @@ export default function Register() {
     const formContainerRef = useRef()
     let navigate = useNavigate()
     const [errorMessage, seterrorMessage] = useState(null)
-    const [usernameExists, setUsernameExists] = useState(false)
-    const [emailExists, setEmailExists] = useState(false)
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     
@@ -80,6 +81,40 @@ export default function Register() {
         passport_expire_date: null,
 
     });
+    
+    // Check if username exist
+    useEffect(()=>{
+        if (form.username !== null){    
+            CheckUsername(form.username)
+            .then((res)=>{
+                console.log(res.data)
+            })
+            .catch((err)=>{
+                console.log(err.response.data.error)
+                setFormError(
+                    {...formError,
+                    username: err.response.data.error}
+                )
+            })
+        }
+    },[form.username])
+
+    // Check if email exist
+    useEffect(()=>{
+        if (form.email !== null){    
+            CheckEmail(form.email)
+            .then((res)=>{
+                console.log(res.data)
+            })
+            .catch((err)=>{
+                console.log(err.response.data.error)
+                setFormError(
+                    {...formError,
+                    email: err.response.data.error}
+                )
+            })
+        }
+    },[form.email])
 
     // Regex Validations
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -94,17 +129,12 @@ export default function Register() {
         let name = event.target.name
         let value = event.target.value
 
-        setEmailExists(false);
-        setUsernameExists(false);
-
         // Email Validations
         if (name === 'email') {
             setForm({
                 ...form,
                 email: value
             });
-            // const emailExists = usersArray ? usersArray.some(user => user.email === value) : false;
-
             setFormError({
                 ...formError,
                 email:
@@ -112,8 +142,6 @@ export default function Register() {
                         ? "You Should Enter Your Email"
                         : !value.match(emailRegex)
                             ? "Invalid Email, Email Should Be Like This name@example.com"
-                            : emailExists
-                            ? "This email already exist"
                             : null
             })
         }
@@ -157,7 +185,6 @@ export default function Register() {
                 ...form,
                 username: value
             });
-            // const usernameExists = usersArray ? usersArray.some(user => user.username === value) : false;
             setFormError({
                 ...formError,
                 username:
@@ -165,8 +192,6 @@ export default function Register() {
                         ? "You Should Enter Your Username"
                         : value.length < 3 || value.length > 20
                             ? "Invalid Name, Username can't Be Less Than 3 Nor Greater Than 20 Character."
-                            : usernameExists == true
-                            ? "This username already exist"
                                 : null
             })
         }
@@ -329,10 +354,6 @@ export default function Register() {
                             ...formError,
                             password: "This password is too common.",
                         });
-                    } else {
-                        err.response.data.email && setEmailExists('Their Is An Account With That Email Address!');
-                        err.response.data.username && setUsernameExists(err.response.data.username);
-                        scrollToTop()
                     }
                 });
         } else {
@@ -352,11 +373,9 @@ export default function Register() {
                         <img src={RegisterImage} width={400} />
                     </div>
                     <div ref={formContainerRef} className="fade-in form bg-white text-start col-7 px-4">
-                        {(errorMessage || emailExists || usernameExists) && (
+                        {(errorMessage) && (
                             <p className="text-danger" style={{ fontSize: '14px' }}>
                                 <div>{errorMessage}</div>
-                                <div>{emailExists}</div>
-                                <div>{usernameExists}</div>
                             </p>
                         )}
                         <form method="post" encType="multipart/form-data">

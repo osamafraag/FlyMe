@@ -7,16 +7,20 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from "./../../Store/Slice/LoggedInUser"
+import { ChangePassword } from '../../APIs/ChangePassword';
 
 var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 
 export default function EditProfile() {
     const [successMessage, setSuccessMessage] = useState('');
     const [showModal, setShowModal] = useState(false)
+    const [passwordChangeModal, setPasswordChangeModal] = useState(true)
     const userData = useSelector(state => state.loggedInUserSlice.data);
     const token = useSelector(state => state.Token.token);
     const navigate = useNavigate()
     const [password, setPassword] = useState('');
+    const [password2, setPassword2] = useState('');
+    const [current_password, setCurrentPassword] = useState('');
     const [errorMessage, seterrorMessage] = useState(null)
     const [emailExists, setEmailExists] = useState(false)
 
@@ -261,6 +265,25 @@ export default function EditProfile() {
         setShowModal(false)
     }
 
+    const handleOnClickChangePassword = () => {
+        console.log(token,userData.id)
+        const id = userData.id
+        ChangePassword(id, current_password, password, password2, token)
+        .then((res) => {
+            console.log('Edit Password successful');
+            console.log('res.data', res.data);
+            setPasswordChangeModal(false);
+            navigate("/Profile")
+        })
+        .catch((err) => {
+            console.log('Edit Password failed');
+            console.log(err);
+            seterrorMessage(err.config.message); // Update error message
+            setSuccessMessage('');
+            console.log('err',err);
+        });
+    }
+
     return (
         <div>
             <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start">
@@ -349,10 +372,9 @@ export default function EditProfile() {
                                 <input type="date" className="form-control" name='passport_expire_date' value={form.passport_expire_date} id="passport_expire_date" onChange={handleOnChangeForm} required />
                                 {formError.passport_expire_date && <div className="form-text text-danger text-start ">{formError.passport_expire_date}</div>}
                             </div>
-                            <center><button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickSaveData}>Save Data</button></center>
-                            <div>
-                                <div className="d-flex justify-content-center ">
-                                </div>
+                            <div className='d-flex justify-content-evenly'>
+                            <button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickSaveData}>Save Data</button>
+                            <button className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={() => setPasswordChangeModal(true)}>Change Password</button>
                             </div>
                         </form>
                     </div>
@@ -371,12 +393,49 @@ export default function EditProfile() {
                                 <input type="password" className="form-control" id="password" value={password} onChange={(e)=>{setPassword(e.target.value);}} placeholder='Enter your password' name="password" required />
                         </div>
                     </form>
-                    {successMessage && <p>ss{successMessage}</p>}
-                    {errorMessage && <p>ee{errorMessage}</p>}
+                    {successMessage && <p>{successMessage}</p>}
+                    {errorMessage && <p>{errorMessage}</p>}
 
                 </Modal.Body>
                 <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
                 <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => handleOnClickPassword()}>
+                        Submit
+                    </Button>
+                    <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => navigate('/Profile')}>
+                        Back to Profile
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Change Password */}
+            <Modal show={passwordChangeModal} onHide={() => setPasswordChangeModal(false)} className='modal-lg modal-dialog-scrollable'>
+                <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
+                    <Modal.Title>Change Password Form</Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{ backgroundColor: "#fafafa" }}>
+                    <form>
+                        {/* Current Password */}
+                        <div className=" mb-3">
+                                <label htmlFor="current_password" className='form-label'>Current Password</label>
+                                <input type="password" className="form-control" id="current_password" value={current_password} onChange={(e)=>{setCurrentPassword(e.target.value);}} placeholder='Enter your current password' name="current_password" required />
+                        </div>
+                        {/* New Password */}
+                        <div className=" mb-3">
+                                <label htmlFor="password" className='form-label'>New Password</label>
+                                <input type="password" className="form-control" id="password" value={password} onChange={(e)=>{setPassword(e.target.value);}} placeholder='Enter your new password' name="password" required />
+                        </div>
+                        {/* Confirm New Password */}
+                        <div className=" mb-3">
+                                <label htmlFor="password2" className='form-label'>Confirm New Password</label>
+                                <input type="password" className="form-control" id="password2" value={password2} onChange={(e)=>{setPassword2(e.target.value);}} placeholder='Enter your new password again' name="password2" required />
+                        </div>
+                    </form>
+                    {successMessage && <p>{successMessage}</p>}
+                    {errorMessage && <p>{errorMessage}</p>}
+
+                </Modal.Body>
+                <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
+                <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => handleOnClickChangePassword()}>
                         Submit
                     </Button>
                     <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => navigate('/Profile')}>
