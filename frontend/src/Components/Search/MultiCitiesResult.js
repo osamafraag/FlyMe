@@ -29,6 +29,7 @@ const MultiCityResult = ({ flightData }) => {
   }
 
   let cost = 0
+  let offerPercentage = 0
   const combinations = [];
 
   if (Array.isArray(flightData[0])) {
@@ -56,11 +57,13 @@ const MultiCityResult = ({ flightData }) => {
               {Array.isArray(flight) ? (
                 <>
                   <span className='d-none'>{cost += flight[0].baseCost + flight[1].baseCost}</span>
+                  <span className='d-none'>{offerPercentage += flight[0].offerPercentage + flight[1].offerPercentage}</span>
                   <Transit flights={flight} />
                 </>
               ) : (
                 <>
                   <span className='d-none'>{cost += flight.baseCost}</span>
+                  <span className='d-none'>{offerPercentage += flight.offerPercentage}</span>
                   <Flight flight={flight} />
                 </>
               )}
@@ -70,7 +73,7 @@ const MultiCityResult = ({ flightData }) => {
           
           <div className='flight-more col-4 h-100 justify-content-end'>
             <h4><span className='fw-normal text-secondary fs-6'>EGP </span> 
-             {cost}
+             {cost - (cost * offerPercentage)}
              <span className='d-none'>{cost = 0}</span>
             </h4>
             <p className='text-secondary'><small>Per Person</small></p>
