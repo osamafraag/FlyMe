@@ -34,9 +34,10 @@ class MyUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        wallet = Wallet()
-        wallet.user = self
-        wallet.save()
+        if not self.wallet:
+            wallet = Wallet()
+            wallet.user = self
+            wallet.save()
         
 
     @classmethod
