@@ -94,6 +94,10 @@ class PaymentCard(models.Model):
     expiration_date = models.DateField()
     CVV = models.CharField(max_length=4)
 
+    class Meta:
+        unique_together = ('user', 'type',)
+
+
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('DEPOSIT', 'Deposit'),
