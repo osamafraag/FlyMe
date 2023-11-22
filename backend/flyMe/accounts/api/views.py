@@ -123,7 +123,8 @@ def user_data_view(request):
 @permission_classes([IsAuthenticated])
 def paymentCardList(request):
     if request.method == 'POST':
-        paymentCard = PaymentCard(data=request.data)
+        request.data['user'] = request.user.id
+        paymentCard = PaymentCardSerializer(data=request.data)
         if paymentCard.is_valid():
             paymentCard.save()
             return Response({"messsage": 'paymentCard add Successfully', "paymentCard":paymentCard.data}, status=201)
@@ -136,8 +137,8 @@ def paymentCardList(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def userPaymentCards(request,id):
-    paymentCards = PaymentCard.objects.filter(user=id)
+def userPaymentCards(request):
+    paymentCards = PaymentCard.objects.filter(user=request.user)
     serializer = PaymentCardSerializer(paymentCards, many=True)
     return Response(serializer.data)
 
@@ -164,6 +165,7 @@ def paymentCardDetail(request, id):
 @permission_classes([IsAuthenticated])
 def transactionsList(request):
     if request.method == 'POST':
+        request.data['user'] = request.user.id
         transaction = TransactionSerializer(data=request.data)
         if transaction.is_valid():
             transaction.save()
@@ -177,8 +179,8 @@ def transactionsList(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def userTransactions(request,id):
-    transactions = Transaction.objects.filter(user=id)
+def userTransactions(request):
+    transactions = Transaction.objects.filter(user=request.user)
     serializer = TransactionSerializer(transactions, many=True)
     return Response(serializer.data)
 
@@ -245,26 +247,24 @@ def notificationDetail(request, id):
 @permission_classes([IsAuthenticated])
 def walletsList(request):
     if request.method == 'POST':
-        auth_header = request.headers.get('Authorization')
-        if auth_header:
-            token = auth_header.split(' ')[1] if len(auth_header.split(' ')) == 2 else None
-            try:
-                user = Token.objects.get(key=token).user
-                wallet = WalletSerializer(data=request.data)
-                if wallet.is_valid():
-                    wallet.save()
-                    return Response({"messsage": 'wallet add Successfully', "wallet":wallet.data}, status=201)
-                return Response({'errors':wallet.errors}, status=400)
-            except Token.DoesNotExist:
-                return Response({"error":"error"}, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response({'errors':"error"}, status=400)
+        wallet = WalletSerializer(data=request.data)
+        if wallet.is_valid():
+            wallet.save()
+            return Response({"messsage": 'wallet add Successfully', "wallet":wallet.data}, status=201)
+        return Response({'errors':wallet.errors}, status=400)
 
     elif request.method=='GET':
         wallets = Wallet.objects.all()
         serializer = WalletSerializer(wallets, many=True)
         return Response(serializer.data)
-
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def userWallet(request):
+    wallet = Wallet.objects.get(user=request.user)
+    serializedWallet = WalletSerializer(wallet)
+    return Response({'data':serializedWallet.data}, status=200)
+    
 @api_view(['GET', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
 def walletDetail(request, id):

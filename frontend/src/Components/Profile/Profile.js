@@ -8,8 +8,10 @@ import { FlightData } from '../../APIs/FlightData';
 import { UnbookFlight, GetFlightBook } from '../../APIs/UnbookFlight';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUserPen, faUserXmark, faGauge } from "@fortawesome/free-solid-svg-icons"
+import Transaction from '../Transactions/Transactions';
+import Wallet from '../Wallet/Wallet';
+import PaymentCard from '../PaymentCard/PaymentCard';
 import { getCountries } from '../../APIs/Countries';
-import { counter } from '@fortawesome/fontawesome-svg-core';
 
 const Profile = () => {
   const token = useSelector(state => state.Token.token) || {};
@@ -131,6 +133,9 @@ const Profile = () => {
                     userData?.is_superuser &&
                     <button type="button" className="btn btn-warning mx-auto text-white" onClick={handleDashboardButtonClick}><FontAwesomeIcon icon={faGauge} /> Dashboard</button>
                   }
+                  <Transaction/>
+                  <Wallet/>
+                  <PaymentCard/>
               </div>
             </div>
             <h5>History </h5>

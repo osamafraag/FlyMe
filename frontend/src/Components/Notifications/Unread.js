@@ -1,27 +1,40 @@
 import React from 'react'
 import NoMessage from './../../Assets/NoMessage.webp'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSquareCheck, faClock } from '@fortawesome/free-regular-svg-icons'
+import { faPlaneDeparture } from '@fortawesome/free-solid-svg-icons'
 
-export default function Unread({unreadNotifications, markNotificationAsRead}) {
+export default function Unread({unread, markAsRead}) {
   return (
-    <div>
-      {unreadNotifications && unreadNotifications.length > 0 ? (
-          <ul className="list-group">
-            {unreadNotifications.map(notification => (
-              <li key={notification.id} className="list-group-item pb-2 border-0">
-                <p className='text-bold text-start'  style={{ fontSize: "25px" }}>{notification.title}</p>
-                <p className='mb-1 pb-2 ps-3'style={{ textAlign:'justify'}}>{notification.description}</p>
-                <div className='pt-4' style={{ display: 'flex' , justifyContent: 'space-between'  }}>
-                  <small className='text-muted text-start'>{notification.date}</small>
-                  <button
-                    className="btn btn-sm btn-primary ms-2  p-2 " style={{ backgroundColor: "var(--main-color)" ,width:'150px' , fontSize:'15px' , borderRadius:'10px'}}
-                    onClick={() => markNotificationAsRead(notification.id)}
-                  >
-                    Mark as Read
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+    <div className='container'>
+      {unread && unread.length > 0 ? (
+        unread.map((notification, index) => (
+          <>
+          <div className="notification row align-items-start py-3" key={notification.id}>
+            <div className='col-1 delete text-start'>
+              <button className="btn border-0" onClick={() => markAsRead(notification.id)}><FontAwesomeIcon icon={faSquareCheck} className='fs-2' style={{color: "var(--main-color)"}} />
+              </button>
+            </div>
+
+            <div className='col-9 message text-start'>
+              <h5>
+                <span 
+                  className={`badge 
+                  ${notification.title == "Your Complaint Answer!" ? "bg-info" : notification.title == "Flight Cancelled" ? "bg-danger" : "bg-warning" }`}>
+                  {notification.title}
+                </span>
+              </h5>
+              <p className='py-2'>{notification.description}</p>
+              <small className="text-muted mt-4"><FontAwesomeIcon icon={faPlaneDeparture} style={{color: "var(--main-color)"}}/> Fly Me</small>
+            </div>
+
+            <div className='col-2'>
+              <p className='text-secondary' style={{fontSize: "12px"}}><FontAwesomeIcon icon={faClock} /> {new Date(notification.date).toLocaleString()}</p>
+            </div>
+          </div>
+          {index !== unread.length - 1 && <hr style={{ color: 'var(--main-color' }} />}
+          </>
+        ))
         ) : (
           <img src={NoMessage} width={300} height={300} />
         )}

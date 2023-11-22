@@ -94,6 +94,10 @@ class PaymentCard(models.Model):
     expiration_date = models.DateField()
     CVV = models.CharField(max_length=4)
 
+    class Meta:
+        unique_together = ('user', 'type',)
+
+
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('DEPOSIT', 'Deposit'),
@@ -169,7 +173,7 @@ class Complaint(models.Model):
             notification = Notification()
             notification.user = self.user_id
             notification.title = "Your Complaint Answer!"
-            notification.description = f"{self.answer} is the answer for your complaints"
+            notification.description = f"{self.answer}  \n Reply For -> {self.description}"
             notification.save()
     
         super().save(*args, **kwargs)
