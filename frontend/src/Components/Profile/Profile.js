@@ -11,6 +11,7 @@ import { faUserPen, faUserXmark, faGauge } from "@fortawesome/free-solid-svg-ico
 import Transaction from '../Transactions/Transactions';
 import Wallet from '../Wallet/Wallet';
 import PaymentCard from '../PaymentCard/PaymentCard';
+import { getCountries } from '../../APIs/Countries';
 
 const Profile = () => {
   const token = useSelector(state => state.Token.token) || {};
@@ -22,6 +23,7 @@ const Profile = () => {
   const navigate = useNavigate()
   const [fetchError, setFetchError] = useState(false);
   const [unbook, setUnbook] = useState('')
+  const [userCountryName, setUserCountryName] = useState('')
 
   useEffect(() => {
     // If !user navigate to login page 
@@ -71,6 +73,15 @@ const Profile = () => {
     return null;
   }
 
+
+  getCountries()
+  .then((res)=>{
+    const countryData = res.filter(country => country.id === userData?.country )
+    const countryName = countryData[0].name
+    setUserCountryName(countryName)
+  })
+  .catch(err => console.log(err))
+
   const handleUnbookFlightButtonClick = (bookId) => {
 
     GetFlightBook(bookId, { Authorization: `Token ${token}` })
@@ -106,7 +117,7 @@ const Profile = () => {
             <div className="card mb-4">
               <div className="card-body text-center">
                 <img
-                  src={userData?.image || 'https://static.vecteezy.com/system/resources/thumbnails/007/033/146/small/profile-icon-login-head-icon-vector.jpg'}
+                  src={userData?.image || (userData.gender == 'M' ? 'https://img.freepik.com/free-vector/smiling-man-traveling_23-2147774191.jpg?w=740&t=st=1700604197~exp=1700604797~hmac=a77278f4f83ab36d8c76ee050f60c03c2877ec9d91825db30d3d283dac28100e' : 'https://img.freepik.com/free-vector/girl-traveler_23-2148175494.jpg?w=740&t=st=1700604327~exp=1700604927~hmac=c14c750fc1562b67e3a6d2809b4db4915ea2adb59cd729c5f7c9cbceed94f541')}
                   alt="avatar"
                   className="rounded-circle img-fluid"
                   style={{ width: '150px' }}
@@ -260,26 +271,6 @@ const Profile = () => {
                 {/* // */}
                 <div className="row">
                   <div className="col-sm-4">
-                    <p className="mb-0">Passport Expire Date</p>
-                  </div>
-                  <div className="col-sm-8">
-                    <p className="text-muted mb-0">{userData?.passport_expire_date}</p>
-                  </div>
-                </div>
-                <hr />
-                {/* // */}
-                <div className="row">
-                  <div className="col-sm-4">
-                    <p className="mb-0">Passport Number</p>
-                  </div>
-                  <div className="col-sm-8">
-                    <p className="text-muted mb-0">{userData?.passport_number}</p>
-                  </div>
-                </div>
-                <hr />
-                {/* // */}
-                <div className="row">
-                  <div className="col-sm-4">
                     <p className="mb-0">Phone</p>
                   </div>
                   <div className="col-sm-8">
@@ -306,6 +297,36 @@ const Profile = () => {
                     <p className="text-muted mb-0">{userData?.birth_date}</p>
                   </div>
                 </div>
+                <hr/>
+                {/* // */}
+                <div className="row">
+                  <div className="col-sm-4">
+                    <p className="mb-0">Country</p>
+                  </div>
+                  <div className="col-sm-8">
+                    <p className="text-muted mb-0">{userCountryName}</p>
+                  </div>
+                </div>
+                <hr/>
+                {/* // */}
+                <div className="row">
+                  <div className="col-sm-4">
+                    <p className="mb-0">Passport Number</p>
+                  </div>
+                  <div className="col-sm-8">
+                    <p className="text-muted mb-0">{userData?.passport_number}</p>
+                  </div>
+                </div>
+                <hr />
+                {/* // */}
+                <div className="row">
+                  <div className="col-sm-4">
+                    <p className="mb-0">Passport Expire Date</p>
+                  </div>
+                  <div className="col-sm-8">
+                    <p className="text-muted mb-0">{userData?.passport_expire_date}</p>
+                  </div>
+                </div>                
                 {/* // */}
               </div>
             </div>
