@@ -81,11 +81,23 @@ class Flight(models.Model):
                     if book.status == 'A':
                         notify = Notification()
                         notify.user = book.passenger
-                        notify.title = 'Flight Canceled'
-                        notify.description = f'sorry but your flight from {self.startAirport.city} to {self.endAirport.city} at {self.departureTime} is canceld'
+                        notify.title = 'Flight Cancelled'
+                        notify.description = f'Sorry But Your Flight From {self.startAirport.city} To {self.endAirport.city} At {self.departureTime} Is Canceld'
                         notify.save()
                         book.status = 'C'
                         book.save(True)
+            else:
+                if self.id:
+                    original_flight = Flight.objects.get(id=self.id)
+                    if self.departureTime != original_flight.departureTime:
+                        books = BookHistory.objects.filter(flight=self.id)
+                        for book in books.all():
+                            if book.status == 'A':
+                                notify = Notification()
+                                notify.user = book.passenger
+                                notify.title = 'Flight Postponed'
+                                notify.description = f'Your Flight From {original_flight.startAirport.city} To {original_flight.endAirport.city} At {original_flight.departureTime} Is Postponed to {self.departureTime}'
+                                notify.save()
             
         else:    
             self.full_clean()

@@ -24,6 +24,18 @@ export default function Complaints() {
   const handleShow = (complaint) => {
     setSelectedComplaint(complaint);
     setShow(true);
+    complaint.status = complaint.status == "IN_PROGRESS" ? "OPEN" : "REOPENED"
+    axiosInstance
+        .put(`/accounts/api/complaints/${complaint.id}`, complaint, {
+          headers: {Authorization: `Token ${token}`}
+        })   
+        .then((response) => {
+          console.log(response)
+          fetchData()
+        })
+        .catch((error) => {
+        console.error(error.response);
+      })
   };
   const handleCloseReply = () => setShowReply(false);
 
@@ -50,6 +62,7 @@ export default function Complaints() {
   };
   function putData(data) {
     data.answer = reply
+    data.status = "RESOLVED"
     axiosInstance
         .put(`/accounts/api/complaints/${data.id}`, data, {
           headers: {Authorization: `Token ${token}`}

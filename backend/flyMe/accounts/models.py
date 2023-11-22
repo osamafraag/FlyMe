@@ -169,7 +169,7 @@ class Complaint(models.Model):
             notification = Notification()
             notification.user = self.user_id
             notification.title = "Your Complaint Answer!"
-            notification.description = f"{self.answer} is the answer for your complaints"
+            notification.description = f"{self.answer}  \n Reply For -> {self.description}"
             notification.save()
     
         super().save(*args, **kwargs)

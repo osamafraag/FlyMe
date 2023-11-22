@@ -1,31 +1,43 @@
 import React from 'react'
+import NoMessage from './../../Assets/NoMessage.webp'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faRectangleXmark, faClock } from '@fortawesome/free-regular-svg-icons'
+import { faPlaneDeparture } from '@fortawesome/free-solid-svg-icons'
 
-export default function Read({readNotifications, deleteNotification}) {
+export default function Read({read, deleteRead}) {
   return (
-    <div>
-      <h1 className="text-start py-3" style={{ color: "var(--main-color)" }}>Old Notifications</h1>
-        {readNotifications && readNotifications.length > 0 ? (
-          <ul className="list-group">
-            {readNotifications.map(notification => (
-              <li key={notification.id} className="list-group-item border-0">
-               <p className='text-bold text-start'  style={{ fontSize: "25px" }}>{notification.title}</p>
-               <p className='mb-1 pb-2'style={{ textAlign:'justify'}}>{notification.description}</p>
-               <div  className='pt-2' style={{ display: 'flex' , justifyContent: 'space-between'  }}>
-                <small className='text-muted text-start'>
-                    {notification.date}  <span className='text-white px-2 rounded-3' style={{ backgroundColor: "var(--main-color)" }}>Seen On :</span> {notification.readDate}
-                </small>
-                <button style={{width:'150px',fontSize:'15px',  borderRadius:'10px' }}
-                  className="btn btn-sm btn-danger ms-2 p-2 " 
-                  onClick={() => deleteNotification(notification.id)}
-                >
-                  Delete
-                </button>
-               </div>
-              </li>
-            ))}
-          </ul>
+    <div className='container'>
+      {read && read.length > 0 ? (
+        read.map((notification, index) => (
+          <>
+          <div className="notification row align-items-start py-3" key={notification.id}>
+            <div className='col-1 delete text-start'>
+              <button className="btn border-0" onClick={() => deleteRead(notification.id)}><FontAwesomeIcon icon={faRectangleXmark} className='fs-2 text-danger' style={{color: "var(--main-color)"}} />
+              </button>
+            </div>
+
+            <div className='col-9 message text-start'>
+              <h5>
+                <span 
+                  className={`badge 
+                  ${notification.title == "Your Complaint Answer!" ? "bg-info" : notification.title == "Flight Cancelled" ? "bg-danger" : "bg-warning" }`}>
+                  {notification.title}
+                </span>
+              </h5>
+              <p className='py-2'>{notification.description}</p>
+              <small className="text-muted mt-4"><FontAwesomeIcon icon={faPlaneDeparture} style={{color: "var(--main-color)"}}/> Fly Me</small>
+            </div>
+
+            <div className='col-2'>
+              <p className='text-secondary' style={{fontSize: "12px"}}><FontAwesomeIcon icon={faClock} /> {new Date(notification.readDate).toLocaleString()}</p>
+            </div>
+
+          </div>
+          {index !== read.length - 1 && <hr style={{ color: 'var(--main-color' }} />}
+          </>
+        ))
         ) : (
-          <h4 className="mt-3 text-secondary">No read notifications.</h4>
+          <img src={NoMessage} width={300} height={300} />
         )}
     </div>
   )

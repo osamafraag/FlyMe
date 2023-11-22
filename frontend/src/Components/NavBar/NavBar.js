@@ -9,18 +9,16 @@ import { faPlaneDeparture, faBell } from '@fortawesome/free-solid-svg-icons'
 import { logout, logData } from '../../Store/Slice/LoggedInUser';
 import { useDispatch  } from 'react-redux';
 import { useSelector } from 'react-redux';
-import Profile from "./../../Assets/Images/Profile1.svg"
-import { useContext } from "react";
 import { Logout } from "../../APIs/Login";
-import { useState } from "react";
-import { useNotificationContext } from './../Notifications/NotificationContext';
+import { GetMessages } from "../../APIs/Notification";
+import { useEffect, useState } from "react";
 import { setToken } from '../../Store/Slice/Token';
-
+import { setNotifications, setUnread, setRead, setCounter } from "../../Store/Slice/Notifications";
 
 export default function NavBar() {
   const token = useSelector(state => state.Token.token);
-  const { unreadCount } = useNotificationContext();
   const isUser = useSelector(state => state.loggedInUserSlice.data !== null);
+  const counter = useSelector(state => state.Notifications.counter);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -38,6 +36,19 @@ export default function NavBar() {
       console.log(error)
     });
   };
+  
+  useEffect(() => {
+    if (isUser) {
+      GetMessages(userData.id, { Authorization: `Token ${token}`})
+      .then((result) => {
+        console.log("Notifiction", result.data)
+        dispatch(setNotifications(result.data))
+        dispatch(setUnread(result.data?.filter(notification => notification.status === 'UNREAD')))
+        dispatch(setRead(result.data?.filter((notification) => notification.status === 'READ' && !notification.deleted)))
+      })
+      .catch((error) => console.log(error))
+    }
+  }, [isUser, counter])
 
   return (
     <Navbar collapseOnSelect expand="lg" className="shadow-sm bg-white position-sticky top-0 start-0 py-3" style={{ zIndex: "1000" }}>
@@ -57,12 +68,13 @@ export default function NavBar() {
                 <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Login"><FontAwesomeIcon icon={faArrowRightToBracket} /> Login</NavLink>
                 :
                 <div>
-                  <NavLink onClick={handleLogout} className='me-3 fw-semibold text-dark text-decoration-none'><FontAwesomeIcon icon={faArrowRightFromBracket}/> Logout</NavLink>
-                  <NavLink className='me-3 fw-semibold text-dark text-decoration-none px-3' to="/Notifications"><FontAwesomeIcon icon={faBell} /> {unreadCount > 0 &&  <span class="position-absolute top-3 start-60 translate-middle badge rounded-pill bg-danger">
-                     {unreadCount}
-                    <span class="visually-hidden">unread messages</span>
-                  </span>}</NavLink>
+                  <NavLink className='fw-semibold text-dark text-decoration-none px-3' to="/Notifications">
+                    <FontAwesomeIcon icon={faBell} className="fs-5" style={{color: "var(--main-color)"}}/> {counter > 0 &&  <sup class="translate-middle badge bg-danger">
+                     {counter}
+                  </sup>}
+                  </NavLink>
                   <NavLink className='me-3 fw-semibold text-dark text-decoration-none ' to="/Profile">{userData.username}</NavLink>
+                  <NavLink onClick={handleLogout} className='me-3 fw-semibold text-dark text-decoration-none'>Logout <FontAwesomeIcon icon={faArrowRightFromBracket}/></NavLink>
                 </div>
             }
           </Nav>
