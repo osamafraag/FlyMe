@@ -14,7 +14,7 @@ var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 export default function EditProfile() {
     const [successMessage, setSuccessMessage] = useState('');
     const [showModal, setShowModal] = useState(false)
-    const [passwordChangeModal, setPasswordChangeModal] = useState(true)
+    const [passwordChangeModal, setPasswordChangeModal] = useState(false)
     const userData = useSelector(state => state.loggedInUserSlice.data);
     const token = useSelector(state => state.Token.token);
     const navigate = useNavigate()
@@ -273,14 +273,14 @@ export default function EditProfile() {
             console.log('Edit Password successful');
             console.log('res.data', res.data);
             setPasswordChangeModal(false);
+            setSuccessMessage('Password Changed successfully')
             navigate("/Profile")
         })
         .catch((err) => {
             console.log('Edit Password failed');
-            console.log(err);
-            seterrorMessage(err.config.message); // Update error message
+            console.log(err.response.data.error);
+            seterrorMessage(err.response.data.error); // Update error message
             setSuccessMessage('');
-            console.log('err',err);
         });
     }
 
@@ -350,7 +350,7 @@ export default function EditProfile() {
                                     className="form-select"
                                     name="country"
                                     id="country"
-                                    value={selectedCountry}
+                                    value={form.country}
                                     onChange={handleSelectChange}
                                 >
                                     <option value="" disabled>Select your country</option>
@@ -394,7 +394,7 @@ export default function EditProfile() {
                         </div>
                     </form>
                     {successMessage && <p>{successMessage}</p>}
-                    {errorMessage && <p>{errorMessage}</p>}
+                    {errorMessage && <p className="text-danger" style={{fontSize:'14px'}}>{errorMessage}</p>}
 
                 </Modal.Body>
                 <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
@@ -431,7 +431,7 @@ export default function EditProfile() {
                         </div>
                     </form>
                     {successMessage && <p>{successMessage}</p>}
-                    {errorMessage && <p>{errorMessage}</p>}
+                    {errorMessage && <p className="text-danger" style={{fontSize:'14px'}}>{errorMessage}</p>}
 
                 </Modal.Body>
                 <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
