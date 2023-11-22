@@ -82,7 +82,7 @@ const RoundTripResult = ({ flightData }) => {
                   )
 
                 } 
-                    <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{(Array.isArray(flight1) ? flight1[0].baseCost + flight1[1].baseCost : flight1.baseCost) + (Array.isArray(flight2) ? flight2[0].baseCost + flight2[1].baseCost : flight2.baseCost)}</smal></h4>
+                    <small className='ms-1 fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{(Array.isArray(flight1) ? flight1[0].baseCost + flight1[1].baseCost : flight1.baseCost) + (Array.isArray(flight2) ? flight2[0].baseCost + flight2[1].baseCost : flight2.baseCost)}</small></h4>
                   }
 
                 <p className='text-secondary'><small>Per Person</small></p>
