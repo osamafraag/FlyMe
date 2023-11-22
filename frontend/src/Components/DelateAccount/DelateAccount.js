@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { useNavigate } from 'react-router-dom';
 import { deleteUserAPI } from '../../APIs/DeleteUser';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../Store/Slice/LoggedInUser';
 import { setToken } from '../../Store/Slice/Token';
+import PasswordImage from '../../Assets/Images/Login/Password.jpg'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserXmark } from '@fortawesome/free-solid-svg-icons'
 
 export default function DeleteAccount() {
   const dispatch = useDispatch()
@@ -51,21 +55,29 @@ export default function DeleteAccount() {
 
   return (
     <Container className="py-5 fade-in">
-      <Row className="justify-content-center align-items-center">
-        <Col md={6}>
+      <Row className="row row-cols-1 align-items-center px-5  rounded-3 shadow mx-auto" style={{width: "700px"}}>
+        <Col>
+          <div>
+            <img
+              src={PasswordImage}
+              width={200}
+              className="img-fluid mb-4"
+              alt="Login"
+            />
+          </div>
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="password" className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </Form.Group>
+          <FloatingLabel controlId="floatingPassword" label="Password">
+            <Form.Control 
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder='Password'
+            />
+          </FloatingLabel>
 
-            <Button variant="success" type="submit" className="mb-3">
-              Delete Account
+            <Button variant="danger" type="submit" className="my-3">
+              <FontAwesomeIcon icon={faUserXmark} /> Delete Account
             </Button>
 
             {successMessage && <Alert variant="success">{successMessage}</Alert>}
