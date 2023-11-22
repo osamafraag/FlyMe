@@ -123,7 +123,8 @@ def user_data_view(request):
 @permission_classes([IsAuthenticated])
 def paymentCardList(request):
     if request.method == 'POST':
-        paymentCard = PaymentCard(data=request.data)
+        request.data['user'] = request.user.id
+        paymentCard = PaymentCardSerializer(data=request.data)
         if paymentCard.is_valid():
             paymentCard.save()
             return Response({"messsage": 'paymentCard add Successfully', "paymentCard":paymentCard.data}, status=201)

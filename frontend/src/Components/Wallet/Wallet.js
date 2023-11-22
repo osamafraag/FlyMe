@@ -8,26 +8,35 @@ import {  } from '@fortawesome/free-solid-svg-icons'
 export default function Wallet() {
     const token = useSelector(state => state.Token.token);
     const [wallet, setWallet] = useState({});
+    const [amount, setAmount] = useState(0);
 
     useEffect(() => {
-        userWallet({ Authorization: `Token ${token}`})
+      fetchData()
+    },[])
+     
+    const fetchData = () => {
+      userWallet({ Authorization: `Token ${token}`})
         .then((result) => {setWallet(result.data.data)})
         .catch((error) => {console.log(error)})
-    },[])
+    }
 
-    const handleTransaction = (event,type) => {
-        transaction = {
-            "amount": event.target.value,
+    const handleTransaction = (type) => {
+        var transaction = {
+            "amount": amount,
             "type": type
-        }
+        };
         createTransaction({ Authorization: `Token ${token}`},transaction)
-        .then((result) => {console.log(result)})
+        .then((result) => {fetchData()})
         .catch((error) => {console.log(error)})
     }
   return (
     <>
-    <a onClick={() => {handleTransaction("DEPOSITE")}}>deposite</a>
-    <a onClick={() => {handleTransaction("WITHDRAWAL")}}>withdraw</a>
+    {wallet.available_balance}
+    {wallet.pendding_balance}
+    {wallet.withdrawal}
+    <input type='number' onChange={(event) => {setAmount(event.target.value)}}></input>
+    <a className='btn btn-primary' onClick={() => {handleTransaction("DEPOSIT")}}>deposite</a>
+    <a className='btn btn-primary' onClick={() => {handleTransaction("WITHDRAWAL")}}>withdraw</a>
 
     </>
   )

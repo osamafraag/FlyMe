@@ -1,4 +1,3 @@
-import Transactions from "../Components/Wallet/Transactions";
 import { axiosInstance } from "./Config";
 
 export const userTransactions = (headers) => {

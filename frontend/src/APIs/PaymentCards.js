@@ -6,14 +6,8 @@ export const userPaymentCards = (headers) => {
   });
 }
 
-export const addPaymentCard = (headers) => {
-    return axiosInstance.post('accounts/api/paymentCards/', {
-      headers: headers,
-    });
-  }
-
-export const aditPaymentCard = (headers,id) => {
-    return axiosInstance.put(`accounts/api/paymentCards/${id}`, {
+export const addPaymentCard = (headers,paymentCard) => {
+    return axiosInstance.post('accounts/api/paymentCards/',paymentCard, {
       headers: headers,
     });
   }
