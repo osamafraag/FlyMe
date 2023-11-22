@@ -86,7 +86,7 @@ export default function NotificationsComponent() {
     DeleteMessage(notificationId, { Authorization: `Token ${token}` })
     .then((response) => {
       console.log("Response" , response)
-      setChanges(`Delete Change: ${response}`)
+      setChanges(`Delete Change ${notificationId}: ${response}`)
     })
     .catch((error) => {
       console.log("Catch" , error)
