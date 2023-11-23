@@ -27,7 +27,6 @@ def getAllUsers(request):
     serlized_users = []
     for user in users:
         serlized_users.append(UserSerializer(user).data)
-    print(serlized_users)
     return Response({"data":serlized_users, "massage":"data receved"},status=200)
 
 
@@ -76,9 +75,10 @@ def user_logout(request):
 ####################################---------  delete user  (owner and admins) -------------###################################
 @api_view(['GET', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
-def delete_user(request):
+def delete_user(request, id):
     
-    user = MyUser.objects.filter(id=request.user.id).first()
+    user = MyUser.objects.filter(id=id).first()
+    print(user.id)
     start = False
 
     if not user:
@@ -89,11 +89,12 @@ def delete_user(request):
         start = True
 
     if (not request.user.is_superuser) and (request.user.id == id):
-        start = True
-        password_to_check = request.query_params.get('password')  # Use query_params to get password
+        
+        password_to_check = request.query_params.get('password')  
         is_password_true = check_password(password_to_check, user.password)
         if not is_password_true:
             return Response({'error': 'wrong password'}, status=status.HTTP_400_BAD_REQUEST)
+        start = True
         
     if request.method == 'DELETE' and start:
         user.delete()
