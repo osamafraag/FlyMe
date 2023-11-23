@@ -1,7 +1,7 @@
 import { axiosInstance } from "./Config";
 
-export const deleteUserAPI = (token, userId) => {
-  return axiosInstance.delete(`accounts/api/edit/${userId}`, {
+export const deleteUserAPI = (token) => {
+  return axiosInstance.delete(`accounts/api/edit/`, {
     headers: {
       Authorization: `Token ${token}`,
     },

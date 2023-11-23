@@ -1,7 +1,7 @@
 import { axiosInstance } from "./Config";
 
-export const EditUserData = (form, headers, userId) => {
-  return axiosInstance.put(`accounts/api/edit/${userId}/`, form, {
+export const EditUserData = (form, headers) => {
+  return axiosInstance.put(`accounts/api/edit/`, form, {
     // params: { password: password },
     headers: headers,
   })

@@ -18,7 +18,6 @@ export default function Users() {
   const [superUsers, setSuperUsers] = useState([]);
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false)
-  const [userToDelete, setUserToDelete] = useState(null);
   const [numberOfUserDeleted, setNumberOfUserDeleted] = useState(0);
 
   function handelNavagateToEdit(id) {
@@ -26,7 +25,7 @@ export default function Users() {
   }
 
   function handelDelateUser(){
-    deleteUserAPI(token, userToDelete).then((res)=>{
+    deleteUserAPI(token).then((res)=>{
       console.log(res)
       setNumberOfUserDeleted(numberOfUserDeleted+1)
       setShowModal(false)
@@ -35,8 +34,7 @@ export default function Users() {
     })
   }
 
-  function handelClickDeleteUser(userId){
-    setUserToDelete(userId)
+  function handelClickDeleteUser(){
     setShowModal(true)
   }
 
@@ -104,7 +102,7 @@ export default function Users() {
               </button> 
               </td>
               <td>
-              <button type="button" className="btn btn-danger btn-sm" onClick={()=>handelClickDeleteUser(user.id)} >
+              <button type="button" className="btn btn-danger btn-sm" onClick={()=>handelClickDeleteUser()} >
                 Delete
               </button>
               </td>

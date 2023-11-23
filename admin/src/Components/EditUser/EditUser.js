@@ -238,8 +238,8 @@ export default function EditProfile() {
     };
 
     const handleOnClickPassword = () =>{
-        console.log(token, userData.id)
-        EditUserData(form , {Authorization: `Token ${token}`} , userData.id)
+        console.log(token)
+        EditUserData(form , {Authorization: `Token ${token}`} )
         .then((res) => {
             console.log('Edit Data successful');
             console.log('res.data', res.data);

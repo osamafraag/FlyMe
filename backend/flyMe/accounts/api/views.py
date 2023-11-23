@@ -76,9 +76,9 @@ def user_logout(request):
 ####################################---------  delete user  (owner and admins) -------------###################################
 @api_view(['GET', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
-def delete_user(request, id):
+def delete_user(request):
     
-    user = MyUser.objects.filter(id=id).first()
+    user = MyUser.objects.filter(id=request.user.id).first()
     start = False
 
     if not user:

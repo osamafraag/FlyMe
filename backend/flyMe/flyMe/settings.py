@@ -168,7 +168,15 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Optional: default Django authentication
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny'
+    ]
+}
 
+STRIPE_SECRET_KEY = 'sk_test_51OFOMOHTOkeScdk3KfrWrvl7ozrRCpjpAxX5IFPICUqsbDuky7fmUV6Rajbq1yIz2pKRXst0XfKcO0zvxKpYxhsl00MICSy0HB'
+
+SITE_URL = "http://localhost:3000"
 
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
