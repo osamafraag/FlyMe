@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom'
 import { AllUsers } from "./../APIs/AllUsers";
 import { deleteUserAPI } from "./../APIs/DeleteUser";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faPlus} from '@fortawesome/free-solid-svg-icons'
 import { getAllUsersData } from '../Store/Slice/LoggedInUser';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faPenToSquare, faTrash} from '@fortawesome/free-solid-svg-icons'
 
 export default function Users() {
   const token = useSelector(state => state.Token.token);
@@ -97,13 +98,13 @@ export default function Users() {
               <td>{user.gender == "F" ? "Female" : "Male"}</td>
               <td>{user.birth_date}</td>
               <td>
-              <button type="button" className="btn btn-secondary btn-sm mr-2" onClick={()=>handelNavagateToEdit(user.id)} >
-                Edit
+              <button type="button" className="btn  border-0" style={{color: "var(--main-color)"}} onClick={()=>handelNavagateToEdit(user.id)} >
+              <FontAwesomeIcon icon={faPenToSquare} />
               </button> 
               </td>
               <td>
-              <button type="button" className="btn btn-danger btn-sm" onClick={()=>handelClickDeleteUser()} >
-                Delete
+              <button type="button" className="btn text-danger  border-0" onClick={()=>handelClickDeleteUser()} >
+              <FontAwesomeIcon icon={faTrash} className='text-danger' />
               </button>
               </td>
             </tr>
@@ -126,8 +127,7 @@ export default function Users() {
               <th>Phone</th>  
               <th>Gender</th>  
               <th>B.O.D</th>  
-              <th>P.Num</th>
-              <th>P.E.D</th>  
+              <th>P.Num</th> 
               <th>Edit</th>  
               <th>Delate</th>  
             </tr>
@@ -141,18 +141,17 @@ export default function Users() {
               <td>{user.username}</td>
               <td>{user.email}</td>
               <td>{user.phone}</td>  
-              <td>{user.gender == "F" ? "Female" : "Male"}</td>  
-              <td>{user.birth_date}</td>  
+              <td>{user.gender == "F" ? "Female" : "Male"}</td> 
               <td>{user.passport_number}</td>
               <td>{user.passport_expire_date}</td>
               <td>
-              <button type="button" className="btn btn-secondary btn-sm mr-2" onClick={()=>handelNavagateToEdit(user.id)} >
-                Edit
+              <button type="button" className="btn border-0"  style={{color: "var(--main-color)"}} onClick={()=>handelNavagateToEdit(user.id)} >
+              <FontAwesomeIcon icon={faPenToSquare} />
               </button> 
               </td>
               <td>
-              <button type="button" className="btn btn-danger btn-sm" onClick={()=>handelClickDeleteUser(user.id)} >
-                Delete
+              <button type="button" className="btn text-danger border-0" onClick={()=>handelClickDeleteUser(user.id)} >
+              <FontAwesomeIcon icon={faTrash} className='text-danger' />
               </button>
               </td>
             </tr>

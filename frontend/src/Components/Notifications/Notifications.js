@@ -102,9 +102,9 @@ export default function NotificationsComponent() {
       <div className='bg-light py-5'>
         <div className='container p-5 bg-white rounded-3 shadow-sm'>
           <div className='mb-2 text-start'>
-            <button className={notificationType === 'Unread' ? 'btn me-3 clicked type' : 'btn me-3 type'} onClick={() => handleNotificationTypeChange('Unread')}><FontAwesomeIcon icon={faEye} /> Unread</button>
-            <button className={notificationType === 'Read' ? 'btn me-3 clicked type' : 'btn me-3 type'}  onClick={() => handleNotificationTypeChange('Read')}><FontAwesomeIcon icon={faEyeSlash} /> Read</button>
-            <button className={notificationType === 'Sent' ? 'btn me-3 clicked type' : 'btn me-3 type'} onClick={() => handleNotificationTypeChange('Sent')}><FontAwesomeIcon icon={faPaperPlane} /> Sent</button>
+            <button className={notificationType === 'Unread' ? 'btn me-3 active type' : 'btn me-3 type'} onClick={() => handleNotificationTypeChange('Unread')}><FontAwesomeIcon icon={faEye} /> Unread</button>
+            <button className={notificationType === 'Read' ? 'btn me-3 active type' : 'btn me-3 type'}  onClick={() => handleNotificationTypeChange('Read')}><FontAwesomeIcon icon={faEyeSlash} /> Read</button>
+            <button className={notificationType === 'Sent' ? 'btn me-3 active type' : 'btn me-3 type'} onClick={() => handleNotificationTypeChange('Sent')}><FontAwesomeIcon icon={faPaperPlane} /> Sent</button>
           </div>
           <hr style={{color: "var(--main-color)"}}/>
           {notificationType === 'Unread' && <Unread unread={unread} markAsRead={markAsRead}/>}

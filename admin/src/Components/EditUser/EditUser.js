@@ -261,14 +261,9 @@ export default function EditProfile() {
 
     return (
         <div>
-            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start">
+            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start" style={{width: "1000px"}}>
                 <div className="row align-items-center">
-                    <img
-                        src="https://www.seiu1000.org/sites/main/files/main-images/camera_lense_0.jpeg"
-                        className="col-6"
-                        width="300"
-                    />
-                    <div className="col-6 pb-5">
+                    <div className="col-12 pb-5">
                         {(errorMessage || emailExists) && (
                             <p className="text-danger" style={{ fontSize: '14px' }}>
                                 <div>{errorMessage}</div>

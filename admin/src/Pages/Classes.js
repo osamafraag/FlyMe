@@ -73,7 +73,7 @@ export default function Classes() {
       <tbody>
         {classes?.map((classData, index) => (
           <tr key={index}>
-            <td>{++index}</td>
+            <td>{classData.id}</td>
             <td>{classData.name}</td>
             <td>{classData.additionalCostPercentage}%</td>
             <td>{classData.seatCategory}</td>

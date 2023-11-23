@@ -8,13 +8,14 @@ import Button from 'react-bootstrap/Button';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from "./../../Store/Slice/LoggedInUser"
 import { ChangePassword } from '../../APIs/ChangePassword';
+import "./Style.css"
 
 var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 
 export default function EditProfile() {
     const [successMessage, setSuccessMessage] = useState('');
     const [showModal, setShowModal] = useState(false)
-    const [passwordChangeModal, setPasswordChangeModal] = useState(true)
+    const [passwordChangeModal, setPasswordChangeModal] = useState(false)
     const userData = useSelector(state => state.loggedInUserSlice.data);
     const token = useSelector(state => state.Token.token);
     const navigate = useNavigate()
@@ -273,27 +274,22 @@ export default function EditProfile() {
             console.log('Edit Password successful');
             console.log('res.data', res.data);
             setPasswordChangeModal(false);
+            setSuccessMessage('Password Changed successfully')
             navigate("/Profile")
         })
         .catch((err) => {
             console.log('Edit Password failed');
-            console.log(err);
-            seterrorMessage(err.config.message); // Update error message
+            console.log(err.response.data.error);
+            seterrorMessage(err.response.data.error); // Update error message
             setSuccessMessage('');
-            console.log('err',err);
         });
     }
 
     return (
-        <div>
-            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start">
+        <div className='edit-profile py-5 px-5 d-flex justify-content-end align-items-end '>
+            <div className="mx-5 p-5 shadow-lg rounded-3 bg-white text-start" style={{width: "700px"}}>
                 <div className="row align-items-center">
-                    <img
-                        src={RegisterImage}
-                        className="col-6"
-                        width="300"
-                    />
-                    <div className="col-6 pb-5">
+                    <div className="col-12">
                         {(errorMessage || emailExists) && (
                             <p className="text-danger" style={{ fontSize: '14px' }}>
                                 <div>{errorMessage}</div>
@@ -350,7 +346,7 @@ export default function EditProfile() {
                                     className="form-select"
                                     name="country"
                                     id="country"
-                                    value={selectedCountry}
+                                    value={form.country}
                                     onChange={handleSelectChange}
                                 >
                                     <option value="" disabled>Select your country</option>
@@ -372,8 +368,8 @@ export default function EditProfile() {
                                 <input type="date" className="form-control" name='passport_expire_date' value={form.passport_expire_date} id="passport_expire_date" onChange={handleOnChangeForm} required />
                                 {formError.passport_expire_date && <div className="form-text text-danger text-start ">{formError.passport_expire_date}</div>}
                             </div>
-                            <div className='d-flex justify-content-evenly'>
-                            <button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickSaveData}>Save Data</button>
+                            <div className='d-flex justify-content-center'>
+                            <button type="submit" className="btn custom-btn my-4 py-2 me-4" style={{ borderRadius: '7px' }} onClick={handleOnClickSaveData}>Save Data</button>
                             <button className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={() => setPasswordChangeModal(true)}>Change Password</button>
                             </div>
                         </form>
@@ -394,7 +390,7 @@ export default function EditProfile() {
                         </div>
                     </form>
                     {successMessage && <p>{successMessage}</p>}
-                    {errorMessage && <p>{errorMessage}</p>}
+                    {errorMessage && <p className="text-danger" style={{fontSize:'14px'}}>{errorMessage}</p>}
 
                 </Modal.Body>
                 <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
@@ -431,7 +427,7 @@ export default function EditProfile() {
                         </div>
                     </form>
                     {successMessage && <p>{successMessage}</p>}
-                    {errorMessage && <p>{errorMessage}</p>}
+                    {errorMessage && <p className="text-danger" style={{fontSize:'14px'}}>{errorMessage}</p>}
 
                 </Modal.Body>
                 <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
