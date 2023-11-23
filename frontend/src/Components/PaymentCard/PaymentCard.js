@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {  } from '@fortawesome/free-solid-svg-icons'
+import { faCreditCard } from '@fortawesome/free-solid-svg-icons'
 
 export default function PaymentCard() {
     const token = useSelector(state => state.Token.token);
@@ -54,7 +54,7 @@ export default function PaymentCard() {
         </>
         )
     })}
-        <a className='btn btn-primary' onClick={() => {setShow(true)}}>Add PaymentCard</a>
+        <a className='btn text-white' style={{backgroundColor: "var(--main-color)"}} onClick={() => {setShow(true)}}><FontAwesomeIcon icon={faCreditCard} /> Add PaymentCard</a>
         <Modal show={show} onHide={handleClose} animation={false}>
         <Modal.Header closeButton>
           <Modal.Title>Add PaymentCard</Modal.Title>
@@ -91,7 +91,7 @@ export default function PaymentCard() {
         </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant='secondary' onClick={()=>{handleAdd();handleClose()}}>
+          <Button className='border-0' style={{backgroundColor: "var(--main-color)"}} onClick={()=>{handleAdd();handleClose()}}>
             Add
           </Button>
         </Modal.Footer>

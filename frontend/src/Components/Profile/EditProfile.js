@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from "./../../Store/Slice/LoggedInUser"
 import { ChangePassword } from '../../APIs/ChangePassword';
+import "./Style.css"
 
 var RegisterImage = require('../../Assets/Images/Accounts/resgister.jpg')
 
@@ -285,15 +286,10 @@ export default function EditProfile() {
     }
 
     return (
-        <div>
-            <div className="profile container p-5 my-5 shadow-lg rounded-3 bg-white text-start">
+        <div className='edit-profile py-5 px-5 d-flex justify-content-end align-items-end '>
+            <div className="mx-5 p-5 shadow-lg rounded-3 bg-white text-start" style={{width: "700px"}}>
                 <div className="row align-items-center">
-                    <img
-                        src={RegisterImage}
-                        className="col-6"
-                        width="300"
-                    />
-                    <div className="col-6 pb-5">
+                    <div className="col-12">
                         {(errorMessage || emailExists) && (
                             <p className="text-danger" style={{ fontSize: '14px' }}>
                                 <div>{errorMessage}</div>
@@ -372,8 +368,8 @@ export default function EditProfile() {
                                 <input type="date" className="form-control" name='passport_expire_date' value={form.passport_expire_date} id="passport_expire_date" onChange={handleOnChangeForm} required />
                                 {formError.passport_expire_date && <div className="form-text text-danger text-start ">{formError.passport_expire_date}</div>}
                             </div>
-                            <div className='d-flex justify-content-evenly'>
-                            <button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickSaveData}>Save Data</button>
+                            <div className='d-flex justify-content-center'>
+                            <button type="submit" className="btn custom-btn my-4 py-2 me-4" style={{ borderRadius: '7px' }} onClick={handleOnClickSaveData}>Save Data</button>
                             <button className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={() => setPasswordChangeModal(true)}>Change Password</button>
                             </div>
                         </form>

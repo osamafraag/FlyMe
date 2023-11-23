@@ -1,0 +1,30 @@
+ul {
+  list-style: none;
+}
+
+ul .available::before {
+  content: "\2022";
+  color: dodgerblue;
+  font-weight: bold;
+  display: inline-block; 
+  width: 1em;
+  margin-left: -1em;
+}
+
+ul .pendding::before {
+  content: "\2022";
+  color: tomato;
+  font-weight: bold;
+  display: inline-block; 
+  width: 1em;
+  margin-left: -1em;
+}
+
+ul .withdrawal::before {
+  content: "\2022";
+  color: seagreen;
+  font-weight: bold;
+  display: inline-block; 
+  width: 1em;
+  margin-left: -1em;
+}

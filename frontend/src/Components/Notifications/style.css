@@ -1,21 +1,3 @@
-.clicked.type {
-  border-color: var(--main-color);
-  color: white;
-  background-color: var(--main-color);
-}
-.clicked.type:hover {
-  border-color: var(--main-color);
-  color: white;
-  background-color: var(--main-color);
-}
-.type {
-  border-color: var(--main-color);
-  color: var(--main-color);
-}
-.type:hover {
-  border-color: var(--main-color);
-  color: var(--main-color);
-}
 .notification {
   position: relative;
 }

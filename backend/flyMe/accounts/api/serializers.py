@@ -2,15 +2,18 @@ from rest_framework import serializers
 from accounts.models import *
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
+from cities_light.models import Country
+
 
 class UserSerializer(serializers.ModelSerializer):
+    country_name = serializers.CharField(source='country.name', read_only=True)
     class Meta:
         model = MyUser
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name', 'passport_number',
             'passport_expire_date', 'phone', 'image', 'is_email_verified',
             'activation_link_created_at', 'birth_date',
-            'gender', 'post_code', 'created_at', 'updated_at', 'is_superuser', 'country', 'city', 'region'
+            'gender', 'post_code', 'created_at', 'updated_at', 'is_superuser', 'country','country_name', 'city', 'region'
         )
         extra_kwargs = {
             'id': {'read_only': True},

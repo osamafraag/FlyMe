@@ -110,7 +110,7 @@ export default function LoginForm() {
                     }
                 });
         } else {
-            seterrorMessage('Please enter your username and password.')
+            seterrorMessage('Please Enter Your Username and Password.')
             console.log(formError);
             console.log(form);
         }

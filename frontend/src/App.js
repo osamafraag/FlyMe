@@ -4,6 +4,7 @@ import Footer from "./Components/Footer/Footer";
 import Router from "./Router/Router"
 import './App.css';
 import './master.css';
+import './style.css';
 import { Token } from "./Context/Token";
 import { EmailAddress } from "./Context/EmailAddress";
 import { AutoLogin } from "./Context/AutoLogin";

@@ -1,0 +1,22 @@
+.edit-profile {
+  background-image: url("./../../Assets/Images/Login/edit.jpg");
+  background-size: cover;
+}
+.flight-book::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 17%;
+  width: 3px;
+  height: 100%;
+  border-left: 1px solid #dee2e6;
+}
+.flight-book::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 77%;
+  width: 3px;
+  height: 100%;
+  border-left: 1px solid #dee2e6;
+}
