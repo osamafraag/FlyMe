@@ -52,6 +52,7 @@ function FlightForm() {
   };
   
   const onSubmit = (event) => {
+    console.log(flight)
     event.preventDefault();
     location.state?
     axiosInstance
@@ -84,6 +85,7 @@ function FlightForm() {
         <span className="input-group-text" for="inputGroupSelect01">Aircraft<pre>  </pre>  <FontAwesomeIcon icon={faPlane}/> </span>
         <select className="form-select" id="inputGroupSelect01" required value={flight?.aircraft} name='aircraft'
         onChange={handleInputChange}>
+          <option value="" disabled>Select Aircraft</option>
         {aircrafts?.map((aircraft, index) => {
             return(<option value={aircraft.id}>{aircraft.name}</option>)})}
         </select>
@@ -92,6 +94,7 @@ function FlightForm() {
         <span className="input-group-text" for="inputGroupSelect02">Start Airport <pre>  </pre> <FontAwesomeIcon icon={faPlaneDeparture} /> </span>
         <select className="form-select" id="inputGroupSelect02" required value={flight?.startAirport} name='startAirport'
         onChange={handleInputChange}>
+          <option value="" disabled>Select Start Airport</option>
         {airports?.map((airport, index) => {
             return(<option value={airport.id}>{airport.name}</option>)})}
         </select>
@@ -100,6 +103,7 @@ function FlightForm() {
         <span className="input-group-text" for="inputGroupSelect03">Destination Airport <pre>  </pre> <FontAwesomeIcon icon={faPlaneArrival} /> </span>
         <select className="form-select" id="inputGroupSelect03" required value={flight?.endAirport} name='endAirport'
         onChange={handleInputChange}>
+          <option value="" disabled>Select End Airport</option>
         {airports?.map((airport, index) => {
             return(<option value={airport.id}>{airport.name}</option>)})}
         </select>

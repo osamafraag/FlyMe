@@ -1,0 +1,18 @@
+.active.type {
+  border-color: var(--main-color) !important;
+  color: white !important;
+  background-color: var(--main-color) !important;
+}
+.active.type:hover {
+  border-color: var(--main-color) !important;
+  color: white !important;
+  background-color: var(--main-color) !important;
+}
+.type {
+  border-color: var(--main-color) !important;
+  color: var(--main-color) !important;
+}
+.type:hover {
+  border-color: var(--main-color) !important;
+  color: var(--main-color) !important;
+}
