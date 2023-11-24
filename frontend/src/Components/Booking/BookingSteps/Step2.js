@@ -15,7 +15,8 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
     const [selectedClassID, setSelectedClassID] = useState('');
     const [classOptions, setClassOptions] = useState([]);
     const [classesData, setclassesData] = useState([])
-    const [userDidBookBefore, setUserDidBookBefore] = useState(false)
+    const [paymentMethod, setpaymentMethod] = useState(null)
+    const [errorMessage, seterrorMessage] = useState(false)
     const userData = useSelector(state => state.loggedInUserSlice.data);
     const token = useSelector(state => state.Token.token) || {};
     const { flights } = useParams()
@@ -43,8 +44,6 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
         fetchClassOptions();
     }, [selectedClass]);
 
-
-
     // handle click on the header to show or not the content of the step
     const [isContentVisible, setIsContentVisible] = useState(false);
     const handleToggle = () => {
@@ -60,7 +59,7 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
         status: 'A',
         totalCost: TotalFare,
         cashBack: 0,
-        paymentMethod: 'C',
+        paymentMethod: paymentMethod,
         adults: 1,
         kids: 0,
         infants: 0,
@@ -80,6 +79,15 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
         flight: null,
     });
 
+    useEffect(() => {
+        console.log('paymentMethod changed:', paymentMethod);
+        setForm(prevForm => ({
+            ...prevForm,
+            paymentMethod: paymentMethod
+          }));
+        console.log(form)
+    }, [paymentMethod]);
+
     // Class
     const handleSelectClassChange = (event) => {
         const selectedValue = event.target.value;
@@ -92,7 +100,8 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
             setForm(prevForm => ({
                 ...prevForm,
                 category_name: selectedValue,
-                category: newClassID
+                category: newClassID,
+                flight: ''
             }));
             setFormError(prevForm => ({
                 ...prevForm,
@@ -103,19 +112,14 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
         });
     };
 
-    console.log('selectedClass', selectedClassID)
-
-    const isFormValid = !formError.category_name && form.category_name
-    console.log(isFormValid, 'isFormValid')
-    console.log(form)
-    console.log(!formError.category_name, '!formError.category_name')
-    console.log(form.category_name, 'form.category_name')
+    const isFormValid = !formError.category_name && !formError.paymentMethod && form.category_name && form.paymentMethod
 
     // handle click on save and submit button
     const handleOnClickSaveButton = (e) => {
         e.preventDefault();
         if (isFormValid) {
             console.log('Form Submitted Successfully');
+            console.log('form:' , form)
 
             const flightIds = flights.split(',');
 
@@ -127,16 +131,16 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
                     status: 'A',
                     totalCost: TotalFare,
                     cashBack: 0,
-                    paymentMethod: 'C',
+                    paymentMethod: paymentMethod,
                     adults: 1,
                     kids: 0,
                     infants: 0,
                     flight: parseInt(flightId)
                 };
-
+                
+                console.log('passengerData',passengerData)
                 return FlightBooking(passengerData, { Authorization: `Token ${token}` });
             });
-
             Promise.all(promises)
                 .then((responses) => {
                     setDataSaved(true);
@@ -144,10 +148,32 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
                     setIsAllDataSaved(true);
                 })
                 .catch((err) => {
-                    console.log('Error:', err);
-                    setUserDidBookBefore(true);
+                        console.log('Error:', err.response.data.errors);
+                        const errorsObject = err.response.data.errors;
+                        if (errorsObject && typeof errorsObject === 'object') {
+                            const paymentMethodErrors = errorsObject.paymentMethod;
+                            const non_field_errors = errorsObject.non_field_errors
+                    
+                            if (Array.isArray(paymentMethodErrors)) {
+                                seterrorMessage(paymentMethodErrors);
+                            } else if (Array.isArray(non_field_errors)) {
+                                console.log('Error',non_field_errors)
+                                if (non_field_errors == 'The fields flight, passenger must make a unique set.')
+                                seterrorMessage(['You Did Book This Flight Before. Check Your Flight History Section In Your Profile.'])
+                                else seterrorMessage(non_field_errors); 
+                            }
+                            else{
+                                seterrorMessage(['Something Went Worng. Please Try Again.'])
+                            }
+                        } else {
+                            const errorsObject = err
+                            console.log(errorsObject)
+                            // console.error('Unexpected error format:', errorsObject);
+                            // seterrorMessage(['An unexpected error occurred.']); 
+                        }
+                   
+                    
                 });
-            console.log('called')
 
             handleToggle();
         } else {
@@ -161,21 +187,28 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
         <>
             <div className='Container'>
                 {/* Confirmation Window/Message */}
-                < Modal show={userDidBookBefore} onHide={() => { navigate('/') }} className='modal-lg modal-dialog-scrollable'>
+                < Modal show={errorMessage} onHide={() => seterrorMessage(false) } className='modal-lg modal-dialog-scrollable'>
                     <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
                         <Modal.Title>Error Message</Modal.Title>
                     </Modal.Header>
                     <Modal.Body style={{ backgroundColor: "#fafafa" }}>
                         <div className='border border-1 rounded-3 p-4 my-3 bg-white' >
-                            <p className='fw-bold'>You do have reserved a ticket on this flight before.</p>
+                            <p className='fw-bold'>{
+                            errorMessage == 'This field may not be null.'
+                            ?
+                            "You didn't Pay Yet."
+                            :
+                            errorMessage
+                            
+                            }</p>
                         </div>
                     </Modal.Body>
                     <Modal.Footer style={{ backgroundColor: "#f4f4f4" }}>
                         <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => { navigate('/') }}>
-                            Back To Home
+                            Home
                         </Button>
-                        <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => { navigate('/Profile') }}>
-                            Go to Profile
+                        <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => seterrorMessage(false) }>
+                            Close
                         </Button>
                     </Modal.Footer>
                 </Modal>
@@ -205,13 +238,14 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
                                     {formError.category && <div className="form-text text-danger text-start ">{formError.category}</div>}
                                 </div>
                                 {
-                                    isFormValid?
-                                    <Payment />
+                                    selectedClass?
+                                    <Payment TotalFare={TotalFare} setpaymentMethod={setpaymentMethod}/>
                                     :
                                     ''
                                 }
+                                {formError.paymentMethod && <div className="form-text text-danger text-start ">{formError.paymentMethod}</div>}
                                 
-                                <center><button type="submit" className="btn custom-btn" disabled={!isFormValid}>Save and continue</button></center>
+                                <center><button type="submit" className="mt-4 btn custom-btn" disabled={!isFormValid}>Save and continue</button></center>
                             </form>
                             
 

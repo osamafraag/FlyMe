@@ -1,4 +1,4 @@
-import React ,{useRef, useEffect} from 'react'
+import React ,{useRef, useState, useEffect} from 'react'
 
 export default function Paypal({amount, onApproveFunction, handleOnError}){
     const paypal = useRef()
