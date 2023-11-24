@@ -23,6 +23,14 @@ function AircraftForm() {
         .catch((error) => console.log(error));
   },[])
 
+  // If !user navigate to login page 
+  useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+  }, [userData, navigate]);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
