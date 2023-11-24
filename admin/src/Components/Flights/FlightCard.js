@@ -30,10 +30,10 @@ const {flight} = props
             <div className='time d-flex justify-content-between align-items-center'>
               <p className='fw-bolder mb-0'><span>{formatTime(flight.departureTime)}</span>
               <br></br>
-              <span className='text-secondary mb-0' style={{fontSize: "11px"}}>{flight.departureTime.split("T")[0]}</span></p>
+              <span className='text-secondary mb-0' style={{fontSize: "11px"}}>{flight.departureTime?.split("T")[0]}</span></p>
               <p className='text-secondary mb-0' style={{fontSize: "11px"}}><FontAwesomeIcon icon={faClock} /> {calculateTimeDifference(flight.departureTime, flight.arrivalTime)}</p>
               <p className='fw-bolder mb-0'><span>{formatTime(flight.arrivalTime)}</span><br></br>
-              <span className='text-secondary mb-0' style={{fontSize: "11px"}}>{flight.arrivalTime.split("T")[0]}</span></p>
+              <span className='text-secondary mb-0' style={{fontSize: "11px"}}>{flight.arrivalTime?.split("T")[0]}</span></p>
             </div>
             <div className='flight-line mx-4 d-flex justify-content-between '>
               <hr style={{border: "solid 1px #6c757d", width:"47%"}}/>
