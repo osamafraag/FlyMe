@@ -17,6 +17,14 @@ function FlightForm() {
   const [flight,setFlight]=useState({aircraft:null,departureTime:null,arrivalTime:null,startAirport:null,
     endAirport:null,distance:0,avalableSeats:0,baseCost:null,status:'A',offerPercentage:null})
 
+  // If !user navigate to login page 
+  useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+  }, [userData, navigate]);
+
   useEffect(() => {
     AirportsAPI({Authorization: `Token ${token}`})
     .then((result) => {

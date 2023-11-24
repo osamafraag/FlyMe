@@ -19,6 +19,14 @@ export default function AddClass() {
   const navigate = useNavigate()
   const location = useLocation()
 
+  // If !user navigate to login page 
+  useEffect(() => {
+    if (!userData || Object.keys(userData).length === 0) {
+      console.log('Navigating to /Login');
+      navigate('/Login');
+    }
+  }, [userData, navigate]);
+
   useEffect(() => {
     GetSpecificClass(location.state?.id, {Authorization: `Token ${token}`})
     .then((result) => {
