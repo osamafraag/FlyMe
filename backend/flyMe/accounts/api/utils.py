@@ -6,9 +6,10 @@ from django.contrib.auth.hashers import check_password
 
 
 
+
+
 def send_random_code(user, emailHeader):
     verification_code = str(random.randint(100000, 999999))
-    user.save()
     send_mail(
         f'{emailHeader}',
         f'Your verification code is: {verification_code}',

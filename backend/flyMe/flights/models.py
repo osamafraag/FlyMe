@@ -6,6 +6,7 @@ from geopy.distance import geodesic
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from accounts.models import Notification
+from django.core.mail import send_mail
 
 
 class Aircraft(models.Model):
@@ -84,8 +85,19 @@ class Flight(models.Model):
                         notify.title = 'Flight Cancelled'
                         notify.description = f'Sorry But Your Flight From {self.startAirport.city} To {self.endAirport.city} At {self.departureTime} Is Canceld'
                         notify.save()
+
+                        # send email to user on gmail ------
+                        send_mail(
+                        f'{notify.title}',
+                        f'{notify.description}',
+                        '{email}',
+                        [notify.user.email],
+                        fail_silently=False,
+                        )
+                        #-------------------------------
+
                         book.status = 'C'
-                        book.save(True)
+                        book.save(True) 
             else:
                 if self.id:
                     original_flight = Flight.objects.get(id=self.id)
@@ -98,7 +110,16 @@ class Flight(models.Model):
                                 notify.title = 'Flight Postponed'
                                 notify.description = f'Your Flight From {original_flight.startAirport.city} To {original_flight.endAirport.city} At {original_flight.departureTime} Is Postponed to {self.departureTime}'
                                 notify.save()
-            
+                                
+                                # send email to user on gmail ------
+                                send_mail(
+                                f'{notify.title}',
+                                f'{notify.description}',
+                                '{email}',
+                                [notify.user.email],
+                                fail_silently=False,
+                                )
+                                #-------------------------------
         else:    
             self.full_clean()
         super().save(*args, **kwargs)
