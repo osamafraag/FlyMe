@@ -46,8 +46,8 @@ class Flight(models.Model):
     endAirport = models.ForeignKey(AirPort, on_delete=models.CASCADE,null=True, related_name='inFlights')
     distance = models.PositiveIntegerField(default=0)
     availableSeats = models.PositiveIntegerField(default=0)
-    baseCost = models.PositiveIntegerField(default=1000)
-    offerPercentage = models.PositiveIntegerField(default=0,validators=[MaxValueValidator(99)])
+    baseCost = models.FloatField(default=1000, validators=[MinValueValidator(0)])
+    offerPercentage = models.FloatField(default=0, validators=[MinValueValidator(0),MaxValueValidator(99)])
     status = models.CharField(max_length=1, choices=statuses, default='M')
 
     def __str__(self) :
@@ -145,7 +145,7 @@ class Class(models.Model):
         ('B', 'Both Cold and Warm drinks')
     ]
     name = models.CharField(default='noName')
-    additionalCostPercentage = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(70)])
+    additionalCostPercentage = models.FloatField(default=1000, validators=[MinValueValidator(1),MaxValueValidator(70)])
     seatCategory = models.CharField(max_length=1, choices=seatCategories, default='E')
     mealCategory = models.CharField(max_length=1, choices=mealCategories, default='M')
     drinkCategory = models.CharField(max_length=1, choices=drinkCategories, default='O')
@@ -192,8 +192,8 @@ class BookHistory(models.Model):
     category = models.ForeignKey(Class,default=1,on_delete=models.CASCADE, related_name='bookHistory')
     bookedAt = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=1, choices=statuses, default='A')
-    totalCost = models.PositiveIntegerField(default=0,blank=True)
-    cashBack = models.PositiveIntegerField(default=0,blank=True)
+    totalCost = models.FloatField(default=0, validators=[MinValueValidator(0)],blank=True)
+    cashBack = models.FloatField(default=0, validators=[MinValueValidator(0)],blank=True)
     paymentMethod = models.CharField(max_length=1, choices=paymentMethods, default='W')
     adults = models.PositiveBigIntegerField(default=1)
     kids = models.PositiveBigIntegerField(default=0)

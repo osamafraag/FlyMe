@@ -1,23 +1,25 @@
-import {React, useContext, useEffect, useState} from 'react'
+import { React, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import './login.css'
 import { Login } from '../../APIs/Login';
 import { userData } from '../../APIs/AllUsers'
-import { useDispatch  } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../../Store/Slice/LoggedInUser';
-import { EmailAddress} from '../../Context/EmailAddress';
+import { EmailAddress } from '../../Context/EmailAddress';
 import { SendActivateEmail } from '../../APIs/Register';
 import { setToken } from '../../Store/Slice/Token';
+import { SetWallet } from '../../Store/Slice/Wallet';
 import { AutoLogin } from '../../Context/AutoLogin';
+import { userWallet } from '../../APIs/Wallet';
 
 var loginImage = require('../../Assets/Images/Login/Login4.png')
 
 export default function LoginForm() {
-    const{userNameAndPassword, setUserNameAndPassword}= useContext(AutoLogin)
-    const{setEmailAddress}= useContext(EmailAddress)
+    const { userNameAndPassword, setUserNameAndPassword } = useContext(AutoLogin)
+    const { setEmailAddress } = useContext(EmailAddress)
     let navigate = useNavigate()
     const dispatch = useDispatch();
-    const [ errorMessage, seterrorMessage ] = useState(null)
+    const [errorMessage, seterrorMessage] = useState(null)
     // Form State
     const [form, setForm] = useState({
         username: '',
@@ -28,23 +30,25 @@ export default function LoginForm() {
         password: null,
     });
 
-    function ifLoginSucess(res){
+    function ifLoginSucess(res) {
         console.log(res.data.token)
         const token_data = res.data.token
         dispatch(setToken(res.data.token))
-        
         // Sava User Data in the Reducer
         userData({
             Authorization: `Token ${token_data}`,
-            })
-        .then((result) => {
-            dispatch(loginSuccess(result.data.user))
-            setUserNameAndPassword(null)
-            navigate('/');
         })
-        .catch((error) => {
-            console.log(error);
-        });
+            .then((result) => {
+                dispatch(loginSuccess(result.data.user))
+                setUserNameAndPassword(null)
+                navigate('/');
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        userWallet({ Authorization: `Token ${token_data}` })
+            .then((result) => { dispatch(SetWallet((result.data.data))); console.log(result.data.data) })
+            .catch((error) => { console.log(error) })
     }
 
     const handleOnChangeForm = (event) => {
@@ -98,10 +102,10 @@ export default function LoginForm() {
                         seterrorMessage('Email is not activated.');
                         const email = err.response.data.email
                         setEmailAddress(email)
-                        SendActivateEmail({email:email}).then((resu)=>{
+                        SendActivateEmail({ email: email }).then((resu) => {
                             console.log(resu)
                             navigate("/CheckActivationCode")
-                        }).catch((errors)=>{
+                        }).catch((errors) => {
                             console.log(errors)
                         })
                     } else {
@@ -118,14 +122,14 @@ export default function LoginForm() {
 
     useEffect(() => {
         // for auto login
-        if (userNameAndPassword ) {
+        if (userNameAndPassword) {
             Login(userNameAndPassword)
-            .then((res) => {
-                ifLoginSucess(res)
-            }).catch((err)=>{
-                console.log(err);
-            })
-        } 
+                .then((res) => {
+                    ifLoginSucess(res)
+                }).catch((err) => {
+                    console.log(err);
+                })
+        }
     }, []);
 
     return (
@@ -138,28 +142,28 @@ export default function LoginForm() {
                         width="300"
                     />
                     <div className="col-6 pb-5">
-                    {(errorMessage) && (
-                        <p className="text-danger" style={{fontSize:'14px'}}>
-                            {errorMessage}
-                        </p>
+                        {(errorMessage) && (
+                            <p className="text-danger" style={{ fontSize: '14px' }}>
+                                {errorMessage}
+                            </p>
                         )}
                         <form method="post" encType="multipart/form-data">
                             {/* Username */}
                             <div className=" mb-3">
                                 <label htmlFor="floatingInput" className='form-label'>Username</label>
-                                <input type="username" className="form-control" id="floatingInput" value={form.username} onChange={handleOnChangeForm} placeholder='Enter your username' name="username" required/>
+                                <input type="username" className="form-control" id="floatingInput" value={form.username} onChange={handleOnChangeForm} placeholder='Enter your username' name="username" required />
                                 {formError.username && <div className="form-text text-danger text-start ">{formError.username}</div>}
                             </div>
                             {/* Password */}
                             <div className=" mb-3">
                                 <label htmlFor="floatingPassword">Password</label>
-                                <input type="password" className="form-control" id="floatingPassword" value={form.password} onChange={handleOnChangeForm} name='password' placeholder='Enter your password' required/>
+                                <input type="password" className="form-control" id="floatingPassword" value={form.password} onChange={handleOnChangeForm} name='password' placeholder='Enter your password' required />
                                 {formError.password && <div className="form-text text-danger text-start ">{formError.password}</div>}
                             </div>
                             {/* Forgot Password */}
                             <div className="d-flex flex-column">
-                                <a href="" className="text-decoration-none text-end mt-3" style={{color: '#426a9d'}} onClick={()=>{navigate('/ForgetPassword')}} >Forgot Password?</a>
-                                <button type="submit" className="btn custom-btn my-4 py-2" style={{borderRadius: '7px'}} onClick={handleOnClickLogin}>Login</button>
+                                <a href="" className="text-decoration-none text-end mt-3" style={{ color: '#426a9d' }} onClick={() => { navigate('/ForgetPassword') }} >Forgot Password?</a>
+                                <button type="submit" className="btn custom-btn my-4 py-2" style={{ borderRadius: '7px' }} onClick={handleOnClickLogin}>Login</button>
                             </div>
                             <div>
                                 <div className="d-flex justify-content-center ">
@@ -168,7 +172,7 @@ export default function LoginForm() {
                         </form>
                         <hr />
                         <div className="text-center">
-                            <a href="" className="text-decoration-none" style={{color: 'var(--main-color)'}} onClick={()=>navigate('/Register')}>Create New Account!</a>
+                            <a href="" className="text-decoration-none" style={{ color: 'var(--main-color)' }} onClick={() => navigate('/Register')}>Create New Account!</a>
                         </div>
                     </div>
                 </div>
