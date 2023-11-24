@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +28,7 @@ SECRET_KEY = 'django-insecure-(w)xn^tzxh15=eo@!agw#$zsrg5rzmszum#fcv96n)6#9m$12@
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['.vercel.app']
 
 
 # Application definition
@@ -96,6 +98,7 @@ DATABASES = {
         "PORT": "5432",
     }
 }
+# DATABASES["default"] = dj_database_url.parse("postgres://flyme_user:3lI9TUjiMEICMWXN3D06euKbnqX4qgrd@dpg-clgdjk6g1b2c73a7tg1g-a.oregon-postgres.render.com/flyme")
 
 
 # Password validation

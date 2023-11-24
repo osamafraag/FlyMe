@@ -3,7 +3,7 @@
 # from rest_framework.response import Response
 # from rest_framework import status
 from django.shortcuts import redirect,render
-import stripe
+# import stripe
 
 def paypal(request):
     return render(request, 'paypal.html') 

@@ -47,7 +47,7 @@ def aircraftDetail(request, id):
     
 @api_view(['GET'])
 def flightList(request):
-    allFlights = Flight.all()
+    allFlights = Flight.objects.filter(status='A')
     allowedTime=False
     transetFlights = []
     source = request.GET.get('from', None)
@@ -150,7 +150,7 @@ def flightSearchSerializer(flights,many=True):
 
 @api_view(['GET'])
 def offerFlights(request):
-    flights = Flight.objects.all()
+    flights = Flight.objects.filter(status='A')
     offerFlights = [] 
     for flight in flights:
         if flight.departureTime.timestamp() > datetime.now().timestamp() and flight.offerPercentage > 0:
