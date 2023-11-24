@@ -31,7 +31,7 @@ export default function Step1() {
             }
         };
         fetchClassOptions();
-    },[]);
+    }, []);
 
     return (
         <>
@@ -44,18 +44,19 @@ export default function Step1() {
                 {isContentVisible &&
                     <>
                         <div className='Note px-5 py-2' style={{ backgroundColor: '#fef7cd' }}>
-                            Your data should be exactly as ther appear in your passport/ID to avoid check-in complications.
-                            We'll never share your data with anyone.
+                            <p className='m-0 p-0'>Your data should be exactly as ther appear in your passport/ID to avoid check-in complications.
+                            We'll never share your data with anyone.</p>
+                            <p className='m-0 p-0 mt-2'>If you want to change your data, click on Edit Profile Data button. If not you can continue your booking process.</p>
                         </div>
                         <div className='Body'>
                             <div>
-                                <div></div>
                                 <table class="table w-100">
                                     <thead>
-                                        <tr>
+                                        {/* <tr>
                                             <th scope="col">Data</th>
                                             <th scope="col">Your Saved Data</th>
-                                        </tr>
+                                        </tr> */}
+                                        <p className='fw-bold fs-4'>{userData.first_name} {userData.last_name}</p>
                                     </thead>
                                     <tbody>
                                         <tr>
@@ -65,10 +66,6 @@ export default function Step1() {
                                         <tr>
                                             <th scope="row">Phone Number</th>
                                             <td>{userData.phone}</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Full Name</th>
-                                            <td colspan="2">{userData.first_name} {userData.last_name}</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">Gender</th>
@@ -88,6 +85,9 @@ export default function Step1() {
                                         </tr>
                                     </tbody>
                                 </table>
+                                <div className='d-flex justify-content-end'>
+                                <button className='btn custom-btn' onClick={()=> navigate('/EditProfile')}> Edit Profile Data </button>
+                                </div>
                             </div>
                         </div>
                     </>
