@@ -5,7 +5,6 @@ import Paypal from '../Components/Paypal/Paypal'
 export default function Home() {
   return (
     <div>
-      <Paypal/>
       <HomeComponent />
     </div>
   )
