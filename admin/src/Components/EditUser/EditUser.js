@@ -36,13 +36,14 @@ export default function EditProfile() {
         const fetchCountries = async () => {
             try {
                 const data = await GetCountries();
-                setCountries(data);
+                setCountries(data.data);
             } catch (error) {
                 console.error('Error fetching countries:', error);
             }
         };
         fetchCountries();
     }, []);
+    console.log(selectedCountry)
 
     // Form State
     const [form, setForm] = useState({
@@ -323,13 +324,13 @@ export default function EditProfile() {
                                     className="form-select"
                                     name="country"
                                     id="country"
-                                    value={selectedCountry}
+                                    value={form.country}
                                     onChange={handleSelectChange}
                                 >
                                     <option value="" disabled>Select your country</option>
-                                    {/* {countries.map((country, index) => (
+                                    {countries.map((country, index) => (
                                         <option key={index} value={country.id}>{country.name}</option>
-                                    ))} */}
+                                    ))}
                                 </select>
                                 {formError.country && <div className="form-text text-danger text-start ">{formError.country}</div>}
                             </div>

@@ -249,7 +249,7 @@ export default function EditProfile() {
         EditUserData(form , {Authorization: `Token ${token}`} , password, userData.id)
         .then((res) => {
             console.log('Edit Data successful');
-            console.log('res.data', res.data);
+            console.log('res.data', res.data); 
             dispatch(loginSuccess(res.data.data))
             setShowModal(false);
             navigate("/Profile")
