@@ -84,7 +84,7 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
         setForm(prevForm => ({
             ...prevForm,
             paymentMethod: paymentMethod
-          }));
+        }));
         console.log(form)
     }, [paymentMethod]);
 
@@ -116,10 +116,10 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
 
     // handle click on save and submit button
     const handleOnClickSaveButton = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         if (isFormValid) {
             console.log('Form Submitted Successfully');
-            console.log('form:' , form)
+            console.log('form:', form)
 
             const flightIds = flights.split(',');
 
@@ -137,8 +137,8 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
                     infants: 0,
                     flight: parseInt(flightId)
                 };
-                
-                console.log('passengerData',passengerData)
+
+                console.log('passengerData', passengerData)
                 return FlightBooking(passengerData, { Authorization: `Token ${token}` });
             });
             Promise.all(promises)
@@ -148,29 +148,29 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
                     setIsAllDataSaved(true);
                 })
                 .catch((err) => {
-                        console.log('Error:', err.response.data.errors);
-                        const errorsObject = err.response.data.errors;
-                        if (errorsObject && typeof errorsObject === 'object') {
-                            const paymentMethodErrors = errorsObject.paymentMethod;
-                            const non_field_errors = errorsObject.non_field_errors
-                    
-                            if (Array.isArray(paymentMethodErrors)) {
-                                seterrorMessage(paymentMethodErrors);
-                            } else if (Array.isArray(non_field_errors)) {
-                                console.log('Error',non_field_errors)
-                                if (non_field_errors == 'The fields flight, passenger must make a unique set.')
+                    console.log('Error:', err.response.data.errors);
+                    const errorsObject = err.response.data.errors;
+                    if (errorsObject && typeof errorsObject === 'object') {
+                        const paymentMethodErrors = errorsObject.paymentMethod;
+                        const non_field_errors = errorsObject.non_field_errors
+
+                        if (Array.isArray(paymentMethodErrors)) {
+                            seterrorMessage(paymentMethodErrors);
+                        } else if (Array.isArray(non_field_errors)) {
+                            console.log('Error', non_field_errors)
+                            if (non_field_errors == 'The fields flight, passenger must make a unique set.')
                                 seterrorMessage(['You Did Book This Flight Before. Check Your Flight History Section In Your Profile.'])
-                                else seterrorMessage(non_field_errors); 
-                            }
-                            else{
-                                seterrorMessage(['Something Went Worng. Please Try Again.'])
-                            }
-                        } else {
-                            const errorsObject = err
-                            console.log(errorsObject)
-                            console.error('Unexpected error format:', errorsObject);
-                            seterrorMessage(['Something Went Worng. Please Try Again.']); 
-                        }                    
+                            else seterrorMessage(non_field_errors);
+                        }
+                        else {
+                            seterrorMessage(['Something Went Worng. Please Try Again.'])
+                        }
+                    } else {
+                        const errorsObject = err
+                        console.log(errorsObject)
+                        console.error('Unexpected error format:', errorsObject);
+                        seterrorMessage(['Something Went Worng. Please Try Again.']);
+                    }
                 });
 
             handleToggle();
@@ -181,23 +181,30 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
         }
     };
 
+    useEffect(() => {
+        if (isFormValid) {
+            handleOnClickSaveButton()
+            console.log('submit ...........----------------')
+        }
+    }, [isFormValid])
+
     return (
         <>
             <div className='Container'>
                 {/* Confirmation Window/Message */}
-                < Modal show={errorMessage} onHide={() => seterrorMessage(false) } className='modal-lg modal-dialog-scrollable'>
+                < Modal show={errorMessage} onHide={() => seterrorMessage(false)} className='modal-lg modal-dialog-scrollable'>
                     <Modal.Header closeButton style={{ backgroundColor: "#f4f4f4" }}>
                         <Modal.Title>Error Message</Modal.Title>
                     </Modal.Header>
                     <Modal.Body style={{ backgroundColor: "#fafafa" }}>
                         <div className='border border-1 rounded-3 p-4 my-3 bg-white' >
                             <p className='fw-bold'>{
-                            errorMessage == 'This field may not be null.'
-                            ?
-                            "You didn't Pay Yet."
-                            :
-                            errorMessage
-                            
+                                errorMessage == 'This field may not be null.'
+                                    ?
+                                    "You didn't Pay Yet."
+                                    :
+                                    errorMessage
+
                             }</p>
                         </div>
                     </Modal.Body>
@@ -205,7 +212,7 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
                         <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => { navigate('/') }}>
                             Home
                         </Button>
-                        <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => seterrorMessage(false) }>
+                        <Button className='border-0' style={{ backgroundColor: "var(--main-color)" }} onClick={() => seterrorMessage(false)}>
                             Close
                         </Button>
                     </Modal.Footer>
@@ -236,16 +243,16 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
                                     {formError.category && <div className="form-text text-danger text-start ">{formError.category}</div>}
                                 </div>
                                 {
-                                    selectedClass?
-                                    <Payment token={token} TotalFare={TotalFare} setpaymentMethod={setpaymentMethod}/>
-                                    :
-                                    ''
+                                    selectedClass ?
+                                        <Payment token={token} TotalFare={TotalFare} setpaymentMethod={setpaymentMethod} />
+                                        :
+                                        ''
                                 }
                                 {formError.paymentMethod && <div className="form-text text-danger text-start ">{formError.paymentMethod}</div>}
-                                
+
                                 <center><button type="submit" className="mt-4 btn custom-btn" disabled={!isFormValid}>Save and continue</button></center>
                             </form>
-                            
+
 
                         </div>
                     </>
