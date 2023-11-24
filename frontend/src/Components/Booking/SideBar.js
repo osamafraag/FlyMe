@@ -5,8 +5,9 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useSelector } from 'react-redux';
 
-export default function SideBar({ TotalFare }) {
+export default function SideBar({ TotalFare, classAdditionalCostPercentage, className }) {
   const token = useSelector(state => state.Token.token) || {};
+
   const navigate = useNavigate()
   const { flights } = useParams();
   const flightIds = flights.split(',');
@@ -31,6 +32,12 @@ export default function SideBar({ TotalFare }) {
             return null;
           }
         });
+
+        // const classesData = data.data.map(classs => classs);
+        // console.log('---------------------------------------')
+        // console.log(classesData)
+        // setClassAdditionalCostPercentage(classesData.find(data => data.name === selectedClass)?.additionalCostPercentage)
+        // console.log('Additional Cost Percentage for "First" class:', classAdditionalCostPercentage);
   
         const flightDataArray = await Promise.all(dataPromises);
         setFlightDataList(flightDataArray.filter((data) => data !== null));
@@ -49,7 +56,8 @@ export default function SideBar({ TotalFare }) {
   const Total_TAX = flightDataList.reduce((acc, flightData) => acc + (flightData?.baseCost * 0.1 || 0), 0);
   const totalBaseCost = flightDataList.reduce((acc, flightData) => acc + (flightData?.baseCost || 0), 0);
   const totalOfferPercentage = flightDataList.reduce((acc, flightData) => acc + ((flightData?.offerPercentage) || 0), 0);
-  const TotalFaree = (totalBaseCost + Total_TAX ) - ((totalBaseCost + Total_TAX ) * (totalOfferPercentage * 0.01)) || 0;
+  const classCost = (classAdditionalCostPercentage * 0.01) * totalBaseCost
+  const TotalFaree = (totalBaseCost + Total_TAX + classCost ) - ((totalBaseCost + Total_TAX ) * (totalOfferPercentage * 0.01)) || 0;
   TotalFare(TotalFaree);
 
   return (
@@ -100,6 +108,18 @@ export default function SideBar({ TotalFare }) {
         <div className='d-flex align-items-center justify-content-between data mb-0 pb-0'>
           <p>Total TAX</p>
           <p>{Total_TAX} Egp</p>
+        </div>
+        <div className='d-flex align-items-center justify-content-between data mb-0 pb-0'>
+          
+            {
+              className === '-'
+              ?
+              <p>Class: Not Choosen</p>
+              :
+              <p>Class: {className} Class</p>
+            }
+            
+          <p>{classAdditionalCostPercentage}%</p>
         </div>
         <div className='d-flex align-items-center justify-content-between data mb-0 pb-0'>
           <p>Total Offer</p>

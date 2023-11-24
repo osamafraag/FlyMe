@@ -9,7 +9,7 @@ export default function Header(props) {
             </div>
             <div className='px-4'>
                 <div>
-                    <p className='Note py-0 my-0'>Step {StepNumber} of 3</p>
+                    <p className='Note py-0 my-0'>Step {StepNumber} of 2</p>
                 </div>
                 <p className='py-0 my-0'>{title}</p>
             </div>
