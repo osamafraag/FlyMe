@@ -99,7 +99,7 @@ export default function HelpComponent() {
         })
         .then(data => {
           // Process the response data
-          setSuccessMessage('Data saved successfully!');
+          setSuccessMessage('Your Problem Sent Successfully, You Will Be Answered Quickly!');
           // Reset form fields
           !userData && setFirstName('');
           !userData && setLastName('');
@@ -223,7 +223,7 @@ export default function HelpComponent() {
               </div>
             </form>
             {successMessage && (
-              <div className="alert alert-info" role="alert">
+              <div className="alert alert-info" role="alert" style={{fontSize: "15px"}}>
                 {successMessage}
               </div>
             )}

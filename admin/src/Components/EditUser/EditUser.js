@@ -10,19 +10,22 @@ import { useDispatch } from 'react-redux';
 export default function EditProfile() {
     const [successMessage, setSuccessMessage] = useState('');
     const [showModal, setShowModal] = useState(false)
+
     const { id } = useParams();
-    const numericId = parseInt(id, 10);
+    console.log(id)
+    const numericId = parseInt(id);
+    console.log(numericId)
+
     const usersData = useSelector(state => state.loggedInUserSlice.allUsersData);
-    const userData = usersData.find(user => user.id === numericId);
+    const userData = usersData?.find(user => user.id === numericId);
     const token = useSelector(state => state.Token.token);
     const navigate = useNavigate()
-    const [password, setPassword] = useState('');
     const [errorMessage, seterrorMessage] = useState(null)
     const [emailExists, setEmailExists] = useState(false)
-
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
     const dispatch = useDispatch();
+
     useEffect(() => {
         // If !user navigate to login page 
         if (!userData || Object.keys(userData).length === 0) {
@@ -238,8 +241,8 @@ export default function EditProfile() {
     };
 
     const handleOnClickPassword = () =>{
-        console.log(token)
-        EditUserData(form , {Authorization: `Token ${token}`} )
+        console.log(numericId)
+        EditUserData(numericId ,form , {Authorization: `Token ${token}`} )
         .then((res) => {
             console.log('Edit Data successful');
             console.log('res.data', res.data);
