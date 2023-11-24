@@ -1,6 +1,6 @@
 import React ,{useRef, useEffect} from 'react'
 
-export default function Paypal(){
+export default function Paypal({cost}){
     const paypal = useRef()
     useEffect(() => {
         window.paypal.Buttons({
@@ -11,7 +11,7 @@ export default function Paypal(){
                         description: 'Flight Ticket',
                         amount:{
                             currency_code: "USD",
-                            value: 75.00
+                            value: cost
                         }
                     }]
                 });
