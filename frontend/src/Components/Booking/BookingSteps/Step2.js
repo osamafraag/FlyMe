@@ -168,11 +168,9 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
                         } else {
                             const errorsObject = err
                             console.log(errorsObject)
-                            // console.error('Unexpected error format:', errorsObject);
-                            // seterrorMessage(['An unexpected error occurred.']); 
-                        }
-                   
-                    
+                            console.error('Unexpected error format:', errorsObject);
+                            seterrorMessage(['Something Went Worng. Please Try Again.']); 
+                        }                    
                 });
 
             handleToggle();
