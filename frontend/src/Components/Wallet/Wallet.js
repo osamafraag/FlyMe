@@ -8,6 +8,8 @@ import './Wallet.css'
 // import PaymentCard from './../PaymentCard/PaymentCard';
 import Paypal from './../Paypal/Paypal'
 import ReactDOM from 'react-dom';
+import { SetWallet } from '../../Store/Slice/Wallet';
+import { useDispatch } from 'react-redux';
 
 export default function Wallet() {
   const token = useSelector(state => state.Token.token);
@@ -17,6 +19,7 @@ export default function Wallet() {
   const [error, setError] = useState(false)
   const [successMessage, setSuccessMessage] = useState(false)
   const [errorMessage, setErrorMessage] = useState(false)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     fetchData()
@@ -24,7 +27,11 @@ export default function Wallet() {
 
   const fetchData = () => {
     userWallet({ Authorization: `Token ${token}` })
-      .then((result) => { setWallet(result.data.data) })
+      .then((result) => { 
+        setWallet(result.data.data); 
+        dispatch(SetWallet(result.data.data))
+        console.log(result.data.data); 
+      })
       .catch((error) => { console.log(error) })
   }
 
