@@ -43,10 +43,11 @@ export default function BookingComponent() {
   }
 
   return (
-    <div className='bookingPage w-100 text-start row'>
+    <div className='bookingPage w-100 text-start row' >
       <div className='col-8'>
         {/* Booking Steps: */}
         <Step1 />
+        <br />
         <Step2 setIsAllDataSaved={setIsAllDataSaved} TotalFare={TotalFare} setClassName={setClassName} setClassAdditionalCostPercentage={setClassAdditionalCostPercentage} />
         {/* <Step3 /> */}
 

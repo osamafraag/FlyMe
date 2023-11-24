@@ -48,7 +48,7 @@ export default function Step1() {
                             We'll never share your data with anyone.</p>
                             <p className='m-0 p-0 mt-2'>If you want to change your data, click on Edit Profile Data button. If not you can continue your booking process.</p>
                         </div>
-                        <div className='Body'>
+                        <div className='Body bg-white'>
                             <div>
                                 <table class="table w-100">
                                     <thead>

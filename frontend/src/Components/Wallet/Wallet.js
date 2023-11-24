@@ -69,8 +69,8 @@ export default function Wallet() {
     if (successMessage || errorMessage) {
       const timeout = setTimeout(() => {
         setSuccessMessage(false);
-        setError(false);
-      }, 5000);
+        setErrorMessage(false);
+      }, 10000);
 
       return () => clearTimeout(timeout);
     }

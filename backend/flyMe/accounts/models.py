@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class MyUser(AbstractUser):
@@ -107,7 +108,7 @@ class Transaction(models.Model):
     ]
 
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    amount = models.PositiveBigIntegerField(default=0)
+    amount = models.FloatField(default=0, validators=[MinValueValidator(0)])
     date = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
 
@@ -136,9 +137,9 @@ class Transaction(models.Model):
 
 class Wallet(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE,related_name='wallet')
-    available_balance = models.FloatField(null=True, blank=True,default=0)
-    pendding_balance = models.FloatField(null=True, blank=True,default=0)
-    withdrawal = models.FloatField(null=True, blank=True,default=0)
+    available_balance = models.FloatField(default=0, null=True, blank=True)
+    pendding_balance = models.FloatField(default=0, null=True, blank=True)
+    withdrawal = models.FloatField(default=0, null=True, blank=True)
 
     def clean(self) :
         pass

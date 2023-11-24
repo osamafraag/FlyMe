@@ -220,7 +220,7 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
                         <div className='Note px-5 py-2' style={{ backgroundColor: '#fef7cd' }}>
                             If you want to cancel yor trip after booking, you can find it in the history section in your profile
                         </div>
-                        <div className='Body'>
+                        <div className='Body bg-white'>
 
                             <form onSubmit={handleOnClickSaveButton}>
                                 {/* Class */}
@@ -237,7 +237,7 @@ export default function Step2({ TotalFare, setIsAllDataSaved, setClassName, setC
                                 </div>
                                 {
                                     selectedClass?
-                                    <Payment TotalFare={TotalFare} setpaymentMethod={setpaymentMethod}/>
+                                    <Payment token={token} TotalFare={TotalFare} setpaymentMethod={setpaymentMethod}/>
                                     :
                                     ''
                                 }
