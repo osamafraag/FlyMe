@@ -7,6 +7,7 @@ import { faWifi, faPlug, faTv } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
 
 export default function AddClass() {
+  let userData = useSelector(state => state.loggedInUserSlice.data);
   const token = useSelector(state => state.Token.token);
   const [name, setName] = useState('noName');
   const [additionalCostPercentage, setAdditionalCostPercentage] = useState(1);

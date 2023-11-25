@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import { useNavigate } from "react-router-dom";
 import Register from '../Components/Register/Register'
+import { useSelector } from 'react-redux';
 
 export default function AddSuperUser() {
+  let userData = useSelector(state => state.loggedInUserSlice.data);
 
   const navigate = useNavigate()
   // If !user navigate to login page 
