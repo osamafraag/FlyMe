@@ -11,6 +11,7 @@ export default function Countries() {
   const [countries, SetCountries] = useState([])
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate() 
+  const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect(() => {
     if (!userData || Object.keys(userData).length === 0) {
@@ -21,14 +22,31 @@ export default function Countries() {
     GetCountries({Authorization: `Token ${token}`})
     .then((result) => {
       SetCountries(result.data)
+      setErrorMessage(false)
     })
     .catch((error) => {
       console.log(error)
+      setErrorMessage("Something gone wrong!")
     })
   }, [userData, navigate])
 
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
+
   return (
     <div className='container py-5 px-4'>
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       <h3 className='text-start text-secondary my-4'>Countries</h3>
       {/* <div className='text-end'>
         <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}}to="/" >

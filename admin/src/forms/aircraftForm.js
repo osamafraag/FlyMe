@@ -12,6 +12,7 @@ function AircraftForm() {
   const navigate = useNavigate()
   const location = useLocation()
   const [aircraft,setAircraft]=useState({name:null,company:'A',capacity:null,maxLoad:0,baggageWeight:null,maxDistance:null})
+  const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect(() => {
     axiosInstance
@@ -20,8 +21,12 @@ function AircraftForm() {
         })
         .then((result) => {
           setAircraft(result.data.data)
+          setErrorMessage(false)
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error)
+          setErrorMessage("Something gone wrong!")
+        });
   },[])
 
   // If !user navigate to login page 
@@ -50,9 +55,11 @@ function AircraftForm() {
         })  
         .then((response) => {
           navigate(`/Aircrafts`);
+          setErrorMessage(false)
         })
         .catch((error) => {
           console.error(error.response.data.errors);
+          setErrorMessage(error.response.data.errors)
         })
         :
     axiosInstance
@@ -61,14 +68,33 @@ function AircraftForm() {
         })
         .then((response) => {
           navigate(`/Aircrafts`);
+          setErrorMessage(false)
         })
         .catch((error) => {
           console.log(error.response.data.errors);
+          setErrorMessage(error.response.data.errors)
         });
     }
+
+    console.log(errorMessage)
+
+    useEffect(() => {
+      if (errorMessage) {
+        const timeout = setTimeout(() => {
+          setErrorMessage(false);
+        }, 10000);
+  
+        return () => clearTimeout(timeout);
+      }
+    }, [errorMessage]);
     
   return (
     <div className='container p-5'>
+      {errorMessage && typeof errorMessage === 'string' && errorMessage.trim() !== '' && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
     <form onSubmit={onSubmit} className="border border-0 text-start shadow w-100">
     <div className='container p-5'>
       <div class="input-group ">
@@ -76,6 +102,7 @@ function AircraftForm() {
         <input type="text" class="form-control" required value={aircraft?.name} name='name'
         onChange={handleInputChange}/>
       </div>
+      {errorMessage?.name && <p className='text-danger m-0'>{errorMessage.name}</p>}
       <div class="input-group mb-3 mt-5">
         <label class="input-group-text" for="inputGroupSelect02">Company Name</label>
         <select class="form-select" id="inputGroupSelect02" required value={aircraft?.company} name='company'
@@ -86,6 +113,7 @@ function AircraftForm() {
           <option value="B">Boeing</option>
         </select>
       </div>
+      {errorMessage?.company && <p className='text-danger m-0'>{errorMessage.company}</p>}
       <div className='row justify-content-center align-items-center'>
         <div className='col my-4'>
           <div class="input-group me-auto w-75 mt-5">
@@ -93,12 +121,14 @@ function AircraftForm() {
             onChange={handleInputChange}/>
             <span class="input-group-text"><FontAwesomeIcon icon={faPeopleGroup}/></span>
           </div>
+          
           <div class="input-group me-auto w-75 mt-5">
             <input type="number" class="form-control"  value={aircraft?.maxLoad} name='maxLoad'
             onChange={handleInputChange}/>
             <span class="input-group-text">Ton</span>
             <span class="input-group-text"><FontAwesomeIcon icon={faWeightHanging}/></span>
           </div>
+          {errorMessage?.maxLoad && <p className='text-danger m-0'>{errorMessage.maxLoad}</p>}
         </div>
         <div className='col my-4'>
           <div class="input-group ms-auto w-75 mt-5">
@@ -107,12 +137,14 @@ function AircraftForm() {
             <span class="input-group-text">KG</span>
             <span class="input-group-text"><FontAwesomeIcon icon={faPersonWalkingLuggage}/></span>
           </div>
+          {errorMessage?.baggageWeight && <p className='text-danger m-0'>{errorMessage.baggageWeight}</p>}
           <div class="input-group ms-auto w-75 mt-5">
             <input type="number" class="form-control" required value={aircraft?.maxDistance} name='maxDistance'
             onChange={handleInputChange} />
             <span class="input-group-text">KM</span>
             <span class="input-group-text"><FontAwesomeIcon icon={faPlane}/></span>
           </div>
+          {errorMessage?.maxDistance && <p className='text-danger m-0'>{errorMessage.maxDistance}</p>}
         </div>
       </div>
 

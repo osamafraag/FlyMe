@@ -12,6 +12,7 @@ export default function Classes() {
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate() 
   const [deleteClass, setDeleteClass] = useState()
+  const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect(() => {
     if (!userData || Object.keys(userData).length === 0) {
@@ -23,9 +24,11 @@ export default function Classes() {
     .then((result) => {
       console.log(result.data);
       setClasses(result.data)
+      setErrorMessage(false)
     })
     .catch((error) => {
       console.log(error)
+      setErrorMessage("Something gone wrong!")
     })
   }, [userData, navigate, deleteClass])
 
@@ -40,14 +43,31 @@ export default function Classes() {
     DeleteClass(id, {Authorization: `Token ${token}`})  
     .then((response) => {
       setDeleteClass(`${name} Class Deleted Successfully`)
+      setErrorMessage(false)
     })
     .catch((error) => {
       console.error(error);
+      setErrorMessage("Something gone wrong!")
     });
   };
 
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
+
   return (
     <div className='container py-5 px-4'>
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       <h3 className='text-start text-secondary my-4'>Classes</h3>
       <div className='text-end'>
         <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}}to="/ClassForm" >

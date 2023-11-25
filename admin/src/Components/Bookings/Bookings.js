@@ -20,6 +20,7 @@ export default function Bookings() {
   });
   const [editingbookId, setEditingbookId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect(() => {
     fetchData();
@@ -30,8 +31,14 @@ export default function Bookings() {
       .get("/flights/api/history/", {
         headers: {Authorization: `Token ${token}`}
       })
-      .then((res) => setBookings(res.data))
-      .catch((err) => console.error("Error fetching data:", err));
+      .then((res) => {
+        setBookings(res.data)
+        setErrorMessage(false)
+      })
+      .catch((err) => {
+        console.error("Error fetching data:", err)
+        setErrorMessage("Something gone wrong!")
+      });
   };
 
   const handleInputChange = (e) => {
@@ -71,9 +78,11 @@ export default function Bookings() {
       .then((response) => {
         console.log(response.data);
         fetchData();
+        setErrorMessage(false)
       })
       .catch((error) => {
         console.error(error);
+        setErrorMessage("Something gone wrong, Check Your Data Again!")
       });
 
     handleCloseModal();
@@ -97,8 +106,23 @@ export default function Bookings() {
     return paymentMethodMap[paymentMethod] || paymentMethod;
   };
 
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
+
   return (
     <>
+    {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       <div className="mb-4 text-end">
         <Button
           style={{

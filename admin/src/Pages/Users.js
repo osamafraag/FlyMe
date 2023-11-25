@@ -21,6 +21,7 @@ export default function Users() {
   const [showModal, setShowModal] = useState(false)
   const [userToDelete, setUserToDelete]= useState(0)
   const [numberOfUserDeleted, setNumberOfUserDeleted] = useState(0);
+  const [errorMessage, setErrorMessage] = useState(false)
 
   function handelNavagateToEdit(id) {
     navigate(`Edit/${id}`);
@@ -31,8 +32,10 @@ export default function Users() {
       console.log(res)
       setNumberOfUserDeleted(numberOfUserDeleted+1)
       setShowModal(false)
+      setErrorMessage(false)
     }).catch((err)=>{
       console.log(err)
+      setErrorMessage("Something gone wrong!")
     })
   }
 
@@ -59,14 +62,31 @@ export default function Users() {
         const adminUsers = allUsersData.filter(user => user.is_superuser);
         setRegularUsers(regularUsers);
         setSuperUsers(adminUsers);
+        setErrorMessage(false)
       })
       .catch((error) => {
         console.log(error);
+        setErrorMessage("Something gone wrong!")
       });
   }, [numberOfUserDeleted]);
 
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
+
   return (
     <div className='container py-5 px-4'>
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       {/* Super Users */}
         <div className='text-end'>
           <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}} to="/SuperUserForm" >

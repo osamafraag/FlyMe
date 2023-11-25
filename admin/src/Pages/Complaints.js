@@ -18,13 +18,14 @@ export default function Complaints() {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate() 
+  const [errorMessage, setErrorMessage] = useState(false)
 
   const handleClose = () => setShow(false);
 
   const handleShow = (complaint) => {
     setSelectedComplaint(complaint);
     setShow(true);
-    complaint.status = complaint.status == "IN_PROGRESS" ? "OPEN" : "REOPENED"
+    complaint.status = complaint.status == "IN_PROGRESS" ? "OPEN" :  complaint.status == "OPEN" && "REOPENED"
     axiosInstance
         .put(`/accounts/api/complaints/${complaint.id}`, complaint, {
           headers: {Authorization: `Token ${token}`}
@@ -32,9 +33,11 @@ export default function Complaints() {
         .then((response) => {
           console.log(response)
           fetchData()
+          setErrorMessage(false)
         })
         .catch((error) => {
         console.error(error.response);
+        setErrorMessage("Something gone wrong!")
       })
   };
   const handleCloseReply = () => setShowReply(false);
@@ -56,24 +59,36 @@ export default function Complaints() {
         .then((result) => {
             console.log(result.data.data)
             putData(result.data.data)
+            setErrorMessage(false)
           })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error)
+          setErrorMessage("Something gone wrong!")
+        });
     handleCloseReply()
   };
   function putData(data) {
-    data.answer = reply
-    data.status = "RESOLVED"
-    axiosInstance
-        .put(`/accounts/api/complaints/${data.id}`, data, {
-          headers: {Authorization: `Token ${token}`}
-        })   
-        .then((response) => {
-          console.log(response)
-          fetchData()
+    console.log(reply.trim() == '')
+    if (reply.trim() === '') {
+      setErrorMessage("Sorry, But You can't Send Empty Message!")
+      return
+    } else {
+      data.answer = reply
+      data.status = "RESOLVED"
+      axiosInstance
+          .put(`/accounts/api/complaints/${data.id}`, data, {
+            headers: {Authorization: `Token ${token}`}
+          })   
+          .then((response) => {
+            console.log(response)
+            fetchData()
+            setErrorMessage(false)
+          })
+          .catch((error) => {
+          console.error(error.response);
+          setErrorMessage("Something gone wrong!")
         })
-        .catch((error) => {
-        console.error(error.response);
-      })
+    }
   }
   
   useEffect(() => {
@@ -90,10 +105,12 @@ export default function Complaints() {
       .then((result) => {
         console.log(result.data)
         setComplaints(result.data);
+        setErrorMessage(false)
       })
       .catch((error) => {
         console.log(token)
         console.log(error);
+        setErrorMessage("Something gone wrong!")
       });
   }
 
@@ -109,9 +126,11 @@ export default function Complaints() {
     })  
     .then((response) => {
       fetchData()
+      setErrorMessage(false)
     })
     .catch((error) => {
       console.error(error);
+      setErrorMessage("Something gone wrong!")
     });
   };
 
@@ -130,8 +149,23 @@ export default function Complaints() {
     return formattedDate;
   }
 
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
+
   return (
     <div className='container py-5 px-4'>
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       <h3 className='text-start text-secondary my-4'>Complaints</h3>
       <table className='table table-hover shadow-sm'>
         <thead className='table-light'>
