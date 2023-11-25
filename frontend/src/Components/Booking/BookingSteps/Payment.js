@@ -8,7 +8,7 @@ import { SetWallet } from '../../../Store/Slice/Wallet'
 import { createTransaction } from '../../../APIs/Transactions';
 import { userWallet } from '../../../APIs/Wallet';
 
-export default function Payment({ token, TotalFare, setpaymentMethod, handleOnClickSaveButton }) {
+export default function Payment({ token, TotalFare, setpaymentMethod }) {
     const [successMessage, setSuccessMessage] = useState(false)
     const [errorMessage, setErrorMessage] = useState(false)
     let wallet = useSelector(state => state.Wallet.wallet);

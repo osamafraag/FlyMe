@@ -85,6 +85,7 @@ const MultiCityForm = ({ handleFlightData, cities }) => {
           return result.data;
         })
         );
+        console.log(resultsArray)
       handleFlightData(resultsArray);
     } catch (error) {
       console.error("Error fetching search results:", error);
