@@ -2,7 +2,6 @@ from rest_framework import serializers
 from countries.models import *
 from cities_light.models import City, Country
 
-
 class CountrySerializer(serializers.ModelSerializer):
 
     class Meta:

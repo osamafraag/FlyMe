@@ -15,6 +15,7 @@ export default function ImagesTrendPlaces() {
   });
   const [editingImageTrendingPlaceId, setEditingImageTrendingPlaceId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect(() => {
     fetchData();
@@ -25,8 +26,14 @@ export default function ImagesTrendPlaces() {
       .get('countries/api/trendingPlaces/images/add/', {
         headers: {Authorization: `Token ${token}`}
       })
-      .then((res) => setImagesTrendPlace(res.data))
-      .catch((err) => console.log('Error Fetching data ', err));
+      .then((res) => { 
+        setImagesTrendPlace(res.data)
+        setErrorMessage(false)
+      })
+      .catch((err) => {
+        console.log('Error Fetching data ', err)
+        setErrorMessage("Something gone wrong!")
+      });
   };
 
   const handleInputChange = (e) => {
@@ -84,14 +91,26 @@ export default function ImagesTrendPlaces() {
         .then((response) => {
           console.log(response.data);
           fetchData();
+          setErrorMessage(false)
         })
         .catch((error) => {
           console.error(error);
+          setErrorMessage("Something gone wrong!, May be There is No Trend Place With This id!")
         });
     }
 
     handleCloseModal();
   };
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
 
   const handleEdit = (imageId, updatedImage) => {
     axiosInstance
@@ -104,9 +123,11 @@ export default function ImagesTrendPlaces() {
       .then((response) => {
         console.log(response.data);
         fetchData();
+        setErrorMessage(false)
       })
       .catch((error) => {
         console.error(error);
+        setErrorMessage("Something gone wrong!")
       });
   };
 
@@ -124,9 +145,11 @@ export default function ImagesTrendPlaces() {
       .then((response) => {
         console.log(response.data);
         fetchData();
+        setErrorMessage(false)
       })
       .catch((error) => {
         console.error(error);
+        setErrorMessage("Something gone wrong!")
       });
   };
 
@@ -141,6 +164,11 @@ export default function ImagesTrendPlaces() {
 
   return (
     <div>
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       <div className="mb-4 text-end">
         <Button  onClick={handleShowModal} style={{backgroundColor: "var(--main-color)", borderColor: "var(--main-color)"}}>
          <FontAwesomeIcon icon={faPlus} /> Add New Trending Places Image

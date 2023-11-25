@@ -16,6 +16,7 @@ export default function ImagesCity() {
   });
   const [editingImageCityId, setEditingImageCityId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect(() => {
     fetchData();
@@ -24,10 +25,16 @@ export default function ImagesCity() {
   const fetchData = () => {
     axiosInstance
       .get("/countries/api/cities/images/add/", {
-        headers: {Authorization: `Token ${token}`}
+        headers: { Authorization: `Token ${token}` }
       })
-      .then((res) => setImageCity(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setErrorMessage(false)
+        setImageCity(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+        setErrorMessage("Something gone wrong!")
+      });
   };
 
   const handleInputChange = async (e) => {
@@ -80,9 +87,11 @@ export default function ImagesCity() {
         .then((response) => {
           console.log(response.data);
           fetchData();
+          setErrorMessage(false)
         })
         .catch((error) => {
           console.error(error);
+          setErrorMessage("Something gone wrong, May Be There is No City With This id!")
         });
     }
 
@@ -100,9 +109,10 @@ export default function ImagesCity() {
       .then((response) => {
         console.log(response.data);
         fetchData();
+        setErrorMessage(false)
       })
       .catch((error) => {
-        console.error(error);
+        setErrorMessage("Something gone wrong!")
       });
   };
 
@@ -117,14 +127,16 @@ export default function ImagesCity() {
 
     axiosInstance
       .delete(`/countries/api/cities/images/${imageId}/`, {
-        headers: {Authorization: `Token ${token}`}
+        headers: { Authorization: `Token ${token}` }
       })
       .then((response) => {
         console.log(response.data);
         fetchData();
+        setErrorMessage(false)
       })
       .catch((error) => {
         console.error(error);
+        setErrorMessage("Something gone wrong!")
       });
   };
 
@@ -137,31 +149,46 @@ export default function ImagesCity() {
     handleShowModal();
   };
 
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
+
   return (
     <div className="text-start">
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"600px" }}>
+          {errorMessage}
+        </div>
+      )}
       <div className="mb-4 text-end">
-        <Button onClick={handleShowModal} style={{backgroundColor: "var(--main-color)", borderColor: "var(--main-color)"}}>
-         <FontAwesomeIcon icon={faPlus} /> Add New City Image
+        <Button onClick={handleShowModal} style={{ backgroundColor: "var(--main-color)", borderColor: "var(--main-color)" }}>
+          <FontAwesomeIcon icon={faPlus} /> Add New City Image
         </Button>
       </div>
       {imagesCity && imagesCity.length > 0 ? (
         <div className="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-4 justify-content-center align-items-center ">
           {imagesCity.map((image) => (
             <div className="col d-flex justify-content-center align-items-center" key={image.id}>
-            <Card style={{ width: '18rem' }} className="border border-0 text-start shadow w-100">
-              <Card.Img variant="top"src={image.photo} alt={`City: ${image.cityName}`} style={{ height: "250px" }} />
-              <Card.Body>
-                <Card.Title>{image.cityName}</Card.Title>
-                <Card.Text>
-                  {image.cityName} has ID &rarr; {image.city}
-                </Card.Text>
-                <div className="d-flex justify-content-between align-items-center">
-                  <Button className="btn border-0 bg-white p-0" onClick={() => handleEditClick(image)}><FontAwesomeIcon icon={faPencilAlt} style={{color: "var(--main-color)"}} /></Button>
-                  <Button className="btn border-0 bg-white p-0" onClick={() => handleDelete(image.id)}><FontAwesomeIcon icon={faTrash} className="text-danger" /></Button>
-                </div>
-              </Card.Body>
-            </Card>
-          </div>
+              <Card style={{ width: '18rem' }} className="border border-0 text-start shadow w-100">
+                <Card.Img variant="top" src={image.photo} alt={`City: ${image.cityName}`} style={{ height: "250px" }} />
+                <Card.Body>
+                  <Card.Title>{image.cityName}</Card.Title>
+                  <Card.Text>
+                    {image.cityName} has ID &rarr; {image.city}
+                  </Card.Text>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <Button className="btn border-0 bg-white p-0" onClick={() => handleEditClick(image)}><FontAwesomeIcon icon={faPencilAlt} style={{ color: "var(--main-color)" }} /></Button>
+                    <Button className="btn border-0 bg-white p-0" onClick={() => handleDelete(image.id)}><FontAwesomeIcon icon={faTrash} className="text-danger" /></Button>
+                  </div>
+                </Card.Body>
+              </Card>
+            </div>
           ))}
         </div>
       ) : (
@@ -194,7 +221,7 @@ export default function ImagesCity() {
                 onChange={handleInputChange}
               />
             </InputGroup>
-            <Button style={{backgroundColor: "var(--main-color)", borderColor: "var(--main-color)"}} className="text-white" type="submit">
+            <Button style={{ backgroundColor: "var(--main-color)", borderColor: "var(--main-color)" }} className="text-white" type="submit">
               {editingImageCityId ? "Update Image" : "Add Image"}
             </Button>
           </Form>

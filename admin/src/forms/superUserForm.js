@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 
 export default function AddSuperUser() {
   let userData = useSelector(state => state.loggedInUserSlice.data);
-
   const navigate = useNavigate()
   // If !user navigate to login page 
   useEffect(() => {

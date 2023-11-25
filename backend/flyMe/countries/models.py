@@ -32,7 +32,7 @@ class TrendingPlace(models.Model):
 
 class MultiImagesCountry(models.Model):
     photo = models.ImageField(upload_to='countries/photos/')
-    country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True,related_name='images')
+    country = models.ForeignKey('cities_light.Country', on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.photo} - Name Of Countries : {self.country}'
