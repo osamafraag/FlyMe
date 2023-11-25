@@ -11,8 +11,8 @@ import {
 import { useSelector } from 'react-redux/es/hooks/useSelector';
 
 function FlightForm() {
-  const token = useSelector(state => state.Token.token);
   let userData = useSelector(state => state.loggedInUserSlice.data);
+  const token = useSelector(state => state.Token.token);
   const navigate = useNavigate()
   const location = useLocation()
   const [airports, setAirports] = useState([])
