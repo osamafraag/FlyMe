@@ -6,7 +6,7 @@ import { AirportsAPI } from './../APIs/AirPorts'
 import { AircraftsAPI } from './../APIs/Aircrafts'
 import {
   faPlaneArrival, faPlane, faPlaneDeparture, faDollarSign, faClock,
-  faTag, faPercent, faMoneyBills
+  faTag, faPercent, faMoneyBills, faL
 } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
 
@@ -27,6 +27,7 @@ function FlightForm() {
   const [baseCost, setBaseCost] = useState()
   const [status, setStatus] = useState()
   const [offerPercentage, setOfferPercentage] = useState()
+  const [errorMessage, setErrorMessage] = useState(false)
   // const [flight,setFlight]=useState({aircraft:null,departureTime:null,arrivalTime:null,startAirport:null,
   //   endAirport:null,distance:0,avalableSeats:0,baseCost:null,status:'A',offerPercentage:null})
 
@@ -42,25 +43,33 @@ function FlightForm() {
     AirportsAPI({ Authorization: `Token ${token}` })
       .then((result) => {
         setAirports(result.data)
+        setErrorMessage(false)
         // setFlight({
         //   ...flight,
         //   startAirport: result.data[0].id,
         //   endAirport: result.data[1].id,
         // });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error)
+        setErrorMessage("Something gone wrong!")
+      });
   }, []);
 
   useEffect(() => {
     AircraftsAPI({ Authorization: `Token ${token}` })
       .then((result) => {
         setAircrafts(result.data)
+        setErrorMessage(false)
         // setFlight({
         //   ...flight,
         //   aircraft: result.data[0].id,
         // });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error)
+        setErrorMessage("Something gone wrong!")
+      });
   }, []);
 
   useEffect(() => {
@@ -80,8 +89,12 @@ function FlightForm() {
         setStatus(result.data.data.status)
         setStartAirport(result.data.data.startAirport)
         setEndAirport(result.data.data.endAirport)
+        setErrorMessage(false)
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error)
+        setErrorMessage("Something gone wrong!")
+      });
   }, [])
 
   const onSubmit = (event) => {
@@ -105,9 +118,11 @@ function FlightForm() {
         })
         .then((response) => {
           navigate(`/Flights`);
+          setErrorMessage(false)
         })
         .catch((error) => {
           console.error(error);
+          setErrorMessage("Something gone wrong, May Be There Problem In Date , Base Cost < 500 or You Don't Enter Required Input")
         })
       :
       console.log('flight', flight)
@@ -117,13 +132,31 @@ function FlightForm() {
       })
       .then((response) => {
         navigate(`/Flights`);
+        setErrorMessage(false)
       })
       .catch((error) => {
         console.log(error);
+        setErrorMessage("Something gone wrong, May Be There Problem In Date , Base Cost < 500 or You Don't Enter Required Input")
       });
   }
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
+  
   return (
     <div className='container p-5 '>
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       <form onSubmit={onSubmit} className="border border-0 text-start shadow w-100">
         <div className='container p-5'>
           <div className="input-group mx-auto w-75">

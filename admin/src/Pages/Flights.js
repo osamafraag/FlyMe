@@ -35,6 +35,7 @@ export default function Flights() {
   const handleDepartureTimeChange = (event) => { setDepartureTime(event.target.value) };
   const handleArrivalTimeChange = (event) => { setArrivalTime(event.target.value) };
   const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false)
 
   const handleShowModal = (flight) => {
     setSelectedFlight(flight);
@@ -62,8 +63,12 @@ export default function Flights() {
     FlightsAPI({ Authorization: `Token ${token}` })
       .then((result) => {
         setFlights(result.data)
+        setErrorMessage(false)
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error)
+        setErrorMessage("Something gone wrong!")
+      });
   }
 
 
@@ -84,12 +89,17 @@ export default function Flights() {
           })
           .then((response) => {
             fetchData()
+            setErrorMessage(false)
           })
           .catch((error) => {
             console.error(error.response);
+            setErrorMessage("Something gone wrong!")
           })
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error)
+        setErrorMessage("Something gone wrong!")
+      });
   }
 
   function handleAddOffer(id) {
@@ -105,12 +115,17 @@ export default function Flights() {
           })
           .then((response) => {
             fetchData()
+            setErrorMessage(false)
           })
           .catch((error) => {
             console.error(error.response);
+            setErrorMessage("Something gone wrong!")
           })
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error)
+        setErrorMessage("Something gone wrong!")
+      });
 
   }
   const handlePostponeClick = (id) => {
@@ -127,12 +142,17 @@ export default function Flights() {
           })
           .then((response) => {
             fetchData()
+            setErrorMessage(false)
           })
           .catch((error) => {
             console.error(error.response);
+            setErrorMessage("Something gone wrong!")
           })
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error)
+        setErrorMessage("Something gone wrong!")
+      });
   }
 
 
@@ -150,14 +170,32 @@ export default function Flights() {
       })
       .then((response) => {
         fetchData()
+        setErrorMessage(false)
       })
       .catch((error) => {
         console.error(error);
+        setErrorMessage("Something gone wrong!")
       });
   };
 
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
+
+
   return (
     <div className='container py-5 px-4'>
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       <div className='d-flex mb-5'>
         <h3 className='text-start text-secondary'>Flights</h3>
         <a className='btn ms-auto text-white' style={{ backgroundColor: "var(--main-color)" }} onClick={() => { handleAddClick() }}><FontAwesomeIcon icon={faPlus} /> Add New Flight</a>

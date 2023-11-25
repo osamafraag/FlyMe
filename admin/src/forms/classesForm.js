@@ -19,6 +19,7 @@ export default function AddClass() {
   const [streamEntertainment, setStreamEntertainment] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const [errorMessage, setErrorMessage] = useState(false)
 
   // If !user navigate to login page 
   useEffect(() => {
@@ -40,8 +41,12 @@ export default function AddClass() {
       setWifiAvailability(result.data.data.wifiAvailability)
       setPowerOutlet(result.data.data.powerOutlet)
       setStreamEntertainment(result.data.data.streamEntertainment)
+      setErrorMessage(false)
     })
-    .catch((error) => console.log(error));
+    .catch((error) => {
+      console.log(error)
+      setErrorMessage("Something gone wrong!")
+    });
   },[])
 
   const handleSubmit = async (e) => {
@@ -61,22 +66,41 @@ export default function AddClass() {
           const response = await EditClass(location.state.id, JSON.stringify(formData), {Authorization: `Token ${token}`});
           console.log(formData)
           console.log('Post Response:', response.data);
+          setErrorMessage(false)
         } catch (error) {
           console.error('Error:', error); 
+          setErrorMessage("Something gone wrong!")
         }
       } else {
         try {
           const response = await PostClasses(JSON.stringify(formData), {Authorization: `Token ${token}`});
           console.log(formData)
           console.log('Post Response:', response.data);
+          setErrorMessage(false)
         } catch (error) {
           console.error('Error:', error); 
+          setErrorMessage("Something gone wrong!")
         }
       }
     navigate('/Classes')
   };
+
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
   return (
     <div className='container p-5'>
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       <h3 className='text-start text-secondary my-4'>Add Class</h3>
       <div className='border border-0 text-start shadow-sm w-100'>
         <form className='container p-5' onSubmit={(e) => handleSubmit(e)}>
@@ -164,7 +188,7 @@ export default function AddClass() {
             
           </div>
           <button type="submit" className="btn text-white" style={{backgroundColor: "var(--main-color)"}}>
-            Add Class
+            Submit
           </button>
         </form>
       </div>

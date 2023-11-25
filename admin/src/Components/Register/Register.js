@@ -285,6 +285,7 @@ export default function Register() {
 
   // handle click on Register button
   const handleOnClickRegister = (e) => {
+    // seterrorMessage(false)
     e.preventDefault();
     if (isFormValid) {
       console.log('form', form)
@@ -333,7 +334,7 @@ export default function Register() {
               <div className=" mb-3">
                 <label htmlFor="floatingInput" className='form-label'>Email address</label>
                 <input type="email" className="form-control" id="floatingInput" value={form.email} onChange={handleOnChangeForm} placeholder='Enter your email' name="email" required />
-                {formError.email && <div className="form-text text-danger text-start ">{formError.email}</div>}
+                {emailExists && <div className="form-text text-danger text-start ">{emailExists}</div>}
               </div>
               {/* Username */}
               <div className="mb-3">

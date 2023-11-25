@@ -18,13 +18,18 @@ export default function Aircrafts() {
   let userData = useSelector(state => state.loggedInUserSlice.data);
   const navigate = useNavigate()
   const [aircrafts, setAircrafts] = useState([])
+  const [errorMessage, setErrorMessage] = useState(false)
   function fetchData(){
     console.log(token)
     AircraftsAPI({Authorization: `Token ${token}`,})
         .then((result) => {
           setAircrafts(result.data)
+          setErrorMessage(false)
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error)
+          setErrorMessage("Something gone wrong!")
+        });
   }
   // If !user navigate to login page 
   useEffect(() => {
@@ -52,14 +57,31 @@ export default function Aircrafts() {
     }) 
     .then((response) => {
       fetchData()
+      setErrorMessage(false)
     })
     .catch((error) => {
       console.error(error);
+      setErrorMessage("Something gone wrong!")
     });
   };
 
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
+
  return (
     <div className='container py-5 px-4'>
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       <div className='d-flex mb-5'>
         <h3 className='text-start text-secondary'>Aircrafts</h3>
         <a className='btn ms-auto text-white' style={{backgroundColor: "var(--main-color)"}} onClick={handleAddClick}>Add New Aircraft <FontAwesomeIcon icon={faPlus} /></a>
