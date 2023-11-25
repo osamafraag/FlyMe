@@ -7,8 +7,8 @@ import {faWeightHanging, faPlane,faPersonWalkingLuggage,
 import { useSelector } from 'react-redux';
 
 function AircraftForm() {
-  const token = useSelector(state => state.Token.token);
   let userData = useSelector(state => state.loggedInUserSlice.data);
+  const token = useSelector(state => state.Token.token);
   const navigate = useNavigate()
   const location = useLocation()
   const [aircraft,setAircraft]=useState({name:null,company:'A',capacity:null,maxLoad:0,baggageWeight:null,maxDistance:null})
