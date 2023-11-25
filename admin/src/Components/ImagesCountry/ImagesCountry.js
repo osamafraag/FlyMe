@@ -15,6 +15,7 @@ export default function ImagesCountry() {
   });
   const [editingImageCountryId, setEditingImageCountryId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect(() => {
     fetchData();
@@ -25,8 +26,14 @@ export default function ImagesCountry() {
       .get('/countries/api/images/add/', {
         headers: {Authorization: `Token ${token}`}
       })
-      .then((res) => setImageCountry(res.data))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        setImageCountry(res.data)
+        setErrorMessage(false)
+      })
+      .catch((err) => {
+        console.log(err)
+        setErrorMessage("Something gone wrong!")
+      });
   };
 
   const handleInputChange = (e) => {
@@ -63,12 +70,13 @@ export default function ImagesCountry() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('country_name', newImageCountry.country);
+    formData.append('country', newImageCountry.country);
     formData.append('photo', newImageCountry.photo);
 
     if (editingImageCountryId) {
       handleEdit(editingImageCountryId, formData);
     } else {
+      console.log(formData)
       axiosInstance
         .post('/countries/api/images/add/', formData, {
           headers: {
@@ -79,9 +87,11 @@ export default function ImagesCountry() {
         .then((response) => {
           console.log(response.data);
           fetchData();
+          setErrorMessage(false)
         })
         .catch((error) => {
           console.error(error);
+          setErrorMessage("Something gone wrong!, May be There is No Country With This id")
         });
     }
 
@@ -99,9 +109,11 @@ export default function ImagesCountry() {
       .then((response) => {
         console.log(response.data);
         fetchData();
+        setErrorMessage(false)
       })
       .catch((error) => {
         console.error(error);
+        setErrorMessage("Something gone wrong!")
       });
   };
 
@@ -119,9 +131,11 @@ export default function ImagesCountry() {
       .then((response) => {
         console.log(response.data);
         fetchData();
+        setErrorMessage(false)
       })
       .catch((error) => {
         console.error(error);
+        setErrorMessage("Something gone wrong!")
       });
   };
 
@@ -134,8 +148,23 @@ export default function ImagesCountry() {
     handleShowModal();
   };
 
+  useEffect(() => {
+    if (errorMessage) {
+      const timeout = setTimeout(() => {
+        setErrorMessage(false);
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [errorMessage]);
+
   return (
     <div className="text-start">
+      {errorMessage && (
+        <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
+          {errorMessage}
+        </div>
+      )}
       <div className="mb-4 text-end">
         <Button onClick={handleShowModal} style={{backgroundColor: "var(--main-color)", borderColor: "var(--main-color)"}}>
          <FontAwesomeIcon icon={faPlus} /> Add New Country Image
@@ -149,6 +178,9 @@ export default function ImagesCountry() {
                 <Card.Img variant="top" src={image.photo} alt={`Country: ${image.country_name}`} style={{ height: "250px" }} />
                 <Card.Body>
                   <Card.Title>{image.country_name}</Card.Title>
+                  <Card.Text>
+                    {image.country_name} has ID &rarr; {image.country}
+                  </Card.Text>
                   {/* countries/api/images/add/ */}
                   <div className="d-flex justify-content-between align-items-center">
                     <Button className="btn border-0 bg-white p-0" onClick={() => handleEditClick(image)}><FontAwesomeIcon icon={faPencilAlt} style={{color: "var(--main-color)"}} /></Button>

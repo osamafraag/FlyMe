@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 
 export default function AddClass() {
   const token = useSelector(state => state.Token.token);
+  let userData = useSelector(state => state.loggedInUserSlice.data);
   const [name, setName] = useState('noName');
   const [additionalCostPercentage, setAdditionalCostPercentage] = useState(1);
   const [seatCategory, setSeatCategory] = useState('E')

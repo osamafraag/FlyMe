@@ -54,7 +54,7 @@ export default function Countries() {
       <tbody>
         {countries?.map((country, index) => (
           <tr key={index}>
-            <td>{++index}</td>
+            <td>{country.id}</td>
             <td>{country.name}</td>
             <td>{country.name_ascii}</td>
             <td>{country.slug}</td>
