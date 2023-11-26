@@ -1,12 +1,8 @@
-from collections.abc import Iterable
-from django.db import models
-
-# Create your models here.
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
 
 
 class MyUser(AbstractUser):

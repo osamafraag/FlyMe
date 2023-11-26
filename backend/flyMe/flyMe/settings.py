@@ -177,18 +177,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-STRIPE_SECRET_KEY = 'sk_test_51OFOMOHTOkeScdk3KfrWrvl7ozrRCpjpAxX5IFPICUqsbDuky7fmUV6Rajbq1yIz2pKRXst0XfKcO0zvxKpYxhsl00MICSy0HB'
-
-SITE_URL = "http://localhost:3000"
-
-from django.contrib.messages import constants as messages
-MESSAGE_TAGS = {
-    messages.DEBUG: 'alert-secondary',
-    messages.INFO: 'alert-info',
-    messages.SUCCESS: 'alert-success',
-    messages.WARNING: 'alert-warning',
-    messages.ERROR: 'alert-danger',
-}
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:3001",
@@ -201,10 +189,6 @@ CSRF_TRUSTED_ORIGINS = [
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://\w+\.example\.com$",
 ]
-# CELERY_BROKER_URL = "redis://localhost:6379/0"
-# CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
-# CELERY_TIMEZONE = 'UTC'
-# CELERY_TASK_ALWAYS_EAGER = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -213,7 +197,3 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-# CORS_ALLOW_HEADERS = [
-#     'headers', 
-# ]
