@@ -39,9 +39,6 @@ export default function Footer() {
                   <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/Book">Book</NavLink>
                 </p>
                 <p>
-                  <NavLink  className='me-3 fw-semibold text-white text-decoration-none' to="/">Explore</NavLink>
-                </p>
-                <p>
                   <NavLink className='me-3 fw-semibold text-white text-decoration-none' to="/AboutUs">About</NavLink>
                 </p>
                 <p>

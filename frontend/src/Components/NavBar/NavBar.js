@@ -7,13 +7,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRightToBracket, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { faPlaneDeparture, faBell } from '@fortawesome/free-solid-svg-icons'
 import { logout, logData } from '../../Store/Slice/LoggedInUser';
-import { useDispatch  } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { Logout } from "../../APIs/Login";
 import { GetMessages } from "../../APIs/Notification";
 import { useEffect, useState } from "react";
 import { setToken } from '../../Store/Slice/Token';
 import { setNotifications, setUnread, setRead, setCounter } from "../../Store/Slice/Notifications";
+import Woman from "./../../Assets/Images/Profile/Woman.jpg"
+import Man from "./../../Assets/Images/Profile/Man.jpg"
 
 export default function NavBar() {
   const token = useSelector(state => state.Token.token);
@@ -27,26 +29,26 @@ export default function NavBar() {
 
     Logout({
       Authorization: `Token ${token}`,
-    }).then((res)=>{
+    }).then((res) => {
       console.log(res.data)
       dispatch(logout())
       dispatch(setToken(null))
       navigate('/');
-    }).catch((error)=>{
+    }).catch((error) => {
       console.log(error)
     });
   };
-  
+
   useEffect(() => {
     if (isUser) {
-      GetMessages(userData.id, { Authorization: `Token ${token}`})
-      .then((result) => {
-        console.log("Notifiction", result.data)
-        dispatch(setNotifications(result.data))
-        dispatch(setUnread(result.data?.filter(notification => notification.status === 'UNREAD')))
-        dispatch(setRead(result.data?.filter((notification) => notification.status === 'READ' && !notification.deleted)))
-      })
-      .catch((error) => console.log(error))
+      GetMessages(userData.id, { Authorization: `Token ${token}` })
+        .then((result) => {
+          console.log("Notifiction", result.data)
+          dispatch(setNotifications(result.data))
+          dispatch(setUnread(result.data?.filter(notification => notification.status === 'UNREAD')))
+          dispatch(setRead(result.data?.filter((notification) => notification.status === 'READ' && !notification.deleted)))
+        })
+        .catch((error) => console.log(error))
     }
   }, [isUser, counter])
 
@@ -67,14 +69,40 @@ export default function NavBar() {
                 ?
                 <NavLink className='me-3 fw-semibold text-dark text-decoration-none' to="/Login"><FontAwesomeIcon icon={faArrowRightToBracket} /> Login</NavLink>
                 :
-                <div>
+                <div className="d-flex align-items-center">
                   <NavLink className='fw-semibold text-dark text-decoration-none px-3' to="/Notifications">
-                    <FontAwesomeIcon icon={faBell} className="fs-5" style={{color: "var(--main-color)"}}/> {counter > 0 &&  <sup class="translate-middle badge bg-danger">
-                     {counter}
-                  </sup>}
+                    <FontAwesomeIcon icon={faBell} className="fs-5" style={{ color: "var(--main-color)" }} /> {counter > 0 && <sup class="translate-middle badge bg-danger">
+                      {counter}
+                    </sup>}
                   </NavLink>
-                  <NavLink className='me-3 fw-semibold text-dark text-decoration-none ' to="/Profile">{userData.username}</NavLink>
-                  <NavLink onClick={handleLogout} className='me-3 fw-semibold text-dark text-decoration-none'>Logout <FontAwesomeIcon icon={faArrowRightFromBracket}/></NavLink>
+                  <div class="dropdown">
+                    <button class="btn fw-semibold text-dark text-decoration-none" style={{border: 'none'}} type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src={userData?.image || (userData.gender == 'F' ? Woman : Man)} width="30" height="30" className="rounded-circle img-fluid mx-0 me-1" />
+                      {userData.first_name} {userData.last_name}
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li className="d-flex align-items-center justify-content-center mb-2">
+                        <NavLink className='fw-semibold text-dark text-decoration-none mx-0' to="/Profile">
+                          <img src={userData?.image || (userData.gender == 'F' ? Woman : Man)} width="30" height="30" className="rounded-circle img-fluid mx-1" />
+                          Profile
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink onClick={handleLogout} className='fw-semibold text-dark text-decoration-none mx-0 d-flex align-items-center justify-content-center'>
+                          <FontAwesomeIcon icon={faArrowRightFromBracket} className="mx-1"/>
+                          Logout
+                        </NavLink>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* ------------- */}
+                  {/* <NavLink className='me-3 fw-semibold text-dark text-decoration-none ' to="/Profile">
+                    {userData.first_name} {userData.last_name}
+                    <img src={userData?.image || (userData.gender == 'F' ? Woman : Man)} width="30" height="30" className="rounded-circle img-fluid mx-2" />
+
+                  </NavLink>
+                  <NavLink onClick={handleLogout} className='me-3 fw-semibold text-dark text-decoration-none'>Logout <FontAwesomeIcon icon={faArrowRightFromBracket} /></NavLink> */}
                 </div>
             }
           </Nav>

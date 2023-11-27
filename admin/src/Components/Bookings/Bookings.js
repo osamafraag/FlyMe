@@ -143,7 +143,7 @@ export default function Bookings() {
               <th>Payment Method</th>
               <th>PassengerID</th>
               <th>FlightID</th>
-              <th>Category</th>
+              <th>Class</th>
             </tr>
           </thead>
           <tbody>

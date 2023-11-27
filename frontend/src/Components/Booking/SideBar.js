@@ -91,8 +91,7 @@ export default function SideBar({ TotalFare, classAdditionalCostPercentage, clas
             </div>
             <div className='data d-flex justify-content-between'>
               <div className=' Note'>Cost: {flightData?.baseCost}</div>
-              <div className=' Note'>{flightData?.departureTime}</div>
-
+              <div className='Note'>{flightData?.departureTime ? new Date(flightData.departureTime).toISOString().split('T')[0] : ''}</div>
             </div>
           </div>
 

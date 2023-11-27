@@ -118,13 +118,13 @@ function AircraftForm() {
         <div className='col my-4'>
           <div class="input-group me-auto w-75 mt-5">
             <input type="number" class="form-control" required value={aircraft?.capacity} name='capacity'
-            onChange={handleInputChange}/>
+            onChange={handleInputChange} placeholder='Capacity'/>
             <span class="input-group-text"><FontAwesomeIcon icon={faPeopleGroup}/></span>
           </div>
           
           <div class="input-group me-auto w-75 mt-5">
             <input type="number" class="form-control"  value={aircraft?.maxLoad} name='maxLoad'
-            onChange={handleInputChange}/>
+            onChange={handleInputChange} placeholder='Max Load'/>
             <span class="input-group-text">Ton</span>
             <span class="input-group-text"><FontAwesomeIcon icon={faWeightHanging}/></span>
           </div>
@@ -133,14 +133,14 @@ function AircraftForm() {
         <div className='col my-4'>
           <div class="input-group ms-auto w-75 mt-5">
             <input type="number" class="form-control" required value={aircraft?.baggageWeight} name='baggageWeight'
-            onChange={handleInputChange} />
+            onChange={handleInputChange} placeholder='Baggage Weight'/>
             <span class="input-group-text">KG</span>
             <span class="input-group-text"><FontAwesomeIcon icon={faPersonWalkingLuggage}/></span>
           </div>
           {errorMessage?.baggageWeight && <p className='text-danger m-0'>{errorMessage.baggageWeight}</p>}
           <div class="input-group ms-auto w-75 mt-5">
             <input type="number" class="form-control" required value={aircraft?.maxDistance} name='maxDistance'
-            onChange={handleInputChange} />
+            onChange={handleInputChange} placeholder='Max Distance'/>
             <span class="input-group-text">KM</span>
             <span class="input-group-text"><FontAwesomeIcon icon={faPlane}/></span>
           </div>
