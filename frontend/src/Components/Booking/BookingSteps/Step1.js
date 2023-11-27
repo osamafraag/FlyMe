@@ -69,7 +69,13 @@ export default function Step1() {
                                         </tr>
                                         <tr>
                                             <th scope="row">Gender</th>
-                                            <td colspan="2">{userData.gender}</td>
+                                            <td colspan="2">{
+                                            userData.gender == 'F'
+                                            ?
+                                            'Female'
+                                            :
+                                            'Male'
+                                            }</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">Date Of Birth</th>

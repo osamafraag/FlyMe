@@ -81,7 +81,7 @@ export default function Users() {
   }, [errorMessage]);
 
   return (
-    <div className='container py-5 px-4'>
+    <div className='container pt-5 px-4'>
       {errorMessage && (
         <div className="error-message alert alert-danger mx-auto" style={{ fontSize: "15px", width:"700px" }}>
           {errorMessage}
@@ -89,11 +89,11 @@ export default function Users() {
       )}
       {/* Super Users */}
         <div className='text-end'>
-          <NavLink className="btn text-white my-4" style={{backgroundColor: "var(--main-color)"}} to="/SuperUserForm" >
+          <NavLink className="btn text-white" style={{backgroundColor: "var(--main-color)"}} to="/SuperUserForm" >
             <FontAwesomeIcon icon={faPlus} /> Add New User 
           </NavLink>
         </div>
-      <div className='super-users pb-5'>
+      <div className='super-users pb-2'>
         <h3 className='text-start py-3' style={{color: "var(--main-color)"}}>Super Users</h3>
         <table className="table table-hover shadow-sm">
           <thead className="table-light">
@@ -136,7 +136,7 @@ export default function Users() {
       </div>
 
       {/* Regular Users */}
-      <div className='regular-users pb-5'>
+      <div className='regular-users'>
         <h3 className='text-start py-3' style={{color: "var(--main-color)"}}>Regular Users</h3>
         <table className="table table-hover shadow-sm">
           <thead className="table-light">
@@ -164,8 +164,8 @@ export default function Users() {
               <td>{user.email}</td>
               <td>{user.phone}</td>  
               <td>{user.gender == "F" ? "Female" : "Male"}</td> 
+              <td>{user.birth_date}</td>
               <td>{user.passport_number}</td>
-              <td>{user.passport_expire_date}</td>
               <td>
               <button type="button" className="btn border-0"  style={{color: "var(--main-color)"}} onClick={()=>handelNavagateToEdit(user.id)} >
               <FontAwesomeIcon icon={faPenToSquare} />

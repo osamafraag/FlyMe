@@ -18,6 +18,7 @@ export default function NavBar() {
   const navigate = useNavigate();
 
   let userData = useSelector(state => state.loggedInUserSlice.data);
+  console.log(userData)
   const handleLogout = () => {
     dispatch(logout())
     dispatch(setToken(null))
@@ -38,7 +39,7 @@ export default function NavBar() {
                 </div>
                 :
                 <div className="text-secondary">
-                  {userData.username}
+                  {userData.first_name} {userData.last_name}
                   <img className="profile rounded-3 ps-3" src={Profile} alt='' />
                   <NavLink onClick={handleLogout} className='ms-3 fw-semibold text-dark text-decoration-none'><FontAwesomeIcon icon={faArrowRightFromBracket}/> Logout</NavLink>
                 </div>

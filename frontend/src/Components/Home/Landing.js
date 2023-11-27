@@ -6,7 +6,7 @@ import FlightSearchForm from "../Book/FlightSearchForm"
 export default function Landing() {
   return (
     <div style={{height: "750px"}}>
-      <div className="landing py-5 position-relative" style={{height: "500px"}}>
+      <div className="landing py-5 position-relative mb-0 pb-0" style={{height: "500px"}}>
         
         <div className="heading mx-auto text-white my-5" style={{width: "70%"}}>
           <h1 className="text-center mb-4 text-white" style={{color: "var(--main-color)"}}>Fly Beyond Boundaries</h1>

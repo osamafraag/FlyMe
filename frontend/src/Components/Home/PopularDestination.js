@@ -12,7 +12,7 @@ export default function PopularDestination({popularDestination}) {
     }
   }
   return (
-    <div className='container my-5 px-5'>
+    <div className='container px-5'>
       <h3 className='text-start mb-5'>Popular Destinations</h3>
       <div className="row row-cols-1 row-cols-lg-3 row-cols-md-2 g-4 justify-content-center align-items-center ">
         {popularDestination.slice(0, 3).map((destination, index) => {
