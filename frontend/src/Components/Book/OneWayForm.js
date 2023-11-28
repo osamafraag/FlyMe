@@ -105,7 +105,7 @@ const OneWayForm = ({ handleFlightData, cities }) => {
     <form className='row row-cols-3 align-items-center form-floating' onSubmit={handleSubmit}>
       {/* From */}
       <div className='col'>
-        <div class="form-floating mb-3">
+        <div className="form-floating mb-3">
           <input 
             className={`form-control ${errorFrom != '' ? "Error" : "" }`}
             type="text"
@@ -120,13 +120,13 @@ const OneWayForm = ({ handleFlightData, cities }) => {
               <option key={city.id} value={city.name} />
             ))}
           </datalist>
-          <label for="from"><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> From</label>
+          <label htmlFor="from"><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> From</label>
         </div>
       </div>
 
       {/* To */}
       <div className='col'>
-        <div class="form-floating mb-3 ">
+        <div className="form-floating mb-3 ">
           <input 
             className={`form-control ${errorTo != '' ? "Error" : "" }`} 
             type="text"
@@ -141,13 +141,13 @@ const OneWayForm = ({ handleFlightData, cities }) => {
               <option key={city.id} value={city.name} />
             ))}
           </datalist>
-          <label for="to"><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> To</label>
+          <label htmlFor="to"><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> To</label>
         </div> 
       </div>
 
       {/* Time */}
       <div className='col'>
-        <div class="form-floating mb-3">
+        <div className="form-floating mb-3">
           <input 
             type="date"
             className="form-control"
@@ -157,7 +157,7 @@ const OneWayForm = ({ handleFlightData, cities }) => {
             id="departure"
             placeholder='Departure' 
           />
-          <label for="departure"><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> Departure</label>
+          <label htmlFor="departure"><FontAwesomeIcon icon={faLocationDot} style={{color: "var(--main-color)"}}/> Departure</label>
         </div>
       </div>
 

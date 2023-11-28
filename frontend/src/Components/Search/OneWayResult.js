@@ -44,7 +44,7 @@ const OneWayResult = ({ flightData }) => {
                     ?
                   <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight[0].baseCost + flight[1].baseCost}</h4>
                   :
-                  <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {(flight[0].baseCost + flight[1].baseCost) - ((flight[0].baseCost + flight[1].baseCost) * ((flight[0].offerPercentage + flight[1].offerPercentage) / 100))} <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight[0].baseCost + flight[1].baseCost}</smal></h4>
+                  <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {(flight[0].baseCost + flight[1].baseCost) - ((flight[0].baseCost + flight[1].baseCost) * ((flight[0].offerPercentage + flight[1].offerPercentage) / 100))} <small className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight[0].baseCost + flight[1].baseCost}</small></h4>
                 }
                 <p className='text-secondary'><small>Per Person</small></p>
                 <button 
@@ -68,7 +68,7 @@ const OneWayResult = ({ flightData }) => {
                   ?
                   <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost}</h4>
                   :
-                  <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost - (flight.baseCost * (flight.offerPercentage / 100))} <smal className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight.baseCost}</smal></h4>
+                  <h4><span className='fw-normal text-secondary fs-6'>EGP</span> {flight.baseCost - (flight.baseCost * (flight.offerPercentage / 100))} <small className='fw-normal text-secondary text-decoration-line-through' style={{fontSize: "13px"}}>{flight.baseCost}</small></h4>
 
                 }
                 <p className='text-secondary'><small>Per Person</small></p>
