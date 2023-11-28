@@ -30,23 +30,27 @@ export default function AddClass() {
   }, [userData, navigate]);
 
   useEffect(() => {
-    GetSpecificClass(location.state?.id, {Authorization: `Token ${token}`})
-    .then((result) => {
-      console.log(result.data.data)
-      setName(result.data.data.name)
-      setAdditionalCostPercentage(result.data.data.additionalCostPercentage)
-      setSeatCategory(result.data.data.seatCategory)
-      setMealCategory(result.data.data.mealCategory)
-      setDrinkCategory(result.data.data.drinkCategory)
-      setWifiAvailability(result.data.data.wifiAvailability)
-      setPowerOutlet(result.data.data.powerOutlet)
-      setStreamEntertainment(result.data.data.streamEntertainment)
-      setErrorMessage(false)
-    })
-    .catch((error) => {
-      console.log(error)
-      setErrorMessage("Something gone wrong!")
-    });
+    if(location.state)
+    {
+      GetSpecificClass(location.state?.id, {Authorization: `Token ${token}`})
+      .then((result) => {
+        console.log(result.data.data)
+        setName(result.data.data.name)
+        setAdditionalCostPercentage(result.data.data.additionalCostPercentage)
+        setSeatCategory(result.data.data.seatCategory)
+        setMealCategory(result.data.data.mealCategory)
+        setDrinkCategory(result.data.data.drinkCategory)
+        setWifiAvailability(result.data.data.wifiAvailability)
+        setPowerOutlet(result.data.data.powerOutlet)
+        setStreamEntertainment(result.data.data.streamEntertainment)
+        setErrorMessage(false)
+      })
+      .catch((error) => {
+        console.log(error)
+        setErrorMessage("Something gone wrong!")
+      });
+    }
+   
   },[])
 
   const handleSubmit = async (e) => {

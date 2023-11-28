@@ -71,16 +71,16 @@ export default function NavBar() {
                 :
                 <div className="d-flex align-items-center">
                   <NavLink className='fw-semibold text-dark text-decoration-none px-3' to="/Notifications">
-                    <FontAwesomeIcon icon={faBell} className="fs-5" style={{ color: "var(--main-color)" }} /> {counter > 0 && <sup class="translate-middle badge bg-danger">
+                    <FontAwesomeIcon icon={faBell} className="fs-5" style={{ color: "var(--main-color)" }} /> {counter > 0 && <sup className="translate-middle badge bg-danger">
                       {counter}
                     </sup>}
                   </NavLink>
-                  <div class="dropdown">
-                    <button class="btn fw-semibold text-dark text-decoration-none" style={{border: 'none'}} type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <div className="dropdown">
+                    <button className="btn fw-semibold text-dark text-decoration-none" style={{border: 'none'}} type="button" data-bs-toggle="dropdown" aria-expanded="false">
                       <img src={userData?.image || (userData.gender == 'F' ? Woman : Man)} width="30" height="30" className="rounded-circle img-fluid mx-0 me-1" />
                       {userData.first_name} {userData.last_name}
                     </button>
-                    <ul class="dropdown-menu">
+                    <ul className="dropdown-menu">
                       <li className="d-flex align-items-center justify-content-center mb-2">
                         <NavLink className='fw-semibold text-dark text-decoration-none mx-0' to="/Profile">
                           <img src={userData?.image || (userData.gender == 'F' ? Woman : Man)} width="30" height="30" className="rounded-circle img-fluid mx-1" />

@@ -45,19 +45,13 @@ export default function Step1() {
                     <>
                         <div className='Note px-5 py-2' style={{ backgroundColor: '#fef7cd' }}>
                             <p className='m-0 p-0'>Your data should be exactly as ther appear in your passport/ID to avoid check-in complications.
-                            We'll never share your data with anyone.</p>
+                                We'll never share your data with anyone.</p>
                             <p className='m-0 p-0 mt-2'>If you want to change your data, click on Edit Profile Data button. If not you can continue your booking process.</p>
                         </div>
                         <div className='Body bg-white'>
                             <div>
-                                <table class="table w-100">
-                                    <thead>
-                                        {/* <tr>
-                                            <th scope="col">Data</th>
-                                            <th scope="col">Your Saved Data</th>
-                                        </tr> */}
-                                        <p className='fw-bold fs-4'>{userData.first_name} {userData.last_name}</p>
-                                    </thead>
+                                <p className='fw-bold fs-4'>{userData.first_name} {userData.last_name}</p>
+                                <table className="table w-100">
                                     <tbody>
                                         <tr>
                                             <th scope="row">Email</th>
@@ -69,30 +63,30 @@ export default function Step1() {
                                         </tr>
                                         <tr>
                                             <th scope="row">Gender</th>
-                                            <td colspan="2">{
-                                            userData.gender == 'F'
-                                            ?
-                                            'Female'
-                                            :
-                                            'Male'
+                                            <td colSpan="2">{
+                                                userData.gender == 'F'
+                                                    ?
+                                                    'Female'
+                                                    :
+                                                    'Male'
                                             }</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">Date Of Birth</th>
-                                            <td colspan="2">{userData.birth_date}</td>
+                                            <td colSpan="2">{userData.birth_date}</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">Passport Number</th>
-                                            <td colspan="2">{userData.passport_number}</td>
+                                            <td colSpan="2">{userData.passport_number}</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">Passport Expirty Date</th>
-                                            <td colspan="2">{userData.passport_expire_date}</td>
+                                            <td colSpan="2">{userData.passport_expire_date}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <div className='d-flex justify-content-end'>
-                                <button className='btn custom-btn' onClick={()=> navigate('/EditProfile')}> Edit Profile Data </button>
+                                    <button className='btn custom-btn' onClick={() => navigate('/EditProfile')}> Edit Profile Data </button>
                                 </div>
                             </div>
                         </div>
