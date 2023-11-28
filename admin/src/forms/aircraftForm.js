@@ -15,18 +15,21 @@ function AircraftForm() {
   const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect(() => {
-    axiosInstance
-        .get(`flights/api/aircrafts/${location.state?.id}`, {
-          headers: {Authorization: `Token ${token}`}
-        })
-        .then((result) => {
-          setAircraft(result.data.data)
-          setErrorMessage(false)
-        })
-        .catch((error) => {
-          console.log(error)
-          setErrorMessage("Something gone wrong!")
-        });
+    if (location.state){
+      axiosInstance
+      .get(`flights/api/aircrafts/${location.state?.id}`, {
+        headers: {Authorization: `Token ${token}`}
+      })
+      .then((result) => {
+        setAircraft(result.data.data)
+        setErrorMessage(false)
+      })
+      .catch((error) => {
+        console.log(error)
+        setErrorMessage("Something gone wrong!")
+      });
+    }
+   
   },[])
 
   // If !user navigate to login page 

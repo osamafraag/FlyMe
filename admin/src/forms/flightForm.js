@@ -73,7 +73,9 @@ function FlightForm() {
   }, []);
 
   useEffect(() => {
-    axiosInstance
+    if (location.state)
+    {
+      axiosInstance
       .get(`flights/api/${location.state?.id}`, {
         headers: { Authorization: `Token ${token}` }
       })
@@ -95,6 +97,8 @@ function FlightForm() {
         console.log(error)
         setErrorMessage("Something gone wrong!")
       });
+    }
+    
   }, [])
 
   const onSubmit = (event) => {
