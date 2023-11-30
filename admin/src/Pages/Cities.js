@@ -81,6 +81,7 @@ export default function Cities() {
           <tr>
             <th>#</th>
             <th>Name</th>
+            <th>ID</th>
             <th>Slug</th>
             <th>Population</th>
             <th>Timezone</th>
@@ -93,6 +94,7 @@ export default function Cities() {
             <tr key={index}>
               <td>{++index}</td>
               <td>{city.name}</td>
+              <td>{city.id}</td>
               <td>{city.slug}</td>
               <td>{city.population}</td>
               <td>{city.timezone}</td>
