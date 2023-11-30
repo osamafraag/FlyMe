@@ -106,7 +106,6 @@ export default function Users() {
               <th>Gender</th>  
               <th>Birth Date</th> 
               <th>Edit</th>  
-              <th>Delate</th>  
             </tr>
           </thead>
           <tbody>
@@ -123,11 +122,6 @@ export default function Users() {
               <button type="button" className="btn  border-0" style={{color: "var(--main-color)"}} onClick={()=>handelNavagateToEdit(user.id)} >
               <FontAwesomeIcon icon={faPenToSquare} />
               </button> 
-              </td>
-              <td>
-              <button type="button" className="btn text-danger  border-0" onClick={()=>handelClickDeleteUser(user.id)} >
-              <FontAwesomeIcon icon={faTrash} className='text-danger' />
-              </button>
               </td>
             </tr>
           ))}
